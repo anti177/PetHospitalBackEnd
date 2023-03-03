@@ -1,4 +1,4 @@
-package com.example.pethospitalbackend.enums;
+package com.example.pethospitalbackend.Enums;
 
 import lombok.Getter;
 

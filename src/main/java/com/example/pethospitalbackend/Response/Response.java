@@ -1,6 +1,6 @@
 package com.example.pethospitalbackend.Response;
 
-import com.example.pethospitalbackend.enums.ResponseEnum;
+import com.example.pethospitalbackend.Enums.ResponseEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
