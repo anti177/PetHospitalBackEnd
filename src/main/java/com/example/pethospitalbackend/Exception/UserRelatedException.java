@@ -12,11 +12,11 @@ import org.zalando.problem.AbstractThrowableProblem;
  * @author yyx
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class AlreadyExistsException extends AbstractThrowableProblem {
+public class UserRelatedException extends AbstractThrowableProblem {
 
     private static final long serialVersionUID = 4775907845387588528L;
 
-    public AlreadyExistsException(String message) {
+    public UserRelatedException(String message) {
 
         super(ErrorConstants.DEFAULT_TYPE,message);
     }

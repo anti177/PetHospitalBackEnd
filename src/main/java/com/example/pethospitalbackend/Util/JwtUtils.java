@@ -99,9 +99,9 @@ public class JwtUtils {
             authorities.add(new SimpleGrantedAuthority(UserRoleConstants.ROLE_ADMIN));
         }
         // 获取用户名
-        String userName = claims.getSubject();
+        String userId = claims.getSubject();
 
-        return new UsernamePasswordAuthenticationToken(userName, token, authorities);
+        return new UsernamePasswordAuthenticationToken(userId, token, authorities);
 
     }
 
