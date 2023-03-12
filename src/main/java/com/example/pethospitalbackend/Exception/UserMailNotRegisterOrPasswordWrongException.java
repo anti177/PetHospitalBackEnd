@@ -11,13 +11,13 @@ import org.zalando.problem.AbstractThrowableProblem;
  *
  * @author yyx
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class AlreadyExistsException extends AbstractThrowableProblem {
+@ResponseStatus(HttpStatus.UNAUTHORIZED)
+public class UserMailNotRegisterOrPasswordWrongException extends AbstractThrowableProblem {
 
-    private static final long serialVersionUID = 4775907845387588528L;
+	private static final long serialVersionUID = 4775907845387588528L;
 
-    public AlreadyExistsException(String message) {
+	public UserMailNotRegisterOrPasswordWrongException (String message) {
 
-        super(ErrorConstants.DEFAULT_TYPE,message);
-    }
+		super(ErrorConstants.DEFAULT_TYPE,message);
+	}
 }

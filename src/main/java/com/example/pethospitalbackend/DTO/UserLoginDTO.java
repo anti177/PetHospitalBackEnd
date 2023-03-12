@@ -13,7 +13,6 @@ import javax.validation.constraints.NotBlank;
  *
  * @author star
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel("用户登陆模型")
 @Data
 public class UserLoginDTO {

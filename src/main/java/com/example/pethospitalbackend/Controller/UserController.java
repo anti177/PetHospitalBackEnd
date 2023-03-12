@@ -7,6 +7,7 @@ import com.example.pethospitalbackend.DTO.UserLoginDTO;
 import com.example.pethospitalbackend.DTO.UserRegisterDTO;
 import com.example.pethospitalbackend.Entity.User;
 import com.example.pethospitalbackend.Response.Response;
+import com.example.pethospitalbackend.Service.AuthService;
 import com.example.pethospitalbackend.Service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,13 +33,30 @@ public class UserController{
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private AuthService authService;
 
 	@PostMapping("/Register")
 	@ApiOperation(value = "用户注册")
 	public ResponseEntity<Response> register(@RequestBody UserRegisterDTO userRegister) {
 		JwtUserDTO jwtUser = userService.register(userRegister);
 
-		// 认证成功后，将 token 存入响应头中返回
+		// 将 token 存入响应头中返回
+		HttpHeaders httpHeaders = new HttpHeaders();
+		// 添加 token 前缀 "Bearer "
+		httpHeaders.set(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
+		Response<UserDTO> response = new Response<>();
+		response.setSuc(jwtUser.getUser());
+		return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+
+	}
+
+	@PostMapping("/Login")
+	@ApiOperation(value = "用户登陆")
+	public ResponseEntity<Response> login(@RequestBody UserLoginDTO userLogin) {
+		JwtUserDTO jwtUser = authService.authLogin(userLogin);
+
+		//将 token 存入响应头中返回
 		HttpHeaders httpHeaders = new HttpHeaders();
 		// 添加 token 前缀 "Bearer "
 		httpHeaders.set(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());

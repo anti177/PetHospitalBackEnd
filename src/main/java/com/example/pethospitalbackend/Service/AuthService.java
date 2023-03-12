@@ -5,6 +5,7 @@ import com.example.pethospitalbackend.DTO.JwtUserDTO;
 import com.example.pethospitalbackend.DTO.UserDTO;
 import com.example.pethospitalbackend.DTO.UserLoginDTO;
 import com.example.pethospitalbackend.Exception.AlreadyExistsException;
+import com.example.pethospitalbackend.Exception.UserMailNotRegisterOrPasswordWrongException;
 import com.example.pethospitalbackend.Util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,16 +14,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * 用户认证服务
  *
- * @author star
+ * @author yyx
  */
 @Service
 public class AuthService {
@@ -45,9 +41,9 @@ public class AuthService {
         // 根据登录名获取用户信息
         UserDTO userReal = userService.getUserByEmail(email);
         if (userReal == null) {
-            throw new UsernameNotFoundException("用户没有注册");
+            throw new UserMailNotRegisterOrPasswordWrongException("用户没有注册");
         }
-        String rightPassword = userLogin.getPassword();
+        String rightPassword = userService.getUserPassword(email);
         // 验证登录密码是否正确。如果正确，则赋予用户相应权限并生成用户认证信息
         if (this.bCryptPasswordEncoder.matches(password, rightPassword)) {
             String role = userReal.getRole();
@@ -65,7 +61,7 @@ public class AuthService {
             // 用户信息
             return new JwtUserDTO(token, userReal);
         }
-        throw new BadCredentialsException("邮箱或密码错误.");
+        throw new UserMailNotRegisterOrPasswordWrongException("邮箱或密码错误");
     }
 
     /**
