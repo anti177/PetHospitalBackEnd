@@ -4,14 +4,12 @@ import com.example.pethospitalbackend.Constant.UserRoleConstants;
 import com.example.pethospitalbackend.DTO.JwtUserDTO;
 import com.example.pethospitalbackend.DTO.UserDTO;
 import com.example.pethospitalbackend.DTO.UserLoginDTO;
-import com.example.pethospitalbackend.Exception.AlreadyExistsException;
 import com.example.pethospitalbackend.Exception.UserMailNotRegisterOrPasswordWrongException;
+import com.example.pethospitalbackend.Response.Response;
 import com.example.pethospitalbackend.Util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -70,7 +68,12 @@ public class AuthService {
      * <p>
      * 清除 Spring Security 上下文中的认证信息
      */
-    public void logout() {
+    public Response<UserDTO> logout() {
         SecurityContextHolder.clearContext();
+        Response<UserDTO> response = new Response<>();
+        response.setMsg("成功退出");
+        response.setCode(200);
+        response.setSuccess(true);
+        return response;
     }
 }

@@ -72,15 +72,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .headers().frameOptions().disable()
              .and()
-                .logout().logoutUrl(SecurityConstants.AUTH_LOGOUT_URL)
+                .logout().permitAll()
              .and()
                 .authorizeRequests()
-                 // 指定路径下的资源需要进行验证后才能访问
                 .antMatchers("/").permitAll()
                 // 配置登录地址
                 .antMatchers(HttpMethod.POST, SecurityConstants.AUTH_LOGIN_URL).permitAll()
                 // 配置注册地址
                 .antMatchers(HttpMethod.POST,SecurityConstants.AUTH_REGISTER_URL).permitAll()
+                .antMatchers(HttpMethod.POST,SecurityConstants.SEND_CODE).permitAll()
+                .antMatchers(HttpMethod.POST,SecurityConstants.FORGET_PASSWORD).permitAll()
+                .antMatchers(HttpMethod.POST,SecurityConstants.AUTH_LOGOUT_URL).permitAll()
                 // 其他请求需验证
                 .anyRequest().authenticated()
              .and()

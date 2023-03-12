@@ -25,6 +25,10 @@ public interface UserDao {
 	@Update("UPDATE user SET password = #{newPassword} WHERE email = #{email}")
 	int updatePassword(@Param("email") String email, @Param("newPassword") String newPassword);
 
+	@Update("UPDATE user SET password = #{newPassword} WHERE user_id = #{userId}")
+	int updatePasswordByUserId(@Param("userId") String userId, @Param("newPassword") String newPassword);
+
+
 	@Delete("Delete From user WHERE user_id=#{userid}")
 	int deleteByUserId(@Param("userid") long userid);
 
