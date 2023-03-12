@@ -29,4 +29,10 @@ public class User implements Serializable {
     @Column(name = "email")
     @ApiModelProperty(value = "邮箱")
     private String email;
+
+    @Column(name = "user_class")
+    @ApiModelProperty(value = "班级")
+    private String user_class;
+
+
 }

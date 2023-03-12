@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserDao {
-	@Insert("INSERT INTO user(password,email,role) VALUES (#{password},#{email},#{role});")
+	@Insert("INSERT INTO user(password,email,role,user_class) VALUES (#{password},#{email},#{role},#{user_class});")
 	int insertUser(User user);
 
 	@ResultType(UserDTO.class)
@@ -19,7 +19,7 @@ public interface UserDao {
 	UserDTO getUserByEmailAndPassword(@Param("email") String email, @Param("password") String password);
 
 	@ResultType(UserDTO.class)
-	@Select("SELECT user_id as userId,email,role FROM user WHERE email = #{email}")
+	@Select("SELECT user_id as userId,email,role,user_class FROM user WHERE email = #{email}")
 	UserDTO getUserByEmail(@Param("email") String email);
 
 	@Update("UPDATE user SET password = #{newPassword} WHERE email = #{email}")
@@ -27,4 +27,9 @@ public interface UserDao {
 
 	@Delete("Delete From user WHERE user_id=#{userid}")
 	int deleteByUserId(@Param("userid") long userid);
+
+
+	@Select("SELECT password FROM user WHERE email = #{email}")
+	String getUserPassword(@Param("email") String email);
+
 }
