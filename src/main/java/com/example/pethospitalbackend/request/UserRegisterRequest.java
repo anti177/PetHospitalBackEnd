@@ -1,8 +1,9 @@
-package com.example.pethospitalbackend.dto;
+package com.example.pethospitalbackend.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -11,11 +12,12 @@ import javax.validation.constraints.Size;
 /**
  * UserDTO
  *
- * @author star
+ * @author yyx
  **/
 @ApiModel("用户注册模型")
 @Data
-public class UserRegisterDTO {
+@ToString
+public class UserRegisterRequest {
 //    @NotBlank
 //    @Size(min = 4, max = 30, message="用户名格式错误")
 //    @ApiModelProperty(value = "用户名称")

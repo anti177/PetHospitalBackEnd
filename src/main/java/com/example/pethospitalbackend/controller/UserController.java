@@ -2,6 +2,7 @@ package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.constant.SecurityConstants;
 import com.example.pethospitalbackend.dto.*;
+import com.example.pethospitalbackend.request.*;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.AuthService;
 import com.example.pethospitalbackend.service.UserService;
@@ -31,7 +32,7 @@ public class UserController{
 
 	@PostMapping("/Register")
 	@ApiOperation(value = "用户注册")
-	public ResponseEntity<Response<UserDTO>> register(@RequestBody UserRegisterDTO userRegister) {
+	public ResponseEntity<Response<UserDTO>> register(@RequestBody UserRegisterRequest userRegister) {
 		JwtUserDTO jwtUser = userService.register(userRegister);
 
 		// 将 token 存入响应头中返回
@@ -46,7 +47,7 @@ public class UserController{
 
 	@PostMapping("/Login")
 	@ApiOperation(value = "用户登陆")
-	public ResponseEntity<Response<UserDTO>> login(@RequestBody UserLoginDTO userLogin) {
+	public ResponseEntity<Response<UserDTO>> login(@RequestBody UserLoginRequest userLogin) {
 		JwtUserDTO jwtUser = authService.authLogin(userLogin);
 		//将 token 存入响应头中返回
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -73,14 +74,14 @@ public class UserController{
 
 	@PostMapping("/forgetPassWord")
 	@ApiOperation(value = "忘记密码")
-	public ResponseEntity sendCode(@RequestBody ForgetPasswordDTO changePasswordDTO) {
+	public ResponseEntity sendCode(@RequestBody ForgetPasswordRequest changePasswordDTO) {
 		Response response =  userService.forgetPassword(changePasswordDTO);
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
 	@PostMapping("/changePassWord")
 	@ApiOperation(value = "修改密码")
-	public ResponseEntity changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+	public ResponseEntity changePassword(@RequestBody ChangePasswordRequest changePasswordDTO) {
 		Response response =  userService.changePassword(changePasswordDTO);
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}

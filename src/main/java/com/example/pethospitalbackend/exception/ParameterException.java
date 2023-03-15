@@ -5,19 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.zalando.problem.AbstractThrowableProblem;
 
-
-/**
- * UserRelatedException
- *
- * @author yyx
- */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class UserRelatedException extends AbstractThrowableProblem {
+public class ParameterException extends AbstractThrowableProblem {
 
-    private static final long serialVersionUID = 4775907845387588528L;
+	private static final long serialVersionUID = 4775907845387588528L;
 
-    public UserRelatedException(String message) {
+	public ParameterException(String message) {
 
-        super(ErrorConstants.DEFAULT_TYPE,message);
-    }
+		super(ErrorConstants.DEFAULT_TYPE,message);
+	}
 }

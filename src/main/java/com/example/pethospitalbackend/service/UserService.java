@@ -7,6 +7,9 @@ import com.example.pethospitalbackend.entity.User;
 import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.exception.UserMailNotRegisterOrPasswordWrongException;
 import com.example.pethospitalbackend.exception.UserRelatedException;
+import com.example.pethospitalbackend.request.ChangePasswordRequest;
+import com.example.pethospitalbackend.request.ForgetPasswordRequest;
+import com.example.pethospitalbackend.request.UserRegisterRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.util.EmailUtil;
 import com.example.pethospitalbackend.util.JwtUtils;
@@ -48,7 +51,7 @@ public class UserService {
             .build();
 
     @Transactional(rollbackFor = Exception.class)
-    public JwtUserDTO register(UserRegisterDTO dto) {
+    public JwtUserDTO register(UserRegisterRequest dto) {
         // 预检查用户名是否存在
         UserDTO userOptional = this.userDao.getUserByEmail(dto.getEmail());
         if (userOptional != null) {
@@ -114,10 +117,10 @@ public class UserService {
         return response;
     }
 
-    public Response forgetPassword(ForgetPasswordDTO changePasswordDTO) {
-        String email = changePasswordDTO.getEmail();
-        String password = changePasswordDTO.getPassword();
-        String code = changePasswordDTO.getCode();
+    public Response forgetPassword(ForgetPasswordRequest changePasswordRequest) {
+        String email = changePasswordRequest.getEmail();
+        String password = changePasswordRequest.getPassword();
+        String code = changePasswordRequest.getCode();
         String rightCode = mailVerifyCodeCache.getIfPresent(email);
         if(rightCode == null){
             throw new UserRelatedException("验证码过期或者邮箱错误");
@@ -134,11 +137,11 @@ public class UserService {
         }
         Response response = new Response();
         response.setSuccess(true);
-        response.setMsg("修改密码成功，请重新登陆");
+        response.setMessage("修改密码成功，请重新登陆");
         return response;
     }
 
-    public Response changePassword(ChangePasswordDTO changePasswordDTO){
+    public Response changePassword(ChangePasswordRequest changePasswordDTO){
         // 获取用户认证信息。
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // 认证信息可能为空，因此需要进行判断。
@@ -156,7 +159,7 @@ public class UserService {
         }
         Response response = new Response();
         response.setSuccess(true);
-        response.setMsg("修改密码成功");
+        response.setMessage("修改密码成功");
         return response;
 
     }

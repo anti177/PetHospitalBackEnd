@@ -1,6 +1,6 @@
 package com.example.pethospitalbackend.response;
 
-import enums.ResponseEnum;
+import com.example.pethospitalbackend.enums.ResponseEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,39 +16,39 @@ public class Response<T> {
     private boolean success;
 
     @ApiModelProperty("返回状态码")
-    private int code;
+    private int status;
 
     @ApiModelProperty("返回信息")
-    private String msg;
+    private String message;
 
     @ApiModelProperty("返回数据格式")
     private T result;
 
     public void setSuc(T data) {
         setSuccess(true);
-        setCode(ResponseEnum.SUCCESS.getCode());
-        setMsg(ResponseEnum.SUCCESS.getMsg());
+        setStatus(ResponseEnum.SUCCESS.getCode());
+        setMessage(ResponseEnum.SUCCESS.getMsg());
         setResult(data);
     }
 
     public void setFail(String msg) {
         setSuccess(false);
-        setCode(ResponseEnum.FAIL.getCode());
-        setMsg(msg);
+        setStatus(ResponseEnum.FAIL.getCode());
+        setMessage(msg);
         setResult(null);
     }
 
     public void setFail(int code, String msg) {
         setSuccess(false);
-        setCode(code);
-        setMsg(msg);
+        setStatus(code);
+        setMessage(msg);
         setResult(null);
     }
 
     public void setFail(ResponseEnum responseStatus) {
         setSuccess(false);
-        setCode(responseStatus.getCode());
-        setMsg(responseStatus.getMsg());
+        setStatus(responseStatus.getCode());
+        setMessage(responseStatus.getMsg());
         setResult(null);
     }
 }

@@ -3,7 +3,7 @@ package com.example.pethospitalbackend.service;
 import com.example.pethospitalbackend.constant.UserRoleConstants;
 import com.example.pethospitalbackend.dto.JwtUserDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
-import com.example.pethospitalbackend.dto.UserLoginDTO;
+import com.example.pethospitalbackend.request.UserLoginRequest;
 import com.example.pethospitalbackend.exception.UserMailNotRegisterOrPasswordWrongException;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.util.JwtUtils;
@@ -32,7 +32,7 @@ public class AuthService {
      *
      * @param userLogin 用户登录信息
      */
-    public JwtUserDTO authLogin(UserLoginDTO userLogin) {
+    public JwtUserDTO authLogin(UserLoginRequest userLogin) {
         String email = userLogin.getEmail();
         String password = userLogin.getPassword();
 
@@ -71,8 +71,8 @@ public class AuthService {
     public Response<UserDTO> logout() {
         SecurityContextHolder.clearContext();
         Response<UserDTO> response = new Response<>();
-        response.setMsg("成功退出");
-        response.setCode(200);
+        response.setMessage("成功退出");
+        response.setStatus(200);
         response.setSuccess(true);
         return response;
     }

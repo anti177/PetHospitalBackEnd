@@ -1,8 +1,9 @@
-package com.example.pethospitalbackend.dto;
+package com.example.pethospitalbackend.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -10,7 +11,8 @@ import java.io.Serializable;
 
 @ApiModel("用户忘记密码模型")
 @Data
-public class ForgetPasswordDTO implements Serializable {
+@ToString
+public class ForgetPasswordRequest implements Serializable {
 
 	@NotBlank
 	@ApiModelProperty(value = "邮箱")
