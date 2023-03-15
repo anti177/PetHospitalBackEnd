@@ -1,8 +1,8 @@
 package com.example.pethospitalbackend;
 
-import com.example.pethospitalbackend.DTO.UserDTO;
-import com.example.pethospitalbackend.Dao.UserDao;
-import com.example.pethospitalbackend.Entity.User;
+import com.example.pethospitalbackend.dto.UserDTO;
+import com.example.pethospitalbackend.dao.UserDao;
+import com.example.pethospitalbackend.entity.User;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
