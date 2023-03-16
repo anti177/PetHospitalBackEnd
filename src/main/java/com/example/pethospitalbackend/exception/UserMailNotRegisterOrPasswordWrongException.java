@@ -7,7 +7,7 @@ import org.zalando.problem.AbstractThrowableProblem;
 
 
 /**
- * AlreadyExistsException
+ *UserMailNotRegisterOrPasswordWrongException
  *
  * @author yyx
  */

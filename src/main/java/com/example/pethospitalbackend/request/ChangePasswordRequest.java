@@ -1,15 +1,17 @@
-package com.example.pethospitalbackend.dto;
+package com.example.pethospitalbackend.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @ApiModel("用户修改密码模型")
 @Data
-public class ChangePasswordDTO implements Serializable {
+@ToString
+public class ChangePasswordRequest implements Serializable {
 
 //	@NotBlank
 //	@ApiModelProperty(value = "用户id")

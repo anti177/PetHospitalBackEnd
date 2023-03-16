@@ -1,8 +1,9 @@
-package com.example.pethospitalbackend.dto;
+package com.example.pethospitalbackend.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -10,11 +11,12 @@ import javax.validation.constraints.NotBlank;
 /**
  * UserLoginDTO
  *
- * @author star
+ * @author yyx
  */
 @ApiModel("用户登陆模型")
 @Data
-public class UserLoginDTO {
+@ToString
+public class UserLoginRequest {
 
     @NotBlank
     @Email(message = "邮箱格式不对")
