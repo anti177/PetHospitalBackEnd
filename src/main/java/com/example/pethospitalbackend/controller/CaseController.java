@@ -1,6 +1,7 @@
 package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.dto.CaseCategoryDTO;
+import com.example.pethospitalbackend.dto.CaseDTO;
 import com.example.pethospitalbackend.dto.CategoryDTO;
 import com.example.pethospitalbackend.dto.RoleDTO;
 import com.example.pethospitalbackend.response.Response;
@@ -38,5 +39,13 @@ public class CaseController {
 		Response<List<CaseCategoryDTO>> response =  caseService.getCaseCategoryByDiseaseId(diseaseId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+
+	@GetMapping("/{caseId}")
+	@ApiOperation(value = "获得具体病例")
+	public ResponseEntity<Response<CaseDTO>> getCaseByCaseId(@PathVariable Long caseId) {
+		Response<CaseDTO> response =  caseService.getCaseByCaseId(caseId);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
 
 }
