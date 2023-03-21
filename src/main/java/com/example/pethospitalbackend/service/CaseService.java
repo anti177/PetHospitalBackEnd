@@ -1,6 +1,8 @@
 package com.example.pethospitalbackend.service;
 
+import com.example.pethospitalbackend.dao.CaseDao;
 import com.example.pethospitalbackend.dao.DiseaseDao;
+import com.example.pethospitalbackend.dto.CaseCategoryDTO;
 import com.example.pethospitalbackend.dto.CategoryDTO;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.enums.ResponseEnum;
@@ -21,6 +23,9 @@ public class CaseService {
 
 	@Autowired
 	DiseaseDao diseaseDao;
+
+	@Autowired
+	CaseDao caseDao;
 
 	public Response<List<CategoryDTO>> getTotalCategory() {
 		Response<List<CategoryDTO>> response = new Response<>();
@@ -54,6 +59,20 @@ public class CaseService {
 
 		response.setSuc(categoryDTOList);
 	   return response;
+
+	}
+
+	public Response<List<CaseCategoryDTO>> getCaseCategoryByDiseaseId(Long diseaseId) {
+		Response<List<CaseCategoryDTO>> response = new Response<>();
+		List<CaseCategoryDTO> categoryDTOList;
+		try{
+			categoryDTOList = caseDao.getCaseByDiseaseId(diseaseId);
+		}catch (Exception e){
+			logger.error("[getTotalCategory Fail], error message{}", SerialUtil.toJsonStr(e.getMessage()));
+			throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+		}
+		response.setSuc(categoryDTOList);
+		return response;
 
 	}
 }

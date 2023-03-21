@@ -33,7 +33,7 @@ public class IllCase {
 	private String diagnosticInfo;
 
 
-	@Column(name = "tratement_text")
+	@Column(name = "treatment_text")
 	@ApiModelProperty(value = "治疗方案介绍")
 	private String treatmentInfo;
 }
