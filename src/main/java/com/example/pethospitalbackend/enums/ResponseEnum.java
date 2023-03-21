@@ -18,7 +18,9 @@ public enum ResponseEnum {
     USER_NOT_FOUND(105, "用户未注册"),
     MAIL_HAS_REGISTERED(106,"邮箱已经注册"),
     VERIFY_MSG_CODE_OR_MAIL_INVALID(107,"验证码过期或者邮箱错误"),
-    VERIFY_INVALID(108,"验证过期,请重新登陆");
+    VERIFY_INVALID(108,"验证过期,请重新登陆"),
+    UPLOAD_OSS_FAILURE(109,"上传文件失败"),
+    DATABASE_FAIL(110,"数据库操作失败");
 
     private int code;
     private String msg;
