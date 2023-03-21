@@ -1,5 +1,7 @@
 package com.example.pethospitalbackend.controller;
 
+import com.example.pethospitalbackend.dto.CaseCategoryDTO;
+import com.example.pethospitalbackend.dto.CaseDTO;
 import com.example.pethospitalbackend.dto.CategoryDTO;
 import com.example.pethospitalbackend.dto.RoleDTO;
 import com.example.pethospitalbackend.response.Response;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,5 +32,20 @@ public class CaseController {
 		Response<List<CategoryDTO>> response =  caseService.getTotalCategory();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+
+	@GetMapping("/TotalCases/{diseaseId}")
+	@ApiOperation(value = "获得角色内容和职责")
+	public ResponseEntity<Response<List<CaseCategoryDTO>>> getCaseCategory(@PathVariable Long diseaseId) {
+		Response<List<CaseCategoryDTO>> response =  caseService.getCaseCategoryByDiseaseId(diseaseId);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/{caseId}")
+	@ApiOperation(value = "获得具体病例")
+	public ResponseEntity<Response<CaseDTO>> getCaseByCaseId(@PathVariable Long caseId) {
+		Response<CaseDTO> response =  caseService.getCaseByCaseId(caseId);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
 
 }

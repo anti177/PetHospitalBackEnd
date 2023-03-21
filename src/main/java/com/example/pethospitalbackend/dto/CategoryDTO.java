@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import java.util.List;
 
-@ApiModel("病例目录模型")
+@ApiModel("疾病目录模型")
 @Data
 public class CategoryDTO {
 	@ApiModelProperty(value = "病种ID")
