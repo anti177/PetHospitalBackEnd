@@ -25,6 +25,6 @@ public class UserDTO implements Serializable {
     private String email;
 
     @ApiModelProperty(value = "班级")
-    private String user_class;
+    private String userClass;
 
 }

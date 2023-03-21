@@ -14,7 +14,7 @@ import org.zalando.problem.AbstractThrowableProblem;
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
 public class UserMailNotRegisterOrPasswordWrongException extends AbstractThrowableProblem {
 
-	private static final long serialVersionUID = 4775907845387588528L;
+	private static final long serialVersionUID = 4775907845387588527L;
 
 	public UserMailNotRegisterOrPasswordWrongException (String message) {
 
