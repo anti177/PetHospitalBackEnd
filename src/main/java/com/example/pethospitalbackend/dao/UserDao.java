@@ -11,15 +11,15 @@ public interface UserDao {
 	int insertUser(User user);
 
 	@ResultType(UserDTO.class)
-	@Select("SELECT user_id as userId,email,role FROM user WHERE user_id = #{userId}")
+	@Select("SELECT user_id as userId,email,role,user_class as userClass FROM user WHERE user_id = #{userId}")
 	UserDTO getUserByUserId(@Param("userId") long userId);
 
 	@ResultType(UserDTO.class)
-	@Select("SELECT user_id as userId,email,role FROM user WHERE email = #{email} and password = #{password}")
+	@Select("SELECT user_id as userId,email,role,user_class as userClass FROM user WHERE email = #{email} and password = #{password}")
 	UserDTO getUserByEmailAndPassword(@Param("email") String email, @Param("password") String password);
 
 	@ResultType(UserDTO.class)
-	@Select("SELECT user_id as userId,email,role,user_class FROM user WHERE email = #{email}")
+	@Select("SELECT user_id as userId,email,role,user_class as userClass FROM user WHERE email = #{email}")
 	UserDTO getUserByEmail(@Param("email") String email);
 
 	@Update("UPDATE user SET password = #{newPassword} WHERE email = #{email}")

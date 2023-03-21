@@ -3,10 +3,14 @@ package com.example.pethospitalbackend.service;
 import com.example.pethospitalbackend.constant.UserRoleConstants;
 import com.example.pethospitalbackend.dto.JwtUserDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
+import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.request.UserLoginRequest;
 import com.example.pethospitalbackend.exception.UserMailNotRegisterOrPasswordWrongException;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.util.JwtUtils;
+import com.example.pethospitalbackend.util.SerialUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AuthService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     @Autowired
     private UserService userService;
@@ -39,7 +44,8 @@ public class AuthService {
         // 根据登录名获取用户信息
         UserDTO userReal = userService.getUserByEmail(email);
         if (userReal == null) {
-            throw new UserMailNotRegisterOrPasswordWrongException("用户没有注册");
+            logger.warn("[User not sign up], email {}", SerialUtil.toJsonStr(email));
+            throw new UserMailNotRegisterOrPasswordWrongException(ResponseEnum.USER_NOT_FOUND.getMsg());
         }
         String rightPassword = userService.getUserPassword(email);
         // 验证登录密码是否正确。如果正确，则赋予用户相应权限并生成用户认证信息
@@ -59,7 +65,8 @@ public class AuthService {
             // 用户信息
             return new JwtUserDTO(token, userReal);
         }
-        throw new UserMailNotRegisterOrPasswordWrongException("邮箱或密码错误");
+        logger.warn("[User auth fail], UserLoginRequest {}", SerialUtil.toJsonStr(userLogin));
+        throw new UserMailNotRegisterOrPasswordWrongException(ResponseEnum.TEL_OR_PWD_ERROR.getMsg());
     }
 
     /**
@@ -71,9 +78,7 @@ public class AuthService {
     public Response<UserDTO> logout() {
         SecurityContextHolder.clearContext();
         Response<UserDTO> response = new Response<>();
-        response.setMessage("成功退出");
-        response.setStatus(200);
-        response.setSuccess(true);
+        response.setSuc(null);
         return response;
     }
 }
