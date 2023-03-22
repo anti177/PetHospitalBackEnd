@@ -2,7 +2,6 @@ package com.example.pethospitalbackend.dao;
 
 import com.example.pethospitalbackend.entity.Disease;
 import tk.mybatis.mapper.common.Mapper;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Select;
 

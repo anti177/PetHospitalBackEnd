@@ -1,7 +1,7 @@
 package com.example.pethospitalbackend.service;
 
-import com.example.pethospitalbackend.dao.CaseDao;
 import com.example.pethospitalbackend.dao.DiseaseDao;
+import com.example.pethospitalbackend.dao.IllCaseDao;
 import com.example.pethospitalbackend.dao.InspectionCaseDao;
 import com.example.pethospitalbackend.dto.CaseCategoryDTO;
 import com.example.pethospitalbackend.dto.CaseDTO;
@@ -15,9 +15,9 @@ import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.util.SerialUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +25,13 @@ import java.util.List;
 public class CaseService {
 	private static final Logger logger = LoggerFactory.getLogger(CaseService.class);
 
-	@Autowired
+	@Resource
 	DiseaseDao diseaseDao;
 
-	@Autowired
-	CaseDao caseDao;
+	@Resource
+	IllCaseDao caseDao;
 
-	@Autowired
+	@Resource
 	InspectionCaseDao inspectionCaseDao;
 
 	public Response<List<CategoryDTO>> getTotalCategory() {

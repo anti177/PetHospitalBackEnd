@@ -19,15 +19,9 @@ import javax.annotation.Resource;
 import com.example.pethospitalbackend.dto.CaseCategoryDTO;
 import com.example.pethospitalbackend.dto.CaseDTO;
 import com.example.pethospitalbackend.dto.CategoryDTO;
-import com.example.pethospitalbackend.dto.RoleDTO;
-import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.CaseService;
-import com.example.pethospitalbackend.service.RolePlayService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +35,7 @@ import java.util.List;
 public class CaseController {
 	@Autowired
 	CaseService caseService;
-  
+
   @Resource
   IllCaseService illCaseService;
   
@@ -89,7 +83,7 @@ public class CaseController {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
   
-  @GetMapping("/cases")
+  @GetMapping("/cases/field")
     ResponseEntity<Response<IllCase>> searchCase(@RequestParam Integer search_field, @RequestParam String content) {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
