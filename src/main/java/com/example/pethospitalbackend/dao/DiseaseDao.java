@@ -1,14 +1,14 @@
 package com.example.pethospitalbackend.dao;
 
 import com.example.pethospitalbackend.entity.Disease;
+import tk.mybatis.mapper.common.Mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-@Mapper
-public interface DiseaseDao {
+public interface DiseaseDao extends Mapper<Disease> {
 	@ResultType(String.class)
 	@Select("SELECT DISTINCT type_name FROM disease ORDER BY type_name")
 	List<String> getAllType();
