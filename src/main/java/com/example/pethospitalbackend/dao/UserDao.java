@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserDao {
+    
 	@Insert("INSERT INTO user(password,email,role,user_class) VALUES (#{password},#{email},#{role},#{user_class});")
 	int insertUser(User user);
 
