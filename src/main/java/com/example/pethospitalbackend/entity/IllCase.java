@@ -37,4 +37,5 @@ public class IllCase implements Serializable {
     @Column(name = "treatment_text")
     @ApiModelProperty(value = "治疗方案介绍")
     private String treatmentInfo;
+  
 }

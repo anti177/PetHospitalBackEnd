@@ -16,18 +16,60 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
+import com.example.pethospitalbackend.dto.CaseCategoryDTO;
+import com.example.pethospitalbackend.dto.CaseDTO;
+import com.example.pethospitalbackend.dto.CategoryDTO;
+import com.example.pethospitalbackend.dto.RoleDTO;
+import com.example.pethospitalbackend.response.Response;
+import com.example.pethospitalbackend.service.CaseService;
+import com.example.pethospitalbackend.service.RolePlayService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
 @RestController
-@RequestMapping("/")
-@Api(tags = {"病例管理"})
+@RequestMapping("/Cases")
+@Api(tags = {"病例学习"})
 public class CaseController {
-    
-    @Resource
-    IllCaseService illCaseService;
-    
-    @Resource
-    DiseaseService diseaseService;
-    
-    // todo: 增加逻辑，异常处理
+	@Autowired
+	CaseService caseService;
+  
+  @Resource
+  IllCaseService illCaseService;
+  
+  @Resource
+  DiseaseService diseaseService;
+
+	@GetMapping("/TotalCategory")
+	@ApiOperation(value = "获得角色内容和职责")
+	public ResponseEntity<Response<List<CategoryDTO>>> getTotalCategory() {
+		Response<List<CategoryDTO>> response =  caseService.getTotalCategory();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/TotalCases/{diseaseId}")
+	@ApiOperation(value = "获得角色内容和职责")
+	public ResponseEntity<Response<List<CaseCategoryDTO>>> getCaseCategory(@PathVariable Long diseaseId) {
+		Response<List<CaseCategoryDTO>> response =  caseService.getCaseCategoryByDiseaseId(diseaseId);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/{caseId}")
+	@ApiOperation(value = "获得具体病例")
+	public ResponseEntity<Response<CaseDTO>> getCaseByCaseId(@PathVariable Long caseId) {
+		Response<CaseDTO> response =  caseService.getCaseByCaseId(caseId);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+  
+  // todo: 增加逻辑，异常处理
     
     /**
      * 分页获取病例
@@ -36,29 +78,23 @@ public class CaseController {
      * @param pageSize 每页数量
      * @return
      */
-    @GetMapping("/cases")
-    ResponseEntity<Response<PageInfo<IllCaseDTO>>> getAllCases(
-            @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }
-    
-    /**
-     * 获取特定病例
-     *
-     * @param id 病例id
-     * @return
-     */
-    @GetMapping("/cases/{id}")
+  @GetMapping("/cases")
+  ResponseEntity<Response<PageInfo<IllCaseDTO>>> getAllCases(
+          @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
+      return new ResponseEntity<>(null, HttpStatus.OK);
+  }
+  
+  @GetMapping("/cases/{id}")
     ResponseEntity<Response<IllCase>> getCase(@PathVariable Integer id) {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
-    
-    @GetMapping("/cases")
+  
+  @GetMapping("/cases")
     ResponseEntity<Response<IllCase>> searchCase(@RequestParam Integer search_field, @RequestParam String content) {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
-    
-    @PostMapping("/cases")
+  
+  @PostMapping("/cases")
     ResponseEntity<Response<IllCase>> postCase(
             @RequestPart("form") IllCaseFormDTO form,
             @RequestPart("admission_pictures") MultipartFile[] admission_pictures,
@@ -66,8 +102,8 @@ public class CaseController {
             @RequestPart("therapy_video") MultipartFile therapy_video) {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
-    
-    @PutMapping("/cases/{id}")
+  
+   @PutMapping("/cases/{id}")
     ResponseEntity<Response<IllCase>> putCase(@PathVariable Long id) {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
@@ -76,7 +112,7 @@ public class CaseController {
     ResponseEntity<Response<IllCase>> deleteCase(@PathVariable Long id) { // 返回新建对象的详细信息或id
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
-    
+
     /**
      * 分页返回疾病信息
      *
@@ -102,29 +138,12 @@ public class CaseController {
         diseaseService.addDisease(disease);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
-    
-    /**
-     * 修改疾病信息
-     *
-     * @param id
-     * @param disease
-     * @return
-     */
+  
     @PutMapping("/diseases/{id}")
     ResponseEntity<Response<Disease>> putDisease(@PathVariable Long id, Disease disease) {
         diseaseService.updateDisease(disease);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
-    
-    /**
-     * 删除疾病信息
-     *
-     * @param id
-     * @return
-     */
-    @DeleteMapping("/diseases/{id}")
-    ResponseEntity<Response<Disease>> deleteDisease(@PathVariable Long id) {
-        diseaseService.deleteDisease(id);
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }
 }
+
+  

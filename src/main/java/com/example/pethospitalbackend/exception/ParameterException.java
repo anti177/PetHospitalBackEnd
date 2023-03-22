@@ -8,7 +8,7 @@ import org.zalando.problem.AbstractThrowableProblem;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ParameterException extends AbstractThrowableProblem {
 
-	private static final long serialVersionUID = 4775907845387588528L;
+	private static final long serialVersionUID = 4775907845387588526L;
 
 	public ParameterException(String message) {
 

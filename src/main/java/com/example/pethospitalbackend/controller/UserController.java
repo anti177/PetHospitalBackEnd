@@ -65,21 +65,21 @@ public class UserController{
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PostMapping("/sendCode")
+	@PostMapping("/Code")
 	@ApiOperation(value = "发验证码")
 	public ResponseEntity sendCode(@RequestParam("email") String email) {
 		Response response =  userService.sendCode(email);
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
-	@PostMapping("/forgetPassWord")
+	@PostMapping("/Password/Forget")
 	@ApiOperation(value = "忘记密码")
 	public ResponseEntity sendCode(@RequestBody ForgetPasswordRequest changePasswordDTO) {
 		Response response =  userService.forgetPassword(changePasswordDTO);
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
-	@PostMapping("/changePassWord")
+	@PostMapping("/Password/Change")
 	@ApiOperation(value = "修改密码")
 	public ResponseEntity changePassword(@RequestBody ChangePasswordRequest changePasswordDTO) {
 		Response response =  userService.changePassword(changePasswordDTO);

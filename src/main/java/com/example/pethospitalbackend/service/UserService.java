@@ -4,6 +4,7 @@ import com.example.pethospitalbackend.constant.UserRoleConstants;
 import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.dao.UserDao;
 import com.example.pethospitalbackend.entity.User;
+import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.exception.UserMailNotRegisterOrPasswordWrongException;
 import com.example.pethospitalbackend.exception.UserRelatedException;
@@ -13,6 +14,9 @@ import com.example.pethospitalbackend.request.UserRegisterRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.util.EmailUtil;
 import com.example.pethospitalbackend.util.JwtUtils;
+import com.example.pethospitalbackend.util.SerialUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -35,6 +39,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     private UserDao userDao;
 
@@ -55,7 +61,8 @@ public class UserService {
         // 预检查用户名是否存在
         UserDTO userOptional = this.userDao.getUserByEmail(dto.getEmail());
         if (userOptional != null) {
-            throw new UserRelatedException("邮箱已经注册");
+            logger.warn("[Mail has already been registered],UserRegisterRequest :{}", SerialUtil.toJsonStr(dto));
+            throw new UserRelatedException(ResponseEnum.MAIL_HAS_REGISTERED.getMsg());
         }
 
         User user = new User();
@@ -69,7 +76,8 @@ public class UserService {
             userDao.insertUser(user);
         } catch (DataIntegrityViolationException e) {
             // 如果预检查没有检查到重复，就利用数据库的完整性检查
-            throw new UserRelatedException("用户已经存在");
+            logger.error("[Insert User Fail],UserRegisterRequest:{}, error msg:{}", SerialUtil.toJsonStr(dto),e.getMessage());
+            throw new UserRelatedException(ResponseEnum.MAIL_HAS_REGISTERED.getMsg());
 
         }
 
@@ -103,10 +111,11 @@ public class UserService {
     public Response sendCode(String email){
         UserDTO userOptional = this.userDao.getUserByEmail(email);
         if (userOptional == null) {
-            throw new UserRelatedException("用户没有注册");
+            logger.warn("[SendCode Fail], email : {}", SerialUtil.toJsonStr(email));
+            throw new UserRelatedException(ResponseEnum.USER_NOT_FOUND.getMsg());
         }
         //发邮件
-        String code = null;
+        String code;
         Response response = new Response<>();
 
         code = emailUtil.sendMail(email);
@@ -123,17 +132,20 @@ public class UserService {
         String code = changePasswordRequest.getCode();
         String rightCode = mailVerifyCodeCache.getIfPresent(email);
         if(rightCode == null){
-            throw new UserRelatedException("验证码过期或者邮箱错误");
+            logger.warn("[ForgetPassword Fail], email: {}", SerialUtil.toJsonStr(email));
+            throw new UserRelatedException(ResponseEnum.VERIFY_MSG_CODE_OR_MAIL_INVALID.getMsg());
         }
         if(rightCode.equals(code)){
             try{
                 String cryptPassword = bCryptPasswordEncoder.encode(password);
                 userDao.updatePassword(email,cryptPassword);
             }catch (Exception e){
-                throw new UserRelatedException(e.getMessage());
+                logger.error("[ForgetPassword Fail], email : {}, error msg : {}", SerialUtil.toJsonStr(email),e.getMessage());
+                throw new UserRelatedException(ResponseEnum.SERVER_ERROR.getMsg());
             }
         }else{
-            throw new UserRelatedException("验证码错误");
+            logger.warn("[Verify Code Wrong], email : {}", SerialUtil.toJsonStr(email));
+            throw new UserRelatedException(ResponseEnum.VERIFY_MSG_CODE_OR_MAIL_INVALID.getMsg());
         }
         Response response = new Response();
         response.setSuccess(true);
@@ -152,10 +164,12 @@ public class UserService {
                 String cryptPassword = bCryptPasswordEncoder.encode(changePasswordDTO.getPassword());
                 userDao.updatePasswordByUserId(userId,cryptPassword);
             }catch (Exception e){
-                throw new DatabaseException("修改密码失败"+e.getMessage());
+                logger.error("[ChangePassword Fail],  error msg : {}", e.getMessage());
+                throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
             }
         }else{
-            throw new UserMailNotRegisterOrPasswordWrongException("验证过期");
+            //验证过期
+            throw new UserMailNotRegisterOrPasswordWrongException(ResponseEnum.VERIFY_INVALID.getMsg());
         }
         Response response = new Response();
         response.setSuccess(true);
