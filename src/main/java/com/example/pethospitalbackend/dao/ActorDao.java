@@ -2,7 +2,6 @@ package com.example.pethospitalbackend.dao;
 
 import com.example.pethospitalbackend.dto.RoleDTO;
 import com.example.pethospitalbackend.dto.RolePlayOperationDTO;
-import com.example.pethospitalbackend.dto.RoleProcessDTO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.ArrayList;
