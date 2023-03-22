@@ -2,6 +2,8 @@ package com.example.pethospitalbackend.util;
 
 import com.example.pethospitalbackend.constant.SecurityConstants;
 import com.example.pethospitalbackend.constant.UserRoleConstants;
+import com.example.pethospitalbackend.enums.ResponseEnum;
+import com.example.pethospitalbackend.exception.UserMailNotRegisterOrPasswordWrongException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
@@ -9,13 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 import javax.xml.bind.DatatypeConverter;
 import java.util.*;
 
 /**
- * Jwt 工具类，用于生成、解析与验证 token
+ * Jwt 工具类，用于生成、解析与验证 token、获取用户ID
  *
  * @author yyx
  **/
@@ -109,6 +112,21 @@ public class JwtUtils {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public static String getUserId(){
+        // 获取用户认证信息。
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 认证信息可能为空，因此需要进行判断。
+        if (Objects.nonNull(authentication)) {
+            //从验证信息中拿userId
+            String userId = (String)authentication.getPrincipal();
+            return userId;
+
+        }else{
+            //验证过期
+            throw new UserMailNotRegisterOrPasswordWrongException(ResponseEnum.VERIFY_INVALID.getMsg());
+        }
     }
 
 }

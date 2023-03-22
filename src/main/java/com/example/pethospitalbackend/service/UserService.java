@@ -18,7 +18,6 @@ import com.example.pethospitalbackend.util.SerialUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
-import java.util.Objects;
+import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,13 +40,13 @@ public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
+    @Resource
     private UserDao userDao;
 
-    @Autowired
+    @Resource
     private  EmailUtil emailUtil;
 
-    @Autowired
+    @Resource
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private Cache<String, String> mailVerifyCodeCache = Caffeine.newBuilder()
@@ -154,12 +153,8 @@ public class UserService {
     }
 
     public Response changePassword(ChangePasswordRequest changePasswordDTO){
-        // 获取用户认证信息。
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // 认证信息可能为空，因此需要进行判断。
-        if (Objects.nonNull(authentication)) {
-            //从验证信息中拿userId
-            String userId = (String)authentication.getPrincipal();
+        String userId = JwtUtils.getUserId();
+        if (userId != null) {
             try{
                 String cryptPassword = bCryptPasswordEncoder.encode(changePasswordDTO.getPassword());
                 userDao.updatePasswordByUserId(userId,cryptPassword);
