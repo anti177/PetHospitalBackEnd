@@ -21,7 +21,6 @@ import com.example.pethospitalbackend.dto.CaseDTO;
 import com.example.pethospitalbackend.dto.CategoryDTO;
 import com.example.pethospitalbackend.service.CaseService;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,14 +32,14 @@ import java.util.List;
 @RequestMapping("/Cases")
 @Api(tags = {"病例学习"})
 public class CaseController {
-	@Autowired
+	@Resource
 	CaseService caseService;
 
-  @Resource
-  IllCaseService illCaseService;
+    @Resource
+    IllCaseService illCaseService;
   
-  @Resource
-  DiseaseService diseaseService;
+    @Resource
+    DiseaseService diseaseService;
 
 	@GetMapping("/TotalCategory")
 	@ApiOperation(value = "获得角色内容和职责")
