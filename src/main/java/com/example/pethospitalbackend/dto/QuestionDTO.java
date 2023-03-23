@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 
-@ApiModel("考试题目模型")
+@ApiModel("题目模型")
 @Data
 public class QuestionDTO {
 	@ApiModelProperty(value = "题目id")

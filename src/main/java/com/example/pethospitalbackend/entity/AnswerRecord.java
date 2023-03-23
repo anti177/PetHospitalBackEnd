@@ -25,6 +25,10 @@ public class AnswerRecord {
 	@ApiModelProperty(value = "用户id")
 	private Long userId;
 
+	@Column(name = "test_id")
+	@ApiModelProperty(value = "考试id")
+	private Long testId;
+
 	@Column(name = "user_answer")
 	@ApiModelProperty(value = "用户答案")
 	private String userAnswer;

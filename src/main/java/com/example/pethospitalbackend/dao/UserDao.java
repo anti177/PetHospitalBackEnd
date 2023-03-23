@@ -3,10 +3,10 @@ package com.example.pethospitalbackend.dao;
 import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.entity.User;
 import org.apache.ibatis.annotations.*;
+import tk.mybatis.mapper.common.Mapper;
 
 
-@Mapper
-public interface UserDao {
+public interface UserDao extends Mapper<User> {
     
 	@Insert("INSERT INTO user(password,email,role,user_class) VALUES (#{password},#{email},#{role},#{user_class});")
 	int insertUser(User user);

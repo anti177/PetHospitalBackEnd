@@ -1,15 +1,18 @@
 package com.example.pethospitalbackend.service;
 
-import com.example.pethospitalbackend.dao.QuestionDao;
-import com.example.pethospitalbackend.dao.TestDao;
+import com.example.pethospitalbackend.dao.*;
 import com.example.pethospitalbackend.dto.*;
+import com.example.pethospitalbackend.entity.AnswerRecord;
 import com.example.pethospitalbackend.entity.Question;
+import com.example.pethospitalbackend.entity.TestRecord;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.exception.UserMailNotRegisterOrPasswordWrongException;
+import com.example.pethospitalbackend.request.RecordRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.util.JwtUtils;
 import com.example.pethospitalbackend.util.SerialUtil;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,17 @@ public class TestService {
 
 	@Resource
 	private QuestionDao questionDao;
+
+	@Resource
+	private TestRecordDao testRecordDao;
+
+	@Resource
+	private TestUserDao testUserDao;
+
+	@Resource
+	private  AnswerRecordDao answerRecordDao;
+
+
 
 	public Response<List<TestCategoryDTO>> getTestCategoryList() {
 		String userId = JwtUtils.getUserId();
@@ -102,5 +116,71 @@ public class TestService {
 		}
 
 		return response;
+	}
+
+	public Response recordAnswer(List<RecordRequest> recordRequests, long testId) {
+		Response<Boolean> response = new Response<>();
+		String userId = JwtUtils.getUserId();
+
+		//1.查询question答案 计算得分
+		List<RecordRequest> questionList = recordRequests;
+		List<Question> questionAnsList;
+		try{
+			questionAnsList = questionDao.getQuestionAnsByTestId(testId);
+		}catch (Exception e){
+			logger.error("[get answer Fail], testId : {},error message{}",
+					SerialUtil.toJsonStr(testId), SerialUtil.toJsonStr(e.getMessage()));
+			throw  new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
+		}
+		long score = getAnsScore(questionList,questionAnsList);
+
+		//2.向test_record插入记录，拿到test_record_id
+		TestRecord testRecord = new TestRecord();
+		testRecord.setTestId(testId);
+		testRecord.setScore(score);
+		testRecord.setUserId(Long.parseLong(userId));
+		//3.向record_answer, testRecord插入记录
+        try{
+			testRecordDao.insert(testRecord);
+			if(score != 0){
+				for(RecordRequest r:questionList){
+					AnswerRecord a = new AnswerRecord();
+					a.setScore(r.getScore());
+					a.setQuestionId(r.getQuestionId());
+					a.setUserId(Long.parseLong(userId));
+					a.setUserAnswer(r.getAns());
+					a.setTestId(testId);
+
+					answerRecordDao.insert(a);
+				}
+			}
+
+        }catch (Exception e){
+	        logger.error("[add record Fail], testRecord : {},error message{}",
+			        SerialUtil.toJsonStr(testRecord), SerialUtil.toJsonStr(e.getMessage()));
+	        throw  new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
+        }
+		//4.修改test_user表 user参考状态
+		try{
+			testUserDao.updateTestUserSates(Long.parseLong(userId),testId,2);
+			response.setSuc(true);
+		}catch(Exception e){
+			logger.error("[change test user Fail], testRecord : {},error message{}",
+					SerialUtil.toJsonStr(testRecord), SerialUtil.toJsonStr(e.getMessage()));
+			throw  new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
+		}
+		return response;
+	}
+	private long getAnsScore(List<RecordRequest> userAnsList, List<Question> rightAnsList){
+		long score = 0;
+		if(userAnsList.size() != rightAnsList.size())return 0;
+		for(int i = 0;i < userAnsList.size();i++){
+			RecordRequest userAns = userAnsList.get(i);
+			Question question = rightAnsList.get(i);
+			if(userAns.getAns().equals(question.getAns())){
+				score += userAns.getScore();
+			}else userAns.setScore(0);
+		}
+		return score;
 	}
 }
