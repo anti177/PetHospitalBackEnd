@@ -1,8 +1,9 @@
 package com.example.pethospitalbackend.service;
 
 import com.example.pethospitalbackend.constant.UserRoleConstants;
-import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.dao.UserDao;
+import com.example.pethospitalbackend.dto.JwtUserDTO;
+import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.entity.User;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
@@ -15,6 +16,8 @@ import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.util.EmailUtil;
 import com.example.pethospitalbackend.util.JwtUtils;
 import com.example.pethospitalbackend.util.SerialUtil;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -24,10 +27,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,24 +39,20 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class UserService {
-
+    
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
+    
     @Resource
     private UserDao userDao;
-
+    
     @Resource
-    private  EmailUtil emailUtil;
-
+    private EmailUtil emailUtil;
+    
     @Resource
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    private Cache<String, String> mailVerifyCodeCache = Caffeine.newBuilder()
-            .expireAfterWrite(600, TimeUnit.SECONDS)
-            .initialCapacity(5)
-            .maximumSize(25)
-            .build();
-
+    
+    private Cache<String, String> mailVerifyCodeCache = Caffeine.newBuilder().expireAfterWrite(600, TimeUnit.SECONDS).initialCapacity(5).maximumSize(25).build();
+    
     @Transactional(rollbackFor = Exception.class)
     public JwtUserDTO register(UserRegisterRequest dto) {
         // 预检查用户名是否存在
@@ -63,10 +61,10 @@ public class UserService {
             logger.warn("[Mail has already been registered],UserRegisterRequest :{}", SerialUtil.toJsonStr(dto));
             throw new UserRelatedException(ResponseEnum.MAIL_HAS_REGISTERED.getMsg());
         }
-
+        
         User user = new User();
         BeanUtils.copyProperties(dto, user);
-
+        
         // 将登录密码进行加密
         String cryptPassword = bCryptPasswordEncoder.encode(dto.getPassword());
         user.setPassword(cryptPassword);
@@ -75,11 +73,11 @@ public class UserService {
             userDao.insertUser(user);
         } catch (DataIntegrityViolationException e) {
             // 如果预检查没有检查到重复，就利用数据库的完整性检查
-            logger.error("[Insert User Fail],UserRegisterRequest:{}, error msg:{}", SerialUtil.toJsonStr(dto),e.getMessage());
+            logger.error("[Insert User Fail],UserRegisterRequest:{}, error msg:{}", SerialUtil.toJsonStr(dto), e.getMessage());
             throw new UserRelatedException(ResponseEnum.MAIL_HAS_REGISTERED.getMsg());
-
+            
         }
-
+        
         UserDTO userdto = getUserByEmail(dto.getEmail());
         String role = userdto.getRole();
         // 如果用户角色为空，则默认赋予 ROLE_USER 角色
@@ -88,26 +86,27 @@ public class UserService {
         }
         // 生成 token
         String token = JwtUtils.generateToken(String.valueOf(user.getUserId()), role, false);
-
+        
         // 认证成功后，设置认证信息到 Spring Security 上下文中
         Authentication authentication = JwtUtils.getAuthentication(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        
         // 用户信息
         return new JwtUserDTO(token, userdto);
-
+        
     }
-
+    
     public UserDTO getUserByEmail(String email) {
         return userDao.getUserByEmail(email);
-
+        
     }
+    
     public String getUserPassword(String email) {
         return userDao.getUserPassword(email);
-
+        
     }
-
-    public Response sendCode(String email){
+    
+    public Response sendCode(String email) {
         UserDTO userOptional = this.userDao.getUserByEmail(email);
         if (userOptional == null) {
             logger.warn("[SendCode Fail], email : {}", SerialUtil.toJsonStr(email));
@@ -116,33 +115,33 @@ public class UserService {
         //发邮件
         String code;
         Response response = new Response<>();
-
+        
         code = emailUtil.sendMail(email);
-
+        
         //存缓存
-        mailVerifyCodeCache.put(email,code);
+        mailVerifyCodeCache.put(email, code);
         response.setSuc(true);
         return response;
     }
-
+    
     public Response forgetPassword(ForgetPasswordRequest changePasswordRequest) {
         String email = changePasswordRequest.getEmail();
         String password = changePasswordRequest.getPassword();
         String code = changePasswordRequest.getCode();
         String rightCode = mailVerifyCodeCache.getIfPresent(email);
-        if(rightCode == null){
+        if (rightCode == null) {
             logger.warn("[ForgetPassword Fail], email: {}", SerialUtil.toJsonStr(email));
             throw new UserRelatedException(ResponseEnum.VERIFY_MSG_CODE_OR_MAIL_INVALID.getMsg());
         }
-        if(rightCode.equals(code)){
-            try{
+        if (rightCode.equals(code)) {
+            try {
                 String cryptPassword = bCryptPasswordEncoder.encode(password);
-                userDao.updatePassword(email,cryptPassword);
-            }catch (Exception e){
-                logger.error("[ForgetPassword Fail], email : {}, error msg : {}", SerialUtil.toJsonStr(email),e.getMessage());
+                userDao.updatePassword(email, cryptPassword);
+            } catch (Exception e) {
+                logger.error("[ForgetPassword Fail], email : {}, error msg : {}", SerialUtil.toJsonStr(email), e.getMessage());
                 throw new UserRelatedException(ResponseEnum.SERVER_ERROR.getMsg());
             }
-        }else{
+        } else {
             logger.warn("[Verify Code Wrong], email : {}", SerialUtil.toJsonStr(email));
             throw new UserRelatedException(ResponseEnum.VERIFY_MSG_CODE_OR_MAIL_INVALID.getMsg());
         }
@@ -151,18 +150,18 @@ public class UserService {
         response.setMessage("修改密码成功，请重新登陆");
         return response;
     }
-
-    public Response changePassword(ChangePasswordRequest changePasswordDTO){
+    
+    public Response changePassword(ChangePasswordRequest changePasswordDTO) {
         String userId = JwtUtils.getUserId();
         if (userId != null) {
-            try{
+            try {
                 String cryptPassword = bCryptPasswordEncoder.encode(changePasswordDTO.getPassword());
-                userDao.updatePasswordByUserId(userId,cryptPassword);
-            }catch (Exception e){
+                userDao.updatePasswordByUserId(userId, cryptPassword);
+            } catch (Exception e) {
                 logger.error("[ChangePassword Fail],  error msg : {}", e.getMessage());
                 throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
             }
-        }else{
+        } else {
             //验证过期
             throw new UserMailNotRegisterOrPasswordWrongException(ResponseEnum.VERIFY_INVALID.getMsg());
         }
@@ -170,6 +169,10 @@ public class UserService {
         response.setSuccess(true);
         response.setMessage("修改密码成功");
         return response;
-
+        
+    }
+    
+    public List<User> getAllUsers() {
+        return userDao.selectAll();
     }
 }

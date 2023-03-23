@@ -6,22 +6,20 @@ import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.RolePlayService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping
 @Api(tags = {"角色扮演"})
 public class RolePlayController {
     
-    @Autowired
+    @Resource
     RolePlayService rolePlayService;
     
     //1是医生，2是护士，3是前台
