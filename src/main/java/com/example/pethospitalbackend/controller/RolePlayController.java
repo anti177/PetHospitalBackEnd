@@ -14,24 +14,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Role")
+@RequestMapping("/role")
 @Api(tags = {"角色扮演"})
 public class RolePlayController {
 	@Autowired
 	RolePlayService rolePlayService;
 
 	//1是医生，2是护士，3是前台
-	@GetMapping("/RoleContentAndResponsibility")
+	@GetMapping("/{id}")
 	@ApiOperation(value = "获得角色内容和职责")
-	public ResponseEntity<Response<RoleDTO>> getRoleContentAndResponsibility(@RequestParam("roleId") String roleId) {
-		Response<RoleDTO> response =  rolePlayService.getRoleContentAndResponsibility(roleId);
+	public ResponseEntity<Response<RoleDTO>> getRoleContentAndResponsibility(@PathVariable String id) {
+		Response<RoleDTO> response =  rolePlayService.getRoleContentAndResponsibility(id);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 
-	@GetMapping("/RoleProcess")
+	@GetMapping("/process/{roleId}")
 	@ApiOperation(value = "获得角色流程")
-	public ResponseEntity<Response<List<RoleProcessDTO>>> getRoleProcess(@RequestParam("roleId") String roleId) {
+	public ResponseEntity<Response<List<RoleProcessDTO>>> getRoleProcess(@PathVariable String roleId) {
 		Response<List<RoleProcessDTO>> response =  rolePlayService.getRoleProcess(roleId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

@@ -16,14 +16,14 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Test")
+@RequestMapping("/test")
 @Api(tags = {"考试"})
 public class TestController {
 
 	@Resource
 	TestService testService;
 
-	@GetMapping("/TotalCategory")
+	@GetMapping("/category")
 	@ApiOperation(value = "获得角色内容和职责")
 	public ResponseEntity<Response<List<TestCategoryDTO>>> getTotalCategory() {
 		Response<List<TestCategoryDTO>> response =  testService.getTestCategoryList();
@@ -31,7 +31,7 @@ public class TestController {
 	}
 
 
-	@GetMapping("/EndTestCategory")
+	@GetMapping("/records/category")
 	@ApiOperation(value = "获得答题记录")
 	public ResponseEntity<Response<List<EndTestCategoryDTO>>> getEndTestCategory() {
 		Response<List<EndTestCategoryDTO>> response =  testService.getEndTestCategoryList();

@@ -21,13 +21,13 @@ import java.util.List;
  * @author yyx
  */
 @RestController
-@RequestMapping("/Vido")
+@RequestMapping("/vido")
 @Api(tags = {"上传文件的例子"})
 public class UploadFileExampleController {
 	@Autowired
 	VideoService videoService;
 
-	@PostMapping("/Video")
+	@PostMapping("")
 	@ApiOperation("添加视频")
 	public ResponseEntity<Response<Boolean>> addVideo(@RequestParam("video_mp4") MultipartFile video_mp4) {
 		Response<Boolean> response = new Response<>();
@@ -36,7 +36,7 @@ public class UploadFileExampleController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PostMapping("/Videos")
+	@PostMapping("/videos")
 	@ApiOperation("添加多个视频")
 	public ResponseEntity<Response<Boolean>> addVideos(@RequestParam("videos") MultipartFile [] videos) {
 		Response<Boolean> response = new Response<>();

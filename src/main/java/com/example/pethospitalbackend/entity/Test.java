@@ -24,6 +24,10 @@ public class Test {
 	@ApiModelProperty(value = "考试名称")
 	private String testName;
 
+	@Column(name = "paper_id")
+	@ApiModelProperty(value = "试卷ID")
+	private long paperID;
+
 	@Column(name = "begin_date")
 	@ApiModelProperty(value = "考试开始时间")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")

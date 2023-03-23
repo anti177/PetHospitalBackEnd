@@ -77,12 +77,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
                 // 配置登录地址
-                .antMatchers(HttpMethod.POST, SecurityConstants.AUTH_LOGIN_URL).permitAll()
+                .antMatchers(HttpMethod.PATCH, SecurityConstants.AUTH_LOGIN_URL).permitAll()
                 // 配置注册地址
                 .antMatchers(HttpMethod.POST,SecurityConstants.AUTH_REGISTER_URL).permitAll()
                 .antMatchers(HttpMethod.POST,SecurityConstants.SEND_CODE).permitAll()
-                .antMatchers(HttpMethod.POST,SecurityConstants.FORGET_PASSWORD).permitAll()
-                .antMatchers(HttpMethod.POST,SecurityConstants.AUTH_LOGOUT_URL).permitAll()
+                .antMatchers(HttpMethod.PATCH,SecurityConstants.FORGET_PASSWORD).permitAll()
+                .antMatchers(HttpMethod.PATCH,SecurityConstants.AUTH_LOGOUT_URL).permitAll()
                 // 其他请求需验证
                 .anyRequest().authenticated()
              .and()

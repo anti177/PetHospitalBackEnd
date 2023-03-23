@@ -8,11 +8,12 @@ import com.example.pethospitalbackend.service.AuthService;
 import com.example.pethospitalbackend.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -21,16 +22,16 @@ import org.springframework.web.bind.annotation.*;
  * @author yyx
  */
 @RestController
-@RequestMapping("/User")
+@RequestMapping("/user")
 @Api(tags = {"用户登陆"})
 public class UserController{
 
-	@Autowired
+	@Resource
 	private UserService userService;
-	@Autowired
+	@Resource
 	private AuthService authService;
 
-	@PostMapping("/Register")
+	@PostMapping("/register")
 	@ApiOperation(value = "用户注册")
 	public ResponseEntity<Response<UserDTO>> register(@RequestBody UserRegisterRequest userRegister) {
 		JwtUserDTO jwtUser = userService.register(userRegister);
@@ -45,7 +46,7 @@ public class UserController{
 
 	}
 
-	@PostMapping("/Login")
+	@PatchMapping("/login")
 	@ApiOperation(value = "用户登陆")
 	public ResponseEntity<Response<UserDTO>> login(@RequestBody UserLoginRequest userLogin) {
 		JwtUserDTO jwtUser = authService.authLogin(userLogin);
@@ -58,28 +59,28 @@ public class UserController{
 		return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
 
 	}
-	@PostMapping("/Logout")
+	@PatchMapping("/logout")
 	@ApiOperation(value = "用户退出登录")
 	public ResponseEntity<Response<UserDTO>> logout() {
 		Response<UserDTO> response = authService.logout();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@PostMapping("/Code")
+	@PostMapping("/code")
 	@ApiOperation(value = "发验证码")
 	public ResponseEntity sendCode(@RequestParam("email") String email) {
 		Response response =  userService.sendCode(email);
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
-	@PostMapping("/Password/Forget")
+	@PatchMapping("/password/forget")
 	@ApiOperation(value = "忘记密码")
 	public ResponseEntity sendCode(@RequestBody ForgetPasswordRequest changePasswordDTO) {
 		Response response =  userService.forgetPassword(changePasswordDTO);
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
-	@PostMapping("/Password/Change")
+	@PatchMapping("/password/change")
 	@ApiOperation(value = "修改密码")
 	public ResponseEntity changePassword(@RequestBody ChangePasswordRequest changePasswordDTO) {
 		Response response =  userService.changePassword(changePasswordDTO);
