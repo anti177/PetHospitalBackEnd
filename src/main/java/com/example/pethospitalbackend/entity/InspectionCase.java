@@ -14,16 +14,16 @@ public class InspectionCase {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "inspection_case_id")
 	@ApiModelProperty(value = "检查情况id")
-	private long inspectionCaseId;
+	private Long inspectionCaseId;
 
 	//一个病例可能有多个检查情况
 	@Column(name = "case_id")
 	@ApiModelProperty(value = "对应病例id")
-	private long caseId;
+	private Long caseId;
 
 	@Column(name = "item_id")
 	@ApiModelProperty(value = "对应检查项目id")
-	private long itemId;
+	private Long itemId;
 
 	@Column(name = "result")
 	@ApiModelProperty(value = "检查情况结果")
@@ -31,6 +31,6 @@ public class InspectionCase {
 
 	@Column(name = "sort_num")
 	@ApiModelProperty(value = "检查情况的排序序号")
-	private long sortNum;
+	private Long sortNum;
 
 }

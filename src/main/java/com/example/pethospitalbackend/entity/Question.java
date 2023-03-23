@@ -16,7 +16,7 @@ public class Question {
 	@Column(name = "question_id")
 	@KeySql(useGeneratedKeys = true)
 	@ApiModelProperty(value = "题目id")
-	private long questionId;
+	private Long questionId;
 
 	@Column(name = "question_type")
 	@ApiModelProperty(value = "题目种类")

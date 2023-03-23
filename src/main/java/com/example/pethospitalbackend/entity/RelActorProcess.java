@@ -14,14 +14,14 @@ public class RelActorProcess {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	@ApiModelProperty(value = "id")
-	private long id;
+	private Long id;
 
 	@Column(name = "process_id")
 	@ApiModelProperty(value = "对应流程Id")
-	private long processId;
+	private Long processId;
 
 	@Column(name = "actor_id")
 	@ApiModelProperty(value = "角色Id")
-	private long acotrId;
+	private Long acotrId;
 
 }

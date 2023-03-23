@@ -16,7 +16,7 @@ public class Paper {
 	@Column(name = "paper_id")
 	@KeySql(useGeneratedKeys = true)
 	@ApiModelProperty(value = "试卷id")
-	private long paperId;
+	private Long paperId;
 
 	@Column(name = "paper_name")
 	@ApiModelProperty(value = "试卷名称")
@@ -24,5 +24,5 @@ public class Paper {
 
 	@Column(name = "score")
 	@ApiModelProperty(value = "试卷总分")
-	private long score;
+	private Long score;
 }

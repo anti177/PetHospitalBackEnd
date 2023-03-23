@@ -12,23 +12,23 @@ public class RelQuestionPaper {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	@ApiModelProperty(value = "关系id")
-	private long id;
+	private Long id;
 
 	@Column(name = "paper_id")
 	@ApiModelProperty(value = "卷子")
-	private long paperId;
+	private Long paperId;
 
 	@Column(name = "question_id")
 	@ApiModelProperty(value = "题目id")
-	private long questionId;
+	private Long questionId;
 
 	@Column(name = "index_num")
 	@ApiModelProperty(value = "题目在卷子中的序号")
-	private long index_num;
+	private Long index_num;
 
 	@Column(name = "score")
 	@ApiModelProperty(value = "题目分值")
-	private long score;
+	private Long score;
 
 }
 

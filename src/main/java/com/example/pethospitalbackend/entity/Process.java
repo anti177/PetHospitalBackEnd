@@ -14,7 +14,7 @@ public class Process {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "process_id")
 	@ApiModelProperty(value = "流程id")
-	private long processId;
+	private Long processId;
 
 	@Column(name = "process_name")
 	@ApiModelProperty(value = "流程名称")

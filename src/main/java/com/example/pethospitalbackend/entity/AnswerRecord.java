@@ -15,15 +15,15 @@ public class AnswerRecord {
 	@Column(name = "answer_record_id")
 	@KeySql(useGeneratedKeys = true)
 	@ApiModelProperty(value = "用户答案记录id")
-	private long answerRecordId;
+	private Long answerRecordId;
 
 	@Column(name = "question_id")
 	@ApiModelProperty(value = "题目id")
-	private long questionId;
+	private Long questionId;
 
 	@Column(name = "user_id")
 	@ApiModelProperty(value = "用户id")
-	private long userId;
+	private Long userId;
 
 	@Column(name = "user_answer")
 	@ApiModelProperty(value = "用户答案")
@@ -31,5 +31,5 @@ public class AnswerRecord {
 
 	@Column(name = "score")
 	@ApiModelProperty(value = "小题得分")
-	private long score;
+	private Long score;
 }

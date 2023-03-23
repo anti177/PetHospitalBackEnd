@@ -15,11 +15,11 @@ public class Operation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "operation_id")
 	@ApiModelProperty(value = "操作id")
-	private long operationId;
+	private Long operationId;
 
 	@Column(name = "process_id")
 	@ApiModelProperty(value = "对应流程Id")
-	private long processId;
+	private Long processId;
 
 	@Column(name = "operation_name")
 	@ApiModelProperty(value = "操作名称")
@@ -32,7 +32,7 @@ public class Operation {
 	//一个操作在一个流程中是第几个
 	@Column(name = "sort_num")
 	@ApiModelProperty(value = "操作顺序序号")
-	private long sortNum;
+	private Long sortNum;
 
 
 }

@@ -14,11 +14,11 @@ public class AdmissionGraph {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "admission_graph_id")
 	@ApiModelProperty(value = "接诊图片id")
-	private long admissionGraphId;
+	private Long admissionGraphId;
 
 	@Column(name = "case_id")
 	@ApiModelProperty(value = "对应病例id")
-	private long caseId;
+	private Long caseId;
 
 	@Column(name = "url")
 	@ApiModelProperty(value = "图片链接")
@@ -27,5 +27,5 @@ public class AdmissionGraph {
 	//一个病例中的接诊中可能有多张图片，这些图片的顺序用sortNum表示
 	@Column(name = "sort_num")
 	@ApiModelProperty(value = "图片顺序")
-	private long sortNum;
+	private Long sortNum;
 }

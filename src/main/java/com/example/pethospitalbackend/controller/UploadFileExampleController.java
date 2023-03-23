@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 @RequestMapping("/vido")
 @Api(tags = {"上传文件的例子"})
 public class UploadFileExampleController {
-	@Autowired
+	@Resource
 	VideoService videoService;
 
 	@PostMapping("")
