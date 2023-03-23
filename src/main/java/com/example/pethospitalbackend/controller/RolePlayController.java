@@ -9,31 +9,35 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/Role")
+@RequestMapping
 @Api(tags = {"角色扮演"})
 public class RolePlayController {
-	@Autowired
-	RolePlayService rolePlayService;
-
-	//1是医生，2是护士，3是前台
-	@GetMapping("/RoleContentAndResponsibility")
-	@ApiOperation(value = "获得角色内容和职责")
-	public ResponseEntity<Response<RoleDTO>> getRoleContentAndResponsibility(@RequestParam("roleId") String roleId) {
-		Response<RoleDTO> response =  rolePlayService.getRoleContentAndResponsibility(roleId);
-		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-
-
-	@GetMapping("/RoleProcess")
-	@ApiOperation(value = "获得角色流程")
-	public ResponseEntity<Response<List<RoleProcessDTO>>> getRoleProcess(@RequestParam("roleId") String roleId) {
-		Response<List<RoleProcessDTO>> response =  rolePlayService.getRoleProcess(roleId);
-		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-
+    
+    @Autowired
+    RolePlayService rolePlayService;
+    
+    //1是医生，2是护士，3是前台
+    @GetMapping("/roles/{roleId}")
+    @ApiOperation(value = "获得角色内容和职责")
+    public ResponseEntity<Response<RoleDTO>> getRoleContentAndResponsibility(@PathVariable("roleId") String roleId) {
+        Response<RoleDTO> response = rolePlayService.getRoleContentAndResponsibility(roleId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    
+    @GetMapping("/roles/{roleId}/processes")
+    @ApiOperation(value = "获得角色流程")
+    public ResponseEntity<Response<List<RoleProcessDTO>>> getRoleProcess(@PathVariable("roleId") String roleId) {
+        Response<List<RoleProcessDTO>> response = rolePlayService.getRoleProcess(roleId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
 }
