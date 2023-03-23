@@ -1,22 +1,20 @@
 package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.dto.*;
+import com.example.pethospitalbackend.request.RecordRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/mytest")
 @Api(tags = {"考试"})
 public class TestController {
 
@@ -42,6 +40,14 @@ public class TestController {
 	@ApiOperation(value = "获得考试题目")
 	public ResponseEntity<Response<TestPaperDTO>>getTestContent(@PathVariable Long testId) {
 		Response<TestPaperDTO> response =  testService.getTestContent(testId);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+
+	@PostMapping("/answer/{testId}")
+	@ApiOperation(value = "获得考试题目")
+	public ResponseEntity<Response<Boolean>>getTestContent(@RequestBody List<RecordRequest> recordRequests, @PathVariable long testId) {
+		Response<Boolean> response =  testService.recordAnswer(recordRequests,testId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

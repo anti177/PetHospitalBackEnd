@@ -2,12 +2,12 @@ package com.example.pethospitalbackend.dao;
 
 import com.example.pethospitalbackend.dto.RoleDTO;
 import com.example.pethospitalbackend.dto.RolePlayOperationDTO;
+import com.example.pethospitalbackend.entity.Actor;
 import org.apache.ibatis.annotations.*;
 
 import java.util.ArrayList;
 
-@Mapper
-public interface ActorDao {
+public interface ActorDao extends tk.mybatis.mapper.common.Mapper<Actor> {
 	@ResultType(RoleDTO.class)
 	@Select("SELECT actor_id as roleId,name,content,responsibility FROM actor WHERE actor_id = #{actorId}")
 	RoleDTO getActorByActorId(@Param("actorId") long actorId);
