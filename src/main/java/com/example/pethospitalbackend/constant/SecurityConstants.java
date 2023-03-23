@@ -15,11 +15,11 @@ public final class SecurityConstants {
     /**
      * 用于登录、注册、登出的 url
      */
-    public static final String AUTH_LOGIN_URL = "/User/Login";
-    public static final String AUTH_REGISTER_URL = "/User/Register";
-    public static final String AUTH_LOGOUT_URL = "/User/Logout";
-    public static final String SEND_CODE = "/User/Code";
-    public static final String FORGET_PASSWORD="/User/Password/Forget";
+    public static final String AUTH_LOGIN_URL = "/user/login";
+    public static final String AUTH_REGISTER_URL = "/user/register";
+    public static final String AUTH_LOGOUT_URL = "/user/logout";
+    public static final String SEND_CODE = "/user/code";
+    public static final String FORGET_PASSWORD="/user/password/forget";
 
     /**
      * JWT签名密钥，这里使用 HS512 算法的签名密钥

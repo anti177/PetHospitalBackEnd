@@ -20,30 +20,28 @@ import javax.annotation.Resource;
  * @author yyx
  */
 @RestController
-@RequestMapping("/Video")
+@RequestMapping("/vido")
 @Api(tags = {"上传文件的例子"})
 public class UploadFileExampleController {
-    
-    @Resource
-    VideoService videoService;
-    
-    @PostMapping("/Video")
-    @ApiOperation("添加视频")
-    public ResponseEntity<Response<Boolean>> addVideo(@RequestParam("video_mp4") MultipartFile video_mp4) {
-        Response<Boolean> response = new Response<>();
-        videoService.addVideo(video_mp4);
-        response.setSuc(null);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
-    @PostMapping("/Videos")
-    @ApiOperation("添加多个视频")
-    public ResponseEntity<Response<Boolean>> addVideos(@RequestParam("videos") MultipartFile[] videos) {
-        Response<Boolean> response = new Response<>();
-        videoService.addVideos(videos);
-        response.setSuc(null);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
-    
+	@Autowired
+	VideoService videoService;
+
+	@PostMapping("")
+	@ApiOperation("添加视频")
+	public ResponseEntity<Response<Boolean>> addVideo(@RequestParam("video_mp4") MultipartFile video_mp4) {
+		Response<Boolean> response = new Response<>();
+		videoService.addVideo(video_mp4);
+		response.setSuc(null);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@PostMapping("/videos")
+	@ApiOperation("添加多个视频")
+	public ResponseEntity<Response<Boolean>> addVideos(@RequestParam("videos") MultipartFile [] videos) {
+		Response<Boolean> response = new Response<>();
+		videoService.addVideos(videos);
+		response.setSuc(null);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
 }
