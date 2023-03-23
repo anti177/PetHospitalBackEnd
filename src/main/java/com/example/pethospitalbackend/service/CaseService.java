@@ -129,10 +129,10 @@ public class CaseService {
         
     }
     
-    public PageInfo<IllCaseDTO> getCasePageInfo(int pageNum, int pageSize) {
+    public PageInfo<CaseBackEndDTO> getCasePageInfo(int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<IllCaseDTO> IllCaseDTOList = caseDao.findAll();
-        return new PageInfo<>(IllCaseDTOList);
+        List<CaseBackEndDTO> CaseDTOList = caseDao.getAllBackEndDtos();
+        return new PageInfo<>(CaseDTOList);
     }
     
     // todo: 考虑级联删除？
@@ -200,4 +200,12 @@ public class CaseService {
         return 0;
     }
     
+    public List<CaseBackEndDTO> getAllCaseDTOs() {
+        return caseDao.getAllBackEndDtos();
+    }
+    
+    @Transactional(rollbackFor = Exception.class)
+    public void addService(IllCaseFormDTO form) {
+    
+    }
 }

@@ -1,7 +1,7 @@
 package com.example.pethospitalbackend.dao;
 
+import com.example.pethospitalbackend.dto.CaseBackEndDTO;
 import com.example.pethospitalbackend.dto.CaseCategoryDTO;
-import com.example.pethospitalbackend.dto.IllCaseDTO;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
 import org.apache.ibatis.annotations.*;
@@ -37,5 +37,5 @@ public interface CaseDao extends Mapper<IllCase> {
                     javaType = Disease.class,
                     one = @One(select = "com.example.pethospitalbackend.dao.DiseaseDao.selectByPrimaryKey",
                             fetchType = FetchType.EAGER))})
-    List<IllCaseDTO> findAll();
+    List<CaseBackEndDTO> getAllBackEndDtos();
 }

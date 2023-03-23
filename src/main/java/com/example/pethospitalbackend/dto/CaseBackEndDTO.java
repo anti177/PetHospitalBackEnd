@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @ApiModel("病例模型")
 @Data
-public class IllCaseDTO{
+public class CaseBackEndDTO {
     
     @NotBlank
     @ApiModelProperty(value = "病例id")

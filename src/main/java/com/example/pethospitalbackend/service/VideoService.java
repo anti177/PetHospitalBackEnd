@@ -18,52 +18,53 @@ import javax.annotation.Resource;
 
 @Service
 public class VideoService {
-	private static final Logger logger = LoggerFactory.getLogger(VideoService.class);
-
-	@Resource
-	OSSUtil ossUtil;
-
-	@Resource
-	TreatmentVideoDao treatmentVideoDao;
-
-	private final String bucketName="pet-hospital-back-end";
-
-	//上传视频的例子
-	public void addVideo(MultipartFile video_mp4) {
-
-		String code = RandomStringUtils.randomNumeric(5);
-		String filename = code+"video_publisher"+JwtUtils.getUserId()+"/"+video_mp4.getOriginalFilename();
-		String url = ossUtil.uploadFile(bucketName,video_mp4,filename);
-		if(StringUtils.isBlank(url)){
-			logger.error("[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video_mp4.getOriginalFilename()));
-			throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
-		}
-		//修改数据库
-		TreatmentVideo video = new TreatmentVideo();
-		video.setCaseId(1);
-		video.setUrl(url);
-		video.setSortNum(4);
-
-		boolean result = treatmentVideoDao.insertVideo(video) > 0;
-
-		if (!result) {
-			logger.error("[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video_mp4));
-			throw new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
-		}
-
-	}
-
-	public void addVideos(MultipartFile[] videos) {
-		for(MultipartFile video:videos){
-			String code = RandomStringUtils.randomNumeric(5);
-			String filename = code+"video_publisher"+JwtUtils.getUserId()+"/"+video.getOriginalFilename();
-			String url = ossUtil.uploadFile(bucketName,video,filename);
-			if(StringUtils.isBlank(url)){
-				logger.error("[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
-				throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
-			}
-			//在数据添加url
-		}
-
-	}
+    
+    private static final Logger logger = LoggerFactory.getLogger(VideoService.class);
+    
+    @Resource
+    OSSUtil ossUtil;
+    
+    @Resource
+    TreatmentVideoDao treatmentVideoDao;
+    
+    private final String bucketName = "pet-hospital-back-end";
+    
+    //上传视频的例子
+    public void addVideo(MultipartFile video_mp4) {
+        
+        String code = RandomStringUtils.randomNumeric(5);
+        String filename = code + "video_publisher" + JwtUtils.getUserId() + "/" + video_mp4.getOriginalFilename();
+        String url = ossUtil.uploadFile(bucketName, video_mp4, filename);
+        if (StringUtils.isBlank(url)) {
+            logger.error("[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video_mp4.getOriginalFilename()));
+            throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
+        }
+        //修改数据库
+        TreatmentVideo video = new TreatmentVideo();
+        video.setCaseId((long) 1);
+        video.setUrl(url);
+        video.setSortNum((long) 4);
+        
+        boolean result = treatmentVideoDao.insertVideo(video) > 0;
+        
+        if (!result) {
+            logger.error("[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video_mp4));
+            throw new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
+        }
+        
+    }
+    
+    public void addVideos(MultipartFile[] videos) {
+        for (MultipartFile video : videos) {
+            String code = RandomStringUtils.randomNumeric(5);
+            String filename = code + "video_publisher" + JwtUtils.getUserId() + "/" + video.getOriginalFilename();
+            String url = ossUtil.uploadFile(bucketName, video, filename);
+            if (StringUtils.isBlank(url)) {
+                logger.error("[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
+                throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
+            }
+            //在数据添加url
+        }
+        
+    }
 }
