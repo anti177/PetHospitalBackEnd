@@ -8,7 +8,8 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "test_user", indexes = {@Index(columnList = "id")})
+@Table(name = "test_user",
+		indexes = {@Index(columnList = "id")})
 public class TestUser {
     
     @Id

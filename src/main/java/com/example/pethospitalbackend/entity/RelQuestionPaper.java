@@ -1,13 +1,12 @@
 package com.example.pethospitalbackend.entity;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-
 @Data
 @Entity
-@Table(name = "rel_question_paper", indexes = {@Index(columnList = "id")})
+@Table(name = "rel_question_paper",
+		indexes = {@Index(columnList = "id")})
 public class RelQuestionPaper {
     
     @Id

@@ -7,7 +7,8 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "inspection_case", indexes = {@Index(columnList = "inspection_case_id")})
+@Table(name = "inspection_case",
+		indexes = {@Index(columnList = "inspection_case_id")})
 public class InspectionCase {
     
     @Id

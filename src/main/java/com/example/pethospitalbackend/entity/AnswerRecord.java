@@ -5,10 +5,10 @@ import lombok.Data;
 import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.*;
-
 @Data
 @Entity
-@Table(name = "answer_record", indexes = {@Index(columnList = "answer_record_id")})
+@Table(name = "answer_record",
+		indexes = {@Index(columnList = "answer_record_id")})
 public class AnswerRecord {
     
     @Id

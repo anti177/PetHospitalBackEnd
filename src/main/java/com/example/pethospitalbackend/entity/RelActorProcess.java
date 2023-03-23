@@ -7,7 +7,8 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "rel_actor_process", indexes = {@Index(columnList = "id")})
+@Table(name = "rel_actor_process",
+		indexes = {@Index(columnList = "id")})
 public class RelActorProcess {
     
     @Id
@@ -22,6 +23,6 @@ public class RelActorProcess {
     
     @Column(name = "actor_id")
     @ApiModelProperty(value = "角色Id")
-    private Long acotrId;
+    private Long actorId;
     
 }
