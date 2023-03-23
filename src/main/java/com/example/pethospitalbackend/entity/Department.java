@@ -14,7 +14,7 @@ public class Department {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "department_id")
 	@ApiModelProperty(value = "科室id")
-	private long departmentId;
+	private Long departmentId;
 
 	@Column(name = "department_name")
 	@ApiModelProperty(value = "科室名称")

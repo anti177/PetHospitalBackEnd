@@ -14,7 +14,7 @@ public class MyClass {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "class_id")
 	@ApiModelProperty(value = "班级id")
-	private long classId;
+	private Long classId;
 
 	@Column(name = "class_name")
 	@ApiModelProperty(value = "班级名称")

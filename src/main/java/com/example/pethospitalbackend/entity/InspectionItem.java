@@ -13,11 +13,11 @@ public class InspectionItem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "inspection_item_id")
 	@ApiModelProperty(value = "检查项目id")
-	private long inspectionItemId;
+	private Long inspectionItemId;
 
 	@Column(name = "department_id")
 	@ApiModelProperty(value = "对应科室id")
-	private long departmentId;
+	private Long departmentId;
 
 	@Column(name = "itemName")
 	@ApiModelProperty(value = "检查项目名称")
@@ -29,6 +29,6 @@ public class InspectionItem {
 
 	@Column(name = "fee")
 	@ApiModelProperty(value = "费用")
-	private double fee;
+	private Double fee;
 
 }

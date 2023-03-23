@@ -18,7 +18,7 @@ public class Test {
 	@Column(name = "test_id")
 	@KeySql(useGeneratedKeys = true)
 	@ApiModelProperty(value = "考试id")
-	private long testId;
+	private Long testId;
 
 	@Column(name = "test_name")
 	@ApiModelProperty(value = "考试名称")
@@ -26,7 +26,7 @@ public class Test {
 
 	@Column(name = "paper_id")
 	@ApiModelProperty(value = "试卷ID")
-	private long paperID;
+	private Long paperID;
 
 	@Column(name = "begin_date")
 	@ApiModelProperty(value = "考试开始时间")

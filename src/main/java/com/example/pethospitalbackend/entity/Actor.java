@@ -14,7 +14,7 @@ public class Actor {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "actor_id")
 	@ApiModelProperty(value = "角色id")
-	private long actorId;
+	private Long actorId;
 
 	@Column(name = "name")
 	@ApiModelProperty(value = "角色名称")
