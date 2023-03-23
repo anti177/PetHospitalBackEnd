@@ -1,8 +1,13 @@
 package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.constant.SecurityConstants;
-import com.example.pethospitalbackend.dto.*;
-import com.example.pethospitalbackend.request.*;
+import com.example.pethospitalbackend.dto.JwtUserDTO;
+import com.example.pethospitalbackend.dto.UserDTO;
+import com.example.pethospitalbackend.entity.User;
+import com.example.pethospitalbackend.request.ChangePasswordRequest;
+import com.example.pethospitalbackend.request.ForgetPasswordRequest;
+import com.example.pethospitalbackend.request.UserLoginRequest;
+import com.example.pethospitalbackend.request.UserRegisterRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.AuthService;
 import com.example.pethospitalbackend.service.UserService;
@@ -14,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -86,6 +92,12 @@ public class UserController{
 		Response response =  userService.changePassword(changePasswordDTO);
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
-
-
+    
+    @GetMapping("/users")
+    public Response<List<User>> getAllUsers() {
+        List<User> userList = userService.getAllUsers();
+        Response<List<User>> response = new Response<>();
+        response.setSuc(userList);
+        return response;
+    }
 }
