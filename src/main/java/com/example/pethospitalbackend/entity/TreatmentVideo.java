@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class TreatmentVideo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "treatment_video_id")
+	@Column(name = "id")
 	@ApiModelProperty(value = "治疗图片id")
 	private Long treatmentGraphId;
 

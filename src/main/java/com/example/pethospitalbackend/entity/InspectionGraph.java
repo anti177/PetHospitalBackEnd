@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class InspectionGraph {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "inspection_graph_id")
+	@Column(name = "id")
 	@ApiModelProperty(value = "检查图片id")
 	private Long inspectionGraphId;
 
