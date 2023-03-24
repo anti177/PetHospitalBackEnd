@@ -1,5 +1,6 @@
 package com.example.pethospitalbackend.service;
 
+import com.example.pethospitalbackend.dto.CaseBackDetailDTO;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +19,7 @@ public class CaseServiceTest {
     @Test
     public void testCaseGeneralDetailDTO() {
         // todo: 测试
-        caseService.getBackCaseDTOByCaseId((long) 22);
+        CaseBackDetailDTO caseBackDetailDTO = caseService.getBackCaseDetailDTOByCaseId((long) 1);
         Assert.assertEquals(0, 0);
     }
 }
