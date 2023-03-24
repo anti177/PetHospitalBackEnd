@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class AdmissionGraph {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "admission_graph_id")
+	@Column(name = "id")
 	@ApiModelProperty(value = "接诊图片id")
 	private Long admissionGraphId;
 
