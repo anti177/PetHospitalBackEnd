@@ -12,6 +12,7 @@ import javax.persistence.*;
 public class Disease {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @KeySql(useGeneratedKeys = true) //使用通用mapper提供的注解
     @Column(name = "disease_id")
     @ApiModelProperty(value = "疾病id")

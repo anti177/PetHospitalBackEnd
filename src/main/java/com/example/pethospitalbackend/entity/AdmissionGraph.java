@@ -13,6 +13,7 @@ public class AdmissionGraph {
     
     @Id
     @KeySql(useGeneratedKeys = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @ApiModelProperty(value = "接诊图片id")
     private Long admissionGraphId;

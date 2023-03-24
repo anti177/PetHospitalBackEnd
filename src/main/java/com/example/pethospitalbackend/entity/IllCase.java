@@ -13,6 +13,7 @@ import java.io.Serializable;
 public class IllCase implements Serializable {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @KeySql(useGeneratedKeys = true)
     @Column(name = "ill_case_id")
     @ApiModelProperty(value = "病例id")
@@ -37,5 +38,5 @@ public class IllCase implements Serializable {
     @Column(name = "treatment_text")
     @ApiModelProperty(value = "治疗方案介绍")
     private String treatmentInfo;
-  
+    
 }
