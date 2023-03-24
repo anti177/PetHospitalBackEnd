@@ -7,12 +7,12 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "treatment_graph", indexes = {@Index(columnList = "file_id")})
+@Table(name = "treatment_graph", indexes = {@Index(columnList = "id")})
 public class TreatmentGraph {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "file_id")
+    @Column(name = "id")
     @ApiModelProperty(value = "治疗图片id")
     private Long treatmentGraphId;
     

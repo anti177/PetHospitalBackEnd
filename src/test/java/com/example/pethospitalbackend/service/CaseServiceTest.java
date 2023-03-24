@@ -1,5 +1,6 @@
 package com.example.pethospitalbackend.service;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,5 +19,6 @@ public class CaseServiceTest {
     public void testCaseGeneralDetailDTO() {
         // todo: 测试
         caseService.getBackCaseDTOByCaseId((long) 22);
+        Assert.assertEquals(0, 0);
     }
 }

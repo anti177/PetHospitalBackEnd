@@ -2,17 +2,18 @@ package com.example.pethospitalbackend.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "admission_graph", indexes = {@Index(columnList = "file_id")})
+@Table(name = "admission_graph", indexes = {@Index(columnList = "id")})
 public class AdmissionGraph {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "file_id")
+    @KeySql(useGeneratedKeys = true)
+    @Column(name = "id")
     @ApiModelProperty(value = "接诊图片id")
     private Long admissionGraphId;
     

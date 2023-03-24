@@ -22,9 +22,9 @@ public interface InspectionCaseDao extends Mapper<InspectionCase> {
     
     @Select("SELECT * FROM inspection_graph WHERE inspection_case_id = #{id} ORDER BY sort_num ")
     @Results(id = "inspection_graph_list",
-            value = {@Result(id = true, column = "inspection_graph_id", property = "fileId"), @Result(
-                    column = "inspection_case_id", property = "caseId"), @Result(column = "url",
-                    property = "url"), @Result(column = "sort_num", property = "sortNum")})
+            value = {@Result(id = true, column = "id", property = "fileId"), @Result(column = "inspection_case_id",
+                    property = "caseId"), @Result(column = "url", property = "url"), @Result(column = "sort_num",
+                    property = "sortNum")})
     List<FileDTO> getInspectionGraphDTOByInspectionCaseId(@Param("id") long inspectionCaseId);
     
     @Select("SELECT * FROM inspection_item WHERE inspection_case_id = #{id} ORDER BY sort_num ")
