@@ -86,52 +86,51 @@ public class CaseService {
         
     }
     
-    public Response<CaseDTO> getCaseByCaseId(Long caseId) {
-        Response<CaseDTO> response = new Response<>();
-        CaseDTO caseDTO = new CaseDTO();
+    public Response<CaseFrontDetailDTO> getFrontCaseByCaseId(Long caseId) {
+        Response<CaseFrontDetailDTO> response = new Response<>();
+        CaseFrontDetailDTO caseFrontDetailDTO = new CaseFrontDetailDTO();
         try {
             IllCase illCase = caseDao.getCaseByCaseId(caseId);
             if (illCase != null) {
-                caseDTO.setCaseId(illCase.getCaseId());
-                caseDTO.setCaseName(illCase.getCaseName());
-                caseDTO.setAdmissionText(illCase.getAdmissionText());
-                caseDTO.setDiagnosticInfo(illCase.getDiagnosticInfo());
-                caseDTO.setTreatmentInfo(illCase.getTreatmentInfo());
+                caseFrontDetailDTO.setCaseId(illCase.getCaseId());
+                caseFrontDetailDTO.setCaseName(illCase.getCaseName());
+                caseFrontDetailDTO.setAdmissionText(illCase.getAdmissionText());
+                caseFrontDetailDTO.setDiagnosticInfo(illCase.getDiagnosticInfo());
+                caseFrontDetailDTO.setTreatmentInfo(illCase.getTreatmentInfo());
                 
                 List<String> admissionGraphs = caseDao.getAdmissionGraphByCaseId(caseId);
-                if (admissionGraphs != null) caseDTO.setAdmissionGraphList(admissionGraphs);
+                if (admissionGraphs != null) caseFrontDetailDTO.setAdmissionGraphList(admissionGraphs);
                 List<String> treatmentGraphs = caseDao.getTreatmentGraphByCaseId(caseId);
-                if (treatmentGraphs != null) caseDTO.setTreatmentGraphList(treatmentGraphs);
+                if (treatmentGraphs != null) caseFrontDetailDTO.setTreatmentGraphList(treatmentGraphs);
                 List<String> treatmentVideos = caseDao.getTreatmentVideoByCaseId(caseId);
-                if (treatmentVideos != null) caseDTO.setTreatmentVideoList(treatmentVideos);
+                if (treatmentVideos != null) caseFrontDetailDTO.setTreatmentVideoList(treatmentVideos);
                 
-                
-                List<InspectionDTO> inspectionDTOList = inspectionCaseDao.getInspectionCaseByCaseId(caseId);
-                if (inspectionDTOList != null) {
-                    for (int i = 0; i < inspectionDTOList.size(); i++) {
-                        InspectionDTO a = inspectionDTOList.get(i);
+                List<InspectionFrontDTO> inspectionFrontDTOList = inspectionCaseDao.getInspectionCaseByCaseId(caseId);
+                if (inspectionFrontDTOList != null) {
+                    for (int i = 0; i < inspectionFrontDTOList.size(); i++) {
+                        InspectionFrontDTO a = inspectionFrontDTOList.get(i);
                         List<String> inspectionGraphs = inspectionCaseDao.getInspectionGraphByInspectionCaseId(a.getInspectionCaseId());
                         if (inspectionGraphs != null) {
                             a.setInspectionGraphList(inspectionGraphs);
-                            inspectionDTOList.set(i, a);
+                            inspectionFrontDTOList.set(i, a);
                         }
                         
                     }
-                    caseDTO.setInspectionDTOList(inspectionDTOList);
+                    caseFrontDetailDTO.setInspectionFrontDTOList(inspectionFrontDTOList);
                 }
             }
         } catch (Exception e) {
             logger.error("[getCaseByCaseId Fail],caseId:{}, error message{}", SerialUtil.toJsonStr(caseId), SerialUtil.toJsonStr(e.getMessage()));
             throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
         }
-        response.setSuc(caseDTO);
+        response.setSuc(caseFrontDetailDTO);
         return response;
         
     }
     
-    public PageInfo<CaseBackEndDTO> getCasePageInfo(int pageNum, int pageSize) {
+    public PageInfo<CaseBackBriefDTO> getCasePageInfo(int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<CaseBackEndDTO> CaseDTOList = caseDao.getAllBackEndDtos();
+        List<CaseBackBriefDTO> CaseDTOList = caseDao.getAllBackBriefDTOs();
         return new PageInfo<>(CaseDTOList);
     }
     
@@ -192,20 +191,31 @@ public class CaseService {
     public PageInfo<Disease> getDiseasePageInfo(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<Disease> diseaseList = diseaseDao.selectAll();
-        PageInfo<Disease> diseasePageInfo = new PageInfo<>(diseaseList);
-        return diseasePageInfo;
+        return new PageInfo<>(diseaseList);
     }
     
     public int updateCase(Long id) {
         return 0;
     }
     
-    public List<CaseBackEndDTO> getAllCaseDTOs() {
-        return caseDao.getAllBackEndDtos();
+    public List<CaseBackBriefDTO> getAllCaseDTOs() {
+        return caseDao.getAllBackBriefDTOs();
     }
     
     @Transactional(rollbackFor = Exception.class)
-    public void addService(IllCaseFormDTO form) {
+    public void addCase(IllCaseFormDTO form) {
+        //todo: 编写逻辑
+    }
     
+    //todo 测试
+    public CaseBackDetailDTO getBackCaseDTOByCaseId(Long caseId) {
+        CaseBackDetailDTO caseBackDetailDTO = caseDao.getBackDetailDTO(caseId);
+        
+        caseBackDetailDTO.setAdmissionGraphList(caseDao.getFileByIllCaseId("admission_graph", caseId));
+        caseBackDetailDTO.setTreatmentGraphList(caseDao.getFileByIllCaseId("treatment_graph", caseId));
+        caseBackDetailDTO.setInspectionCaseList(inspectionCaseDao.getInspectionCaseBackDTOByCaseId(caseId));
+        caseBackDetailDTO.setTreatmentVideoList(caseDao.getFileByIllCaseId("treatment_video", caseId));
+        
+        return null;
     }
 }

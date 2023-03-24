@@ -36,10 +36,16 @@ public class CaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    @GetMapping("/case/{caseId}")
+    @GetMapping("/cases/{caseId}")
     @ApiOperation(value = "获得具体病例")
-    public ResponseEntity<Response<CaseDTO>> getCaseByCaseId(@PathVariable Long caseId) {
-        Response<CaseDTO> response = caseService.getCaseByCaseId(caseId);
+    public ResponseEntity<Response<CaseFrontDetailDTO>> getCaseByCaseId(
+            @PathVariable Long caseId, @RequestParam Boolean front) {
+        Response response = new Response<>();
+        if (front) {
+            response = caseService.getFrontCaseByCaseId(caseId);
+        } else {
+            response.setSuc(caseService.getBackCaseDTOByCaseId(caseId));
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
@@ -48,30 +54,23 @@ public class CaseController {
     Response getAllCases(
             @RequestParam(required = false) Integer pageNum, @RequestParam(required = false) Integer pageSize) {
         if (pageNum == null) {
-            List<CaseBackEndDTO> caseBackEndDTOS = caseService.getAllCaseDTOs();
-            Response<List<CaseBackEndDTO>> response = new Response<>();
-            response.setSuc(caseBackEndDTOS);
+            List<CaseBackBriefDTO> caseBackBriefDTOS = caseService.getAllCaseDTOs();
+            Response<List<CaseBackBriefDTO>> response = new Response<>();
+            response.setSuc(caseBackBriefDTOS);
             return response;
         } else {
-            PageInfo<CaseBackEndDTO> illCaseDTOPageInfo = caseService.getCasePageInfo(pageNum, pageSize);
-            Response<PageInfo<CaseBackEndDTO>> response = new Response<>();
+            PageInfo<CaseBackBriefDTO> illCaseDTOPageInfo = caseService.getCasePageInfo(pageNum, pageSize);
+            Response<PageInfo<CaseBackBriefDTO>> response = new Response<>();
             response.setSuc(illCaseDTOPageInfo);
             return response;
         }
     }
-
-//    @GetMapping("/cases")
-//    @ApiOperation("按字段模糊搜索病例")
-//    ResponseEntity<Response<IllCase>> searchCase(@RequestParam Integer search_field, @RequestParam String content) {
-//        //todo: 搜索->前端分页。暂时不做了
-//        return new ResponseEntity<>(null, HttpStatus.OK);
-//    }
     
-    //todo: 等待前台商量接口
+    
     @PostMapping("/cases")
     @ApiOperation("上传病例")
     ResponseEntity<Response<IllCase>> postCase(@RequestBody IllCaseFormDTO form) {
-        caseService.addService(form);
+        caseService.addCase(form);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
     
