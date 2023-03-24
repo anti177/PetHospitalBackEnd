@@ -11,13 +11,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping
 @Api(tags = {"病例学习"})
 public class CaseController {
     
@@ -45,32 +43,35 @@ public class CaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    // todo: 增加逻辑，异常处理
-    
     @GetMapping("/cases")
     @ApiOperation("分页获取病例基本信息")
-    Response<PageInfo<IllCaseDTO>> getAllCases(@RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-        PageInfo<IllCaseDTO> illCaseDTOPageInfo = caseService.getCasePageInfo(pageNum, pageSize);
-        Response<PageInfo<IllCaseDTO>> response = new Response<>();
-        response.setSuc(illCaseDTOPageInfo);
-        return response;
+    Response getAllCases(
+            @RequestParam(required = false) Integer pageNum, @RequestParam(required = false) Integer pageSize) {
+        if (pageNum == null) {
+            List<CaseBackEndDTO> caseBackEndDTOS = caseService.getAllCaseDTOs();
+            Response<List<CaseBackEndDTO>> response = new Response<>();
+            response.setSuc(caseBackEndDTOS);
+            return response;
+        } else {
+            PageInfo<CaseBackEndDTO> illCaseDTOPageInfo = caseService.getCasePageInfo(pageNum, pageSize);
+            Response<PageInfo<CaseBackEndDTO>> response = new Response<>();
+            response.setSuc(illCaseDTOPageInfo);
+            return response;
+        }
     }
-    
-    //todo: 搜索
-    @GetMapping("/cases")
-    @ApiOperation("按字段模糊搜索病例")
-    ResponseEntity<Response<IllCase>> searchCase(@RequestParam Integer search_field, @RequestParam String content) {
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }
+
+//    @GetMapping("/cases")
+//    @ApiOperation("按字段模糊搜索病例")
+//    ResponseEntity<Response<IllCase>> searchCase(@RequestParam Integer search_field, @RequestParam String content) {
+//        //todo: 搜索->前端分页。暂时不做了
+//        return new ResponseEntity<>(null, HttpStatus.OK);
+//    }
     
     //todo: 等待前台商量接口
     @PostMapping("/cases")
     @ApiOperation("上传病例")
-    ResponseEntity<Response<IllCase>> postCase(
-            @RequestPart("form") IllCaseFormDTO form,
-            @RequestPart("admission_pictures") MultipartFile[] admission_pictures,
-            @RequestPart("inspection_pictures") MultipartFile[] inspection_pictures,
-            @RequestPart("therapy_video") MultipartFile therapy_video) {
+    ResponseEntity<Response<IllCase>> postCase(@RequestBody IllCaseFormDTO form) {
+        caseService.addService(form);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
     
