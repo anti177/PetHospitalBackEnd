@@ -5,10 +5,12 @@ import com.example.pethospitalbackend.entity.User;
 import org.apache.ibatis.annotations.*;
 import tk.mybatis.mapper.common.Mapper;
 
+import java.util.List;
+
 public interface UserDao extends Mapper<User> {
 
   @Insert(
-      "INSERT INTO user(password,email,role,user_class) VALUES (#{password},#{email},#{role},#{user_class});")
+      "INSERT INTO user(password,email,role,userClass) VALUES (#{password},#{email},#{role},#{user_class});")
   int insertUser(User user);
 
   @ResultType(UserDTO.class)
@@ -39,4 +41,7 @@ public interface UserDao extends Mapper<User> {
 
   @Select("SELECT password FROM user WHERE email = #{email}")
   String getUserPassword(@Param("email") String email);
+
+  @Select("SELECT user_id as userId,email,role,user_class as userClass FROM user")
+  List<UserDTO> selectAllUserDTOs();
 }

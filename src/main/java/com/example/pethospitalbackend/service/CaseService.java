@@ -150,13 +150,22 @@ public class CaseService {
       caseDao.insert(illCase);
       Long caseId = illCase.getCaseId();
 
-      // 添加相关图片和视频信息
-      List<FileDTO> admissionGraphList = getFileDTOList(form.getAdmission_graphs(), caseId);
-      List<FileDTO> therapyGraphList = getFileDTOList(form.getTherapy_graphs(), caseId);
-      List<FileDTO> therapyVideoList = getFileDTOList(form.getTherapy_videos(), caseId);
-      caseDao.insertFiles(admissionGraphList, "admission_graph");
-      caseDao.insertFiles(therapyGraphList, "therapy_graph");
-      caseDao.insertFiles(therapyVideoList, "therapy_video");
+      List<String> admissionGraphUrls = form.getAdmission_graphs();
+      List<String> therapyGraphUrls = form.getTherapy_graphs();
+      List<String> therapyVideoUrls = form.getTherapy_videos();
+      // 如果存在，添加相关图片和视频信息
+      if (admissionGraphUrls != null) {
+        List<FileDTO> admissionGraphList = getFileDTOList(admissionGraphUrls, caseId);
+        caseDao.insertFiles(admissionGraphList, "admission_graph");
+      }
+      if (therapyGraphUrls != null) {
+        List<FileDTO> therapyGraphList = getFileDTOList(therapyGraphUrls, caseId);
+        caseDao.insertFiles(therapyGraphList, "therapy_graph");
+      }
+      if (therapyVideoUrls != null) {
+        List<FileDTO> therapyVideoList = getFileDTOList(therapyVideoUrls, caseId);
+        caseDao.insertFiles(therapyVideoList, "therapy_video");
+      }
 
       for (int i = 0; i < form.getInspection_cases().size(); i++) {
         // 添加相关检查项目信息
@@ -170,16 +179,17 @@ public class CaseService {
 
         // 添加相关检查图片信息
         Long inspectionCaseId = inspectionCase.getInspectionCaseId();
-        List<FileDTO> inspectionGraphList =
-            getFileDTOList(inspectionCaseFrontDTO.getInspection_graphs(), inspectionCaseId);
-        caseDao.insertInspectionGraphs(inspectionGraphList);
+        List<String> inspectionGraphUrls = inspectionCaseFrontDTO.getInspection_graphs();
+        if (inspectionGraphUrls != null) {
+          List<FileDTO> inspectionGraphList = getFileDTOList(inspectionGraphUrls, inspectionCaseId);
+          caseDao.insertInspectionGraphs(inspectionGraphList);
+        }
       }
     } catch (Exception e) {
       // todo: 异常处理
     }
   }
 
-  // todo: 异常处理
   public List<FileDTO> getFileDTOList(List<String> urlList, Long caseId) {
     List<FileDTO> fileDTOList = new ArrayList<>();
     for (int i = 0; i < urlList.size(); i++) {
@@ -245,7 +255,7 @@ public class CaseService {
     }
   }
 
-  // 需要测一下性能，后续优化
+  // todo: 需要测一下性能，后续优化
   public CaseBackDetailDTO getBackCaseDetailDTOByCaseId(Long caseId) {
     try {
       CaseBackDetailDTO caseBackDetailDTO = caseDao.getBackDetailDTO(caseId); // 先读基本类型属性和疾病属性

@@ -41,9 +41,9 @@ public class VideoService {
     }
     // 修改数据库
     TreatmentVideo video = new TreatmentVideo();
-    video.setCaseId((long) 1);
+    video.setCaseId(1L);
     video.setUrl(url);
-    video.setSortNum((long) 4);
+    video.setSortNum(4L);
 
     boolean result = treatmentVideoDao.insertVideo(video) > 0;
 
