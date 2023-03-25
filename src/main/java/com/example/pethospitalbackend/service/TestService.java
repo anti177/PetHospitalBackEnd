@@ -94,13 +94,7 @@ public class TestService {
           dto.setDescription(q.getDescription());
           dto.setQuestionType(q.getQuestionType());
           dto.setScore(q.getScore());
-          // 将choice转为数组
-          String[] temp;
-          String delimiter = ";"; // 指定分割字符
-          temp = q.getChoice().split(delimiter); // 分割字符串
-          List<String> choiceList = new ArrayList<>();
-          Collections.addAll(choiceList, temp);
-          dto.setChoice(choiceList);
+          dto.setChoice(transferChoice(q.getChoice()));
           paperQuestionDTOList.add(dto);
         }
         testPaperDTO.setQuestionList(paperQuestionDTOList);
@@ -189,5 +183,35 @@ public class TestService {
       } else userAns.setScore(0);
     }
     return score;
+  }
+
+  public Response<List<FrontTestAnswerDTO>> getRecord(long testId) {
+    String userId = JwtUtils.getUserId();
+    List<FrontTestAnswerDTO> answerDTOS;
+    Response<List<FrontTestAnswerDTO>> response = new Response<>();
+    try{
+      answerDTOS = answerRecordDao.getTestAnswer(testId,Long.parseLong(userId));
+      for(FrontTestAnswerDTO dto : answerDTOS){
+        dto.setChoiceList(transferChoice(dto.getChoice()));
+      }
+    }catch (Exception e){
+      logger.error(
+              "[get Record Fail], testId : {}, userId:{},error message{}",
+              SerialUtil.toJsonStr(testId), userId,
+              SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
+    }
+    response.setSuc(answerDTOS);
+    return response;
+
+}
+  private List<String> transferChoice(String choice){
+    // 将choice转为数组
+    String[] temp;
+    String delimiter = ";"; // 指定分割字符
+    temp = choice.split(delimiter); // 分割字符串
+    List<String> choiceList = new ArrayList<>();
+    Collections.addAll(choiceList, temp);
+    return choiceList;
   }
 }

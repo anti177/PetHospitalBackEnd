@@ -1,6 +1,9 @@
 package com.example.pethospitalbackend.controller;
 
-import com.example.pethospitalbackend.dto.*;
+import com.example.pethospitalbackend.dto.EndTestCategoryDTO;
+import com.example.pethospitalbackend.dto.FrontTestAnswerDTO;
+import com.example.pethospitalbackend.dto.TestCategoryDTO;
+import com.example.pethospitalbackend.dto.TestPaperDTO;
 import com.example.pethospitalbackend.request.RecordRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.TestService;
@@ -28,7 +31,6 @@ public class TestController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-
 	@GetMapping("/records/category")
 	@ApiOperation(value = "获得答题记录")
 	public ResponseEntity<Response<List<EndTestCategoryDTO>>> getEndTestCategory() {
@@ -46,8 +48,16 @@ public class TestController {
 
 	@PostMapping("/answer/{testId}")
 	@ApiOperation(value = "提交考试答案")
-	public ResponseEntity<Response<Boolean>>getTestContent(@RequestBody List<RecordRequest> recordRequests, @PathVariable long testId) {
+	public ResponseEntity<Response<Boolean>>postTestAnswer(@RequestBody List<RecordRequest> recordRequests, @PathVariable long testId) {
 		Response<Boolean> response =  testService.recordAnswer(recordRequests,testId);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+  @GetMapping("/record/{testId}")
+  @ApiOperation(value = "查看考试答案")
+  public ResponseEntity<Response<List<FrontTestAnswerDTO>>> getTestAnswer(
+      @PathVariable long testId) {
+    Response<List<FrontTestAnswerDTO>> response = testService.getRecord(testId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }
