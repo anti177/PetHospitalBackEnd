@@ -11,18 +11,20 @@ import java.io.Serializable;
 @Data
 public class RoleDTO implements Serializable {
 
-  @NotBlank
-  @ApiModelProperty(value = "角色id")
-  private long roleId;
+	@NotBlank
+	@ApiModelProperty(value = "角色id")
+	private long roleId;
 
-  @NotBlank
-  @ApiModelProperty(value = "角色名称")
-  private String name;
+	@NotBlank
+	@ApiModelProperty(value = "角色名称")
+	private String name;
 
-  @ApiModelProperty(value = "角色内容")
-  private String content;
+	@ApiModelProperty(value = "角色内容")
+	private String content;
 
-  @NotBlank
-  @ApiModelProperty(value = "角色职责")
-  private String responsibility;
+	@NotBlank
+	@ApiModelProperty(value = "角色职责")
+	private String responsibility;
+
+
 }

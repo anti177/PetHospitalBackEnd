@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.zalando.problem.AbstractThrowableProblem;
 
+
 /**
  * UserRelatedException
  *
@@ -13,10 +14,10 @@ import org.zalando.problem.AbstractThrowableProblem;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class UserRelatedException extends AbstractThrowableProblem {
 
-  private static final long serialVersionUID = 4775907845387588526L;
+    private static final long serialVersionUID = 4775907845387588526L;
 
-  public UserRelatedException(String message) {
+    public UserRelatedException(String message) {
 
-    super(ErrorConstants.DEFAULT_TYPE, message);
-  }
+        super(ErrorConstants.DEFAULT_TYPE,message);
+    }
 }

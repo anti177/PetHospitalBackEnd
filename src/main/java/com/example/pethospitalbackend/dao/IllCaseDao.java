@@ -10,8 +10,8 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
-
-public interface CaseDao extends Mapper<IllCase> {
+public interface IllCaseDao extends Mapper<IllCase> {
+    
     
     @ResultType(CaseCategoryDTO.class)
     @Select("SELECT ill_case_id as caseId, case_name as caseName, admission_text as admissionText" + " FROM ill_case WHERE disease_id = #{id}")
@@ -37,5 +37,5 @@ public interface CaseDao extends Mapper<IllCase> {
                     javaType = Disease.class,
                     one = @One(select = "com.example.pethospitalbackend.dao.DiseaseDao.selectByPrimaryKey",
                             fetchType = FetchType.EAGER))})
-    List<CaseBackEndDTO> getAllBackEndDtos();
+    List<CaseBackEndDTO> findAll();
 }

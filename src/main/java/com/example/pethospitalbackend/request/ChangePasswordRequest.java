@@ -13,11 +13,12 @@ import java.io.Serializable;
 @ToString
 public class ChangePasswordRequest implements Serializable {
 
-  //	@NotBlank
-  //	@ApiModelProperty(value = "用户id")
-  //	private String userId;
+//	@NotBlank
+//	@ApiModelProperty(value = "用户id")
+//	private String userId;
 
-  @NotBlank
-  @ApiModelProperty(value = "密码")
-  private String password;
+	@NotBlank
+	@ApiModelProperty(value = "密码")
+	private String password;
+
 }
