@@ -14,21 +14,22 @@ import java.util.Date;
 @Data
 @ToString
 public class TestCategoryDTO implements Serializable {
-
-  @NotBlank
-  @ApiModelProperty(value = "考试id")
-  private long testId;
-
-  @ApiModelProperty(value = "考试名称")
-  private String testName;
-
-  @NotBlank
-  @ApiModelProperty(value = "考试开始时间")
-  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private Date beginDate;
-
-  @NotBlank
-  @ApiModelProperty(value = "考试结束时间")
-  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private Date endDate;
+    
+    @NotBlank
+    @ApiModelProperty(value = "考试id")
+    private long testId;
+    
+    @ApiModelProperty(value = "考试名称")
+    private String testName;
+    
+    @NotBlank
+    @ApiModelProperty(value = "考试开始时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date beginDate;
+    
+    @NotBlank
+    @ApiModelProperty(value = "考试结束时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date endDate;
+    
 }

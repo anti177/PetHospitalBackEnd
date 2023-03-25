@@ -7,9 +7,10 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class InspectionCaseFrontDTO {
-
-  Long inspection_item_id;
-  String inspection_result_text;
-  List<String> inspection_graphs;
+public class InspectionCaseDTO {
+    
+    Long inspection_item_id;
+    String inspection_result_text;
+    List<String> inspection_graphs;
+    
 }

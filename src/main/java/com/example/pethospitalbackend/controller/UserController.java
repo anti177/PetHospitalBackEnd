@@ -2,7 +2,6 @@ package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.constant.SecurityConstants;
 import com.example.pethospitalbackend.dto.JwtUserDTO;
-import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.entity.User;
 import com.example.pethospitalbackend.request.ChangePasswordRequest;
@@ -22,122 +21,83 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 
+
 /**
  * UserResource
  *
  * @author yyx
  */
 @RestController
+@RequestMapping("/user")
 @Api(tags = {"用户登陆"})
-public class UserController {
+public class UserController{
 
-  @Resource private UserService userService;
-  @Resource private AuthService authService;
+	@Resource
+	private UserService userService;
+	@Resource
+	private AuthService authService;
 
-  @PostMapping("/user/register")
-  @ApiOperation(value = "用户注册")
-  public ResponseEntity<Response<UserDTO>> register(@RequestBody UserRegisterRequest userRegister) {
-    JwtUserDTO jwtUser = userService.register(userRegister);
+	@PostMapping("/register")
+	@ApiOperation(value = "用户注册")
+	public ResponseEntity<Response<UserDTO>> register(@RequestBody UserRegisterRequest userRegister) {
+		JwtUserDTO jwtUser = userService.register(userRegister);
 
-    // 将 token 存入响应头中返回
-    HttpHeaders httpHeaders = new HttpHeaders();
-    // 添加 token 前缀 "Bearer "
-    httpHeaders.set(
-        SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
-    Response<UserDTO> response = new Response<>();
-    response.setSuc(jwtUser.getUser());
-    return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
-  }
+		// 将 token 存入响应头中返回
+		HttpHeaders httpHeaders = new HttpHeaders();
+		// 添加 token 前缀 "Bearer "
+		httpHeaders.set(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
+		Response<UserDTO> response = new Response<>();
+		response.setSuc(jwtUser.getUser());
+		return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
 
-  @PatchMapping("/user/login")
-  @ApiOperation(value = "用户登陆")
-  public ResponseEntity<Response<UserDTO>> login(@RequestBody UserLoginRequest userLogin) {
-    JwtUserDTO jwtUser = authService.authLogin(userLogin);
-    // 将 token 存入响应头中返回
-    HttpHeaders httpHeaders = new HttpHeaders();
-    // 添加 token 前缀 "Bearer "
-    httpHeaders.set(
-        SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
-    Response<UserDTO> response = new Response<>();
-    response.setSuc(jwtUser.getUser());
-    return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
-  }
+	}
 
-  @PatchMapping("/user/logout")
-  @ApiOperation(value = "用户退出登录")
-  public ResponseEntity<Response<UserDTO>> logout() {
-    Response<UserDTO> response = authService.logout();
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
+	@PatchMapping("/login")
+	@ApiOperation(value = "用户登陆")
+	public ResponseEntity<Response<UserDTO>> login(@RequestBody UserLoginRequest userLogin) {
+		JwtUserDTO jwtUser = authService.authLogin(userLogin);
+		//将 token 存入响应头中返回
+		HttpHeaders httpHeaders = new HttpHeaders();
+		// 添加 token 前缀 "Bearer "
+		httpHeaders.set(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
+		Response<UserDTO> response = new Response<>();
+		response.setSuc(jwtUser.getUser());
+		return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
 
-  @PostMapping("/user/code")
-  @ApiOperation(value = "发验证码")
-  public ResponseEntity sendCode(@RequestParam("email") String email) {
-    Response response = userService.sendCode(email);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
+	}
+	@PatchMapping("/logout")
+	@ApiOperation(value = "用户退出登录")
+	public ResponseEntity<Response<UserDTO>> logout() {
+		Response<UserDTO> response = authService.logout();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
-  @PatchMapping("user/password/forget")
-  @ApiOperation(value = "忘记密码")
-  public ResponseEntity sendCode(@RequestBody ForgetPasswordRequest changePasswordDTO) {
-    Response response = userService.forgetPassword(changePasswordDTO);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
+	@PostMapping("/code")
+	@ApiOperation(value = "发验证码")
+	public ResponseEntity sendCode(@RequestParam("email") String email) {
+		Response response =  userService.sendCode(email);
+		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
 
-  @PatchMapping("user/password/change")
-  @ApiOperation(value = "修改密码")
-  public ResponseEntity changePassword(@RequestBody ChangePasswordRequest changePasswordDTO) {
-    Response response = userService.changePassword(changePasswordDTO);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
+	@PatchMapping("/password/forget")
+	@ApiOperation(value = "忘记密码")
+	public ResponseEntity sendCode(@RequestBody ForgetPasswordRequest changePasswordDTO) {
+		Response response =  userService.forgetPassword(changePasswordDTO);
+		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
 
-  @GetMapping("/users")
-  @ApiOperation("获取全部用户")
-  public Response<List<UserDTO>> getAllUsers() {
-    List<UserDTO> userList = userService.getAllUsers();
-    Response<List<UserDTO>> response = new Response<>();
-    response.setSuc(userList);
-    return response;
-  }
-
-  @GetMapping("/users/{id}")
-  @ApiOperation("获取单个用户")
-  public Response<UserDTO> getUser(@PathVariable Long id) {
-    UserDTO user = userService.getUserDTOById(id);
-    Response<UserDTO> response = new Response<>();
-    response.setSuc(user);
-    return response;
-  }
-
-  @DeleteMapping("/users/{id}")
-  @ApiOperation("删除单个用户")
-  public Response<ModifiedRecordCountDTO> deleteUser(@PathVariable Long id) {
-    Integer res = userService.deleteUser(id);
-    Response<ModifiedRecordCountDTO> response = new Response<>();
-    response.setSuc(new ModifiedRecordCountDTO(res));
-    return response;
-  }
-
-  @PostMapping("/users/batch")
-  @ApiOperation("批量删除用户")
-  public Response<ModifiedRecordCountDTO> userBatchOperation(
-      @RequestParam String action, @RequestBody List<Long> ids) {
-    Response<ModifiedRecordCountDTO> response = new Response<>();
-    if (action.equals("delete")) {
-      Integer res = userService.deleteUsers(ids);
-      response.setSuc(new ModifiedRecordCountDTO(res));
-    } else {
-      // todo: 参数不合法
+	@PatchMapping("/password/change")
+	@ApiOperation(value = "修改密码")
+	public ResponseEntity changePassword(@RequestBody ChangePasswordRequest changePasswordDTO) {
+		Response response =  userService.changePassword(changePasswordDTO);
+		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
+    
+    @GetMapping("/users")
+    public Response<List<User>> getAllUsers() {
+        List<User> userList = userService.getAllUsers();
+        Response<List<User>> response = new Response<>();
+        response.setSuc(userList);
+        return response;
     }
-    return response;
-  }
-
-  @PatchMapping("/users/{id}")
-  public Response<ModifiedRecordCountDTO> updateUser(
-      @PathVariable Long id, @RequestBody User user) {
-    Response<ModifiedRecordCountDTO> response = new Response<>();
-    Integer res = userService.updateUser(user);
-    response.setSuc(new ModifiedRecordCountDTO(res));
-    return response;
-  }
 }

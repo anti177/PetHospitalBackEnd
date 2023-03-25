@@ -15,29 +15,30 @@ import java.util.Date;
 @ToString
 public class EndTestCategoryDTO implements Serializable {
 
-  @NotBlank
-  @ApiModelProperty(value = "考试id")
-  private long testId;
+	@NotBlank
+	@ApiModelProperty(value = "考试id")
+	private long testId;
 
-  @ApiModelProperty(value = "考试名称")
-  private String testName;
+	@ApiModelProperty(value = "考试名称")
+	private String testName;
 
-  @NotBlank
-  @ApiModelProperty(value = "考试分数")
-  private long score;
+	@NotBlank
+	@ApiModelProperty(value = "考试分数")
+	private long score;
 
-  @NotBlank
-  @ApiModelProperty(value = "考试开始时间")
-  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private Date beginDate;
+	@NotBlank
+	@ApiModelProperty(value = "考试开始时间")
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date beginDate;
+	
+	@NotBlank
+	@ApiModelProperty(value = "考试结束时间")
+	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date endDate;
 
-  @NotBlank
-  @ApiModelProperty(value = "考试结束时间")
-  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private Date endDate;
+	//2.已经参加考试，3.未参加考试错过考试
+	@NotBlank
+	@ApiModelProperty(value = "是否参加考试")
+	private long hasTested;
 
-  // 2.已经参加考试，3.未参加考试错过考试
-  @NotBlank
-  @ApiModelProperty(value = "是否参加考试")
-  private long hasTested;
 }

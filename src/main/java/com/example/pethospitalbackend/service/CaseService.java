@@ -7,7 +7,6 @@ import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
 import com.example.pethospitalbackend.entity.InspectionCase;
-import com.example.pethospitalbackend.entity.InspectionGraph;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.response.Response;
@@ -26,331 +25,187 @@ import java.util.List;
 
 @Service
 public class CaseService {
-
-  private static final Logger logger = LoggerFactory.getLogger(CaseService.class);
-
-  @Resource DiseaseDao diseaseDao;
-
-  @Resource CaseDao caseDao;
-
-  @Resource InspectionCaseDao inspectionCaseDao;
-
-  // ----------------------------------前台方法----------------------------
-
-  public Response<List<CategoryDTO>> getTotalCategory() {
-    Response<List<CategoryDTO>> response = new Response<>();
-    List<String> typeList;
-    List<Disease> diseaseList;
-    try {
-      typeList = diseaseDao.getAllType();
-      diseaseList = diseaseDao.getAllDisease();
-    } catch (Exception e) {
-      logger.error(
-          "[getTotalCategory Fail], error message{}", SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
-    }
-    List<CategoryDTO> categoryDTOList = new ArrayList<>();
-    for (int i = 0; i < typeList.size(); i++) {
-      CategoryDTO categoryDTO = new CategoryDTO();
-      categoryDTO.setTypeId(i);
-      categoryDTO.setTypeName(typeList.get(i));
-      List<Disease> subDiseaseList = new ArrayList<>();
-      boolean endFlag = false;
-      for (Disease d : diseaseList) {
-        if (d.getTypeName().equals(typeList.get(i))) {
-          subDiseaseList.add(d);
-          if (!endFlag) endFlag = true;
-        } else {
-          if (endFlag) break;
+    
+    private static final Logger logger = LoggerFactory.getLogger(CaseService.class);
+    
+    @Resource
+    DiseaseDao diseaseDao;
+    
+    @Resource
+    CaseDao caseDao;
+    
+    @Resource
+    InspectionCaseDao inspectionCaseDao;
+    
+    public Response<List<CategoryDTO>> getTotalCategory() {
+        Response<List<CategoryDTO>> response = new Response<>();
+        List<String> typeList;
+        List<Disease> diseaseList;
+        try {
+            typeList = diseaseDao.getAllType();
+            diseaseList = diseaseDao.getAllDisease();
+        } catch (Exception e) {
+            logger.error("[getTotalCategory Fail], error message{}", SerialUtil.toJsonStr(e.getMessage()));
+            throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
         }
-      }
-      categoryDTO.setDiseaseDTOList(subDiseaseList);
-      categoryDTOList.add(categoryDTO);
-    }
-
-    response.setSuc(categoryDTOList);
-    return response;
-  }
-
-  public Response<List<CaseCategoryDTO>> getCaseCategoryByDiseaseId(Long diseaseId) {
-    Response<List<CaseCategoryDTO>> response = new Response<>();
-    List<CaseCategoryDTO> categoryDTOList;
-    try {
-      categoryDTOList = caseDao.getCaseByDiseaseId(diseaseId);
-    } catch (Exception e) {
-      logger.error(
-          "[getCaseCategory Fail], diseaseId : {},error message{}",
-          SerialUtil.toJsonStr(diseaseId),
-          SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
-    }
-    response.setSuc(categoryDTOList);
-    return response;
-  }
-
-  public Response<CaseFrontDetailDTO> getFrontCaseByCaseId(Long caseId) {
-    Response<CaseFrontDetailDTO> response = new Response<>();
-    CaseFrontDetailDTO caseFrontDetailDTO = new CaseFrontDetailDTO();
-    try {
-      IllCase illCase = caseDao.getCaseByCaseId(caseId);
-      if (illCase != null) {
-        caseFrontDetailDTO.setCaseId(illCase.getCaseId());
-        caseFrontDetailDTO.setCaseName(illCase.getCaseName());
-        caseFrontDetailDTO.setAdmissionText(illCase.getAdmissionText());
-        caseFrontDetailDTO.setDiagnosticInfo(illCase.getDiagnosticInfo());
-        caseFrontDetailDTO.setTreatmentInfo(illCase.getTreatmentInfo());
-
-        List<String> admissionGraphs = caseDao.getAdmissionGraphByCaseId(caseId);
-        if (admissionGraphs != null) {
-          caseFrontDetailDTO.setAdmissionGraphList(admissionGraphs);
-        }
-        List<String> treatmentGraphs = caseDao.getTreatmentGraphByCaseId(caseId);
-        if (treatmentGraphs != null) {
-          caseFrontDetailDTO.setTreatmentGraphList(treatmentGraphs);
-        }
-        List<String> treatmentVideos = caseDao.getTreatmentVideoByCaseId(caseId);
-        if (treatmentVideos != null) {
-          caseFrontDetailDTO.setTreatmentVideoList(treatmentVideos);
-        }
-
-        List<InspectionFrontDTO> inspectionFrontDTOList =
-            inspectionCaseDao.getInspectionCaseByCaseId(caseId);
-        if (inspectionFrontDTOList != null) {
-          for (int i = 0; i < inspectionFrontDTOList.size(); i++) {
-            InspectionFrontDTO a = inspectionFrontDTOList.get(i);
-            List<String> inspectionGraphs =
-                inspectionCaseDao.getInspectionGraphByInspectionCaseId(a.getInspectionCaseId());
-            if (inspectionGraphs != null) {
-              a.setInspectionGraphList(inspectionGraphs);
-              inspectionFrontDTOList.set(i, a);
+        List<CategoryDTO> categoryDTOList = new ArrayList<>();
+        for (int i = 0; i < typeList.size(); i++) {
+            CategoryDTO categoryDTO = new CategoryDTO();
+            categoryDTO.setTypeId(i);
+            categoryDTO.setTypeName(typeList.get(i));
+            List<Disease> subDiseaseList = new ArrayList<>();
+            boolean endFlag = false;
+            for (Disease d : diseaseList) {
+                if (d.getTypeName().equals(typeList.get(i))) {
+                    subDiseaseList.add(d);
+                    if (!endFlag) endFlag = true;
+                } else {
+                    if (endFlag) break;
+                }
             }
-          }
-          caseFrontDetailDTO.setInspectionFrontDTOList(inspectionFrontDTOList);
+            categoryDTO.setDiseaseDTOList(subDiseaseList);
+            categoryDTOList.add(categoryDTO);
         }
-      }
-    } catch (Exception e) {
-      logger.error(
-          "[getCaseByCaseId Fail],caseId:{}, error message{}",
-          SerialUtil.toJsonStr(caseId),
-          SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+        
+        response.setSuc(categoryDTOList);
+        return response;
+        
     }
-    response.setSuc(caseFrontDetailDTO);
-    return response;
-  }
-
-  // ---------------------------------后台方法------------------------------
-
-  @Transactional(rollbackFor = Exception.class)
-  public void addCase(IllCaseFormDTO form) {
-    // todo: 测试
-    try {
-      // 插入病例基本类
-      IllCase illCase = transformIllCaseFormToIllCase(form);
-      caseDao.insert(illCase);
-      Long caseId = illCase.getCaseId();
-
-      List<String> admissionGraphUrls = form.getAdmission_graphs();
-      List<String> therapyGraphUrls = form.getTherapy_graphs();
-      List<String> therapyVideoUrls = form.getTherapy_videos();
-      // 如果存在，添加相关图片和视频信息
-      if (admissionGraphUrls != null) {
-        List<FileDTO> admissionGraphList = getFileDTOList(admissionGraphUrls, caseId);
-        caseDao.insertFiles(admissionGraphList, "admission_graph");
-      }
-      if (therapyGraphUrls != null) {
-        List<FileDTO> therapyGraphList = getFileDTOList(therapyGraphUrls, caseId);
-        caseDao.insertFiles(therapyGraphList, "therapy_graph");
-      }
-      if (therapyVideoUrls != null) {
-        List<FileDTO> therapyVideoList = getFileDTOList(therapyVideoUrls, caseId);
-        caseDao.insertFiles(therapyVideoList, "therapy_video");
-      }
-
-      for (int i = 0; i < form.getInspection_cases().size(); i++) {
-        // 添加相关检查项目信息
-        InspectionCaseFrontDTO inspectionCaseFrontDTO = form.getInspection_cases().get(i);
-        InspectionCase inspectionCase = new InspectionCase();
-        inspectionCase.setCaseId(caseId);
-        inspectionCase.setItemId(inspectionCaseFrontDTO.getInspection_item_id());
-        inspectionCase.setResult(inspectionCaseFrontDTO.getInspection_result_text());
-        inspectionCase.setSortNum((long) i);
-        inspectionCaseDao.insert(inspectionCase);
-
-        // 添加相关检查图片信息
-        Long inspectionCaseId = inspectionCase.getInspectionCaseId();
-        List<String> inspectionGraphUrls = inspectionCaseFrontDTO.getInspection_graphs();
-        if (inspectionGraphUrls != null) {
-          List<FileDTO> inspectionGraphList = getFileDTOList(inspectionGraphUrls, inspectionCaseId);
-          caseDao.insertInspectionGraphs(inspectionGraphList);
+    
+    public Response<List<CaseCategoryDTO>> getCaseCategoryByDiseaseId(Long diseaseId) {
+        Response<List<CaseCategoryDTO>> response = new Response<>();
+        List<CaseCategoryDTO> categoryDTOList;
+        try {
+            categoryDTOList = caseDao.getCaseByDiseaseId(diseaseId);
+        } catch (Exception e) {
+            logger.error("[getCaseCategory Fail], diseaseId : {},error message{}", SerialUtil.toJsonStr(diseaseId), SerialUtil.toJsonStr(e.getMessage()));
+            throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
         }
-      }
-    } catch (Exception e) {
-      // todo: 异常处理
+        response.setSuc(categoryDTOList);
+        return response;
+        
     }
-  }
-
-  public List<FileDTO> getFileDTOList(List<String> urlList, Long caseId) {
-    List<FileDTO> fileDTOList = new ArrayList<>();
-    for (int i = 0; i < urlList.size(); i++) {
-      FileDTO fileDTO = new FileDTO();
-      fileDTO.setCaseId(caseId);
-      fileDTO.setSortNum((long) i);
-      fileDTO.setUrl(urlList.get(i));
-      fileDTOList.add(fileDTO);
+    
+    public Response<CaseDTO> getCaseByCaseId(Long caseId) {
+        Response<CaseDTO> response = new Response<>();
+        CaseDTO caseDTO = new CaseDTO();
+        try {
+            IllCase illCase = caseDao.getCaseByCaseId(caseId);
+            if (illCase != null) {
+                caseDTO.setCaseId(illCase.getCaseId());
+                caseDTO.setCaseName(illCase.getCaseName());
+                caseDTO.setAdmissionText(illCase.getAdmissionText());
+                caseDTO.setDiagnosticInfo(illCase.getDiagnosticInfo());
+                caseDTO.setTreatmentInfo(illCase.getTreatmentInfo());
+                
+                List<String> admissionGraphs = caseDao.getAdmissionGraphByCaseId(caseId);
+                if (admissionGraphs != null) caseDTO.setAdmissionGraphList(admissionGraphs);
+                List<String> treatmentGraphs = caseDao.getTreatmentGraphByCaseId(caseId);
+                if (treatmentGraphs != null) caseDTO.setTreatmentGraphList(treatmentGraphs);
+                List<String> treatmentVideos = caseDao.getTreatmentVideoByCaseId(caseId);
+                if (treatmentVideos != null) caseDTO.setTreatmentVideoList(treatmentVideos);
+                
+                
+                List<InspectionDTO> inspectionDTOList = inspectionCaseDao.getInspectionCaseByCaseId(caseId);
+                if (inspectionDTOList != null) {
+                    for (int i = 0; i < inspectionDTOList.size(); i++) {
+                        InspectionDTO a = inspectionDTOList.get(i);
+                        List<String> inspectionGraphs = inspectionCaseDao.getInspectionGraphByInspectionCaseId(a.getInspectionCaseId());
+                        if (inspectionGraphs != null) {
+                            a.setInspectionGraphList(inspectionGraphs);
+                            inspectionDTOList.set(i, a);
+                        }
+                        
+                    }
+                    caseDTO.setInspectionDTOList(inspectionDTOList);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("[getCaseByCaseId Fail],caseId:{}, error message{}", SerialUtil.toJsonStr(caseId), SerialUtil.toJsonStr(e.getMessage()));
+            throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+        }
+        response.setSuc(caseDTO);
+        return response;
+        
     }
-    return fileDTOList;
-  }
-
-  // todo: 测试
-  @Transactional(rollbackFor = Exception.class)
-  public int deleteCase(long caseId) {
-    try {
-      List<Long> inspectionCaseIdList =
-          inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
-      Example example = new Example(InspectionGraph.class);
-      Example.Criteria criteria =
-          example.createCriteria().andIn("inspection_id", inspectionCaseIdList);
-      inspectionCaseDao.deleteByExample(criteria); // 删除检查情况中的照片
-      inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(caseId); // 删除检查情况
-      caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
-      caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
-      caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
-      return caseDao.deleteByPrimaryKey(caseId);
-    } catch (Exception e) {
-      logger.error(
-          "[delete ill case fail], caseId: {}, error message: {}",
-          SerialUtil.toJsonStr(caseId),
-          SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    
+    public PageInfo<CaseBackEndDTO> getCasePageInfo(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<CaseBackEndDTO> CaseDTOList = caseDao.getAllBackEndDtos();
+        return new PageInfo<>(CaseDTOList);
     }
-  }
-
-  // todo: 编写逻辑
-  public int updateCase(IllCaseFormDTO form) {
-    IllCase illCase = transformIllCaseFormToIllCase(form);
-    caseDao.updateByPrimaryKey(illCase);
-    return 0;
-  }
-
-  // 工具方法，用于转换前端表单类到实体类
-  public IllCase transformIllCaseFormToIllCase(IllCaseFormDTO form) {
-    IllCase illCase = new IllCase();
-    illCase.setCaseName(form.getCase_title());
-    illCase.setDiseaseId(form.getDisease_id());
-    illCase.setDiagnosticInfo(form.getDiagnostic_result());
-    illCase.setTreatmentInfo(form.getAdmission_text());
-    illCase.setAdmissionText(form.getAdmission_text());
-    return illCase;
-  }
-
-  public List<CaseBackBriefDTO> getAllCaseBackBriefDTOs() {
-    try {
-      return caseDao.getAllCaseBackBriefDTOs();
-    } catch (Exception e) {
-      logger.error(
-          "[get Ill Case brief infos fail], error message: {}",
-          SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    
+    // todo: 考虑级联删除？
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteCase(long id) {
+        try {
+            int res = caseDao.deleteByPrimaryKey(id);
+            Example.Criteria inspectionCaseExample = new Example(InspectionCase.class).createCriteria().andEqualTo("case_id", id);
+            inspectionCaseDao.deleteByExample(inspectionCaseExample);
+            
+            return res;
+        } catch (Exception e) {
+            logger.error("[delete ill case fail], caseId : {},error message{}", SerialUtil.toJsonStr(id), SerialUtil.toJsonStr(e.getMessage()));
+            throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+        }
     }
-  }
-
-  // todo: 需要测一下性能，后续优化
-  public CaseBackDetailDTO getBackCaseDetailDTOByCaseId(Long caseId) {
-    try {
-      CaseBackDetailDTO caseBackDetailDTO = caseDao.getBackDetailDTO(caseId); // 先读基本类型属性和疾病属性
-
-      caseBackDetailDTO.setAdmissionGraphList(
-          caseDao.getFilesByIllCaseId("admission_graph", caseId));
-      caseBackDetailDTO.setTreatmentGraphList(
-          caseDao.getFilesByIllCaseId("treatment_graph", caseId));
-      caseBackDetailDTO.setInspectionCaseList(
-          inspectionCaseDao.getInspectionCaseBackDTOByIllCaseId(caseId));
-      caseBackDetailDTO.setTreatmentVideoList(
-          caseDao.getFilesByIllCaseId("treatment_video", caseId));
-      return caseBackDetailDTO;
-    } catch (Exception e) {
-      logger.error(
-          "[get Ill Case detailed info fail], caseId: {}, error message: {}",
-          SerialUtil.toJsonStr(caseId),
-          SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteCases(List<Long> ids) {
+        return 0; // todo: 多选删除
     }
-  }
-
-  // 目前不需要这个方法
-  public PageInfo<CaseBackBriefDTO> getCasePageInfo(int pageNum, int pageSize) {
-    PageHelper.startPage(pageNum, pageSize);
-    List<CaseBackBriefDTO> CaseDTOList = caseDao.getAllCaseBackBriefDTOs();
-    return new PageInfo<>(CaseDTOList);
-  }
-
-  public Disease addDisease(Disease disease) {
-    try {
-      diseaseDao.insert(disease);
-      return disease;
-    } catch (Exception e) {
-      logger.error("[add disease fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    
+    //todo: 增改病例
+    
+    
+    @Transactional
+    public int deleteDisease(Long id) {
+        try {
+            int res = diseaseDao.deleteByPrimaryKey(id); //todo: 关联删除
+            deleteCase(id);
+            return res;
+        } catch (Exception e) {
+            logger.error("[delete disease fail], diseaseId : {},error message{}", SerialUtil.toJsonStr(id), SerialUtil.toJsonStr(e.getMessage()));
+            throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+        }
     }
-  }
-
-  @Transactional(rollbackFor = Exception.class)
-  public int deleteDisease(Long id) {
-    try {
-      return diseaseDao.deleteByPrimaryKey(id); // todo: 关联删除？
-    } catch (Exception e) {
-      logger.error(
-          "[delete disease fail], diseaseId: {}, error message: {}",
-          SerialUtil.toJsonStr(id),
-          SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    
+    public int updateDisease(Disease disease) {
+        try {
+            int res = diseaseDao.updateByPrimaryKey(disease);
+            return res;
+        } catch (Exception e) {
+            logger.error("[update disease fail], diseaseId : {},error message{}", SerialUtil.toJsonStr(disease.getDiseaseId()), SerialUtil.toJsonStr(e.getMessage()));
+            throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+        }
     }
-  }
-
-  public int updateDisease(Disease disease) {
-    try {
-      return diseaseDao.updateByPrimaryKey(disease);
-    } catch (Exception e) {
-      logger.error(
-          "[update disease fail], diseaseId: {}, error message: {}",
-          SerialUtil.toJsonStr(disease.getDiseaseId()),
-          SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    
+    public Disease addDisease(Disease disease) {
+        diseaseDao.insert(disease);
+        return disease;
     }
-  }
-
-  public Disease getDisease(Long id) {
-    try {
-      return diseaseDao.selectByPrimaryKey(id);
-    } catch (Exception e) {
-      logger.error(
-          "[get disease fail], diseaseId: {}, error message: {}",
-          SerialUtil.toJsonStr(id),
-          SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    
+    public Disease getDisease(Long id) {
+        return diseaseDao.selectByPrimaryKey(id);
     }
-  }
-
-  public List<Disease> getAllDiseases() {
-    try {
-      return diseaseDao.selectAll();
-    } catch (Exception e) {
-      logger.error(
-          "[get all diseases fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    
+    public PageInfo<Disease> getDiseasePageInfo(Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Disease> diseaseList = diseaseDao.selectAll();
+        PageInfo<Disease> diseasePageInfo = new PageInfo<>(diseaseList);
+        return diseasePageInfo;
     }
-  }
-
-  // 目前不需要这个方法
-  public PageInfo<Disease> getDiseasePageInfo(Integer pageNum, Integer pageSize) {
-    try {
-      PageHelper.startPage(pageNum, pageSize);
-      return new PageInfo<>(diseaseDao.selectAll());
-    } catch (Exception e) {
-      logger.error(
-          "[get all diseases fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    
+    public int updateCase(Long id) {
+        return 0;
     }
-  }
+    
+    public List<CaseBackEndDTO> getAllCaseDTOs() {
+        return caseDao.getAllBackEndDtos();
+    }
+    
+    @Transactional(rollbackFor = Exception.class)
+    public void addService(IllCaseFormDTO form) {
+    
+    }
 }
