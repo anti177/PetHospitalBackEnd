@@ -20,32 +20,31 @@ import java.util.Collections;
 @Configuration
 public class WebCorsConfiguration implements WebMvcConfigurer {
 
-    /**
-     * 设置xxx主页
-     */
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("home.html");
-        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        WebMvcConfigurer.super.addViewControllers(registry);
-    }
+  /** 设置xxx主页 */
+  @Override
+  public void addViewControllers(ViewControllerRegistry registry) {
+    registry.addViewController("/").setViewName("home.html");
+    registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+    WebMvcConfigurer.super.addViewControllers(registry);
+  }
 
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("*"));
-        config.setAllowedMethods(Collections.singletonList("*"));
-        config.setAllowedHeaders(Collections.singletonList("*"));
-        // 暴露 header 中的其他属性给客户端应用程序
-        config.setExposedHeaders(Arrays.asList(
-                "Authorization", "X-Total-Count", "Link",
-                "Access-Control-Allow-Origin",
-                "Access-Control-Allow-Credentials"
-        ));
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
-
+  @Bean
+  public CorsFilter corsFilter() {
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowCredentials(true);
+    config.setAllowedOrigins(Collections.singletonList("*"));
+    config.setAllowedMethods(Collections.singletonList("*"));
+    config.setAllowedHeaders(Collections.singletonList("*"));
+    // 暴露 header 中的其他属性给客户端应用程序
+    config.setExposedHeaders(
+        Arrays.asList(
+            "Authorization",
+            "X-Total-Count",
+            "Link",
+            "Access-Control-Allow-Origin",
+            "Access-Control-Allow-Credentials"));
+    source.registerCorsConfiguration("/**", config);
+    return new CorsFilter(source);
+  }
 }

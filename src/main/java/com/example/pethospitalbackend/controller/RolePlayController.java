@@ -18,24 +18,23 @@ import java.util.List;
 @RestController
 @Api(tags = {"角色扮演"})
 public class RolePlayController {
-    
-    @Resource
-    RolePlayService rolePlayService;
-    
-    //1是医生，2是护士，3是前台
-    @GetMapping("/roles/{roleId}")
-    @ApiOperation(value = "获得角色内容和职责")
-    public ResponseEntity<Response<RoleDTO>> getRoleContentAndResponsibility(@PathVariable("roleId") String roleId) {
-        Response<RoleDTO> response = rolePlayService.getRoleContentAndResponsibility(roleId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
-    
-    @GetMapping("/roles/{roleId}/processes")
-    @ApiOperation(value = "获得角色流程")
-    public ResponseEntity<Response<List<RoleProcessDTO>>> getRoleProcess(@PathVariable("roleId") String roleId) {
-        Response<List<RoleProcessDTO>> response = rolePlayService.getRoleProcess(roleId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
+
+  @Resource RolePlayService rolePlayService;
+
+  // 1是医生，2是护士，3是前台
+  @GetMapping("/roles/{roleId}")
+  @ApiOperation(value = "获得角色内容和职责")
+  public ResponseEntity<Response<RoleDTO>> getRoleContentAndResponsibility(
+      @PathVariable("roleId") String roleId) {
+    Response<RoleDTO> response = rolePlayService.getRoleContentAndResponsibility(roleId);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("/roles/{roleId}/processes")
+  @ApiOperation(value = "获得角色流程")
+  public ResponseEntity<Response<List<RoleProcessDTO>>> getRoleProcess(
+      @PathVariable("roleId") String roleId) {
+    Response<List<RoleProcessDTO>> response = rolePlayService.getRoleProcess(roleId);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
 }

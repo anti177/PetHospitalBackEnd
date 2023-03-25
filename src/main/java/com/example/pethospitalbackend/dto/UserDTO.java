@@ -12,19 +12,18 @@ import java.io.Serializable;
 @Data
 @ToString
 public class UserDTO implements Serializable {
-    
-    @NotBlank
-    @ApiModelProperty(value = "用户id")
-    private long userId;
-    
-    @ApiModelProperty(value = "身份")
-    private String role;
-    
-    @NotBlank
-    @ApiModelProperty(value = "邮箱")
-    private String email;
-    
-    @ApiModelProperty(value = "班级")
-    private String userClass;
-    
+
+  @NotBlank
+  @ApiModelProperty(value = "用户id")
+  private long userId;
+
+  @ApiModelProperty(value = "身份")
+  private String role;
+
+  @NotBlank
+  @ApiModelProperty(value = "邮箱")
+  private String email;
+
+  @ApiModelProperty(value = "班级")
+  private String userClass;
 }
