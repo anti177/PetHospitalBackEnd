@@ -5,6 +5,8 @@ import com.example.pethospitalbackend.dto.JwtUserDTO;
 import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.entity.User;
+import com.example.pethospitalbackend.enums.ResponseEnum;
+import com.example.pethospitalbackend.exception.ParameterException;
 import com.example.pethospitalbackend.request.ChangePasswordRequest;
 import com.example.pethospitalbackend.request.ForgetPasswordRequest;
 import com.example.pethospitalbackend.request.UserLoginRequest;
@@ -12,8 +14,11 @@ import com.example.pethospitalbackend.request.UserRegisterRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.AuthService;
 import com.example.pethospitalbackend.service.UserService;
+import com.example.pethospitalbackend.util.SerialUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +31,12 @@ import java.util.List;
  * UserResource
  *
  * @author yyx
+ * @author zjy19
  */
 @RestController
 @Api(tags = {"用户登陆"})
 public class UserController {
+  private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
   @Resource private UserService userService;
   @Resource private AuthService authService;
@@ -94,7 +101,7 @@ public class UserController {
   @GetMapping("/users")
   @ApiOperation("获取全部用户")
   public Response<List<UserDTO>> getAllUsers() {
-    List<UserDTO> userList = userService.getAllUsers();
+    List<UserDTO> userList = userService.getAllUserDTOs();
     Response<List<UserDTO>> response = new Response<>();
     response.setSuc(userList);
     return response;
@@ -121,23 +128,35 @@ public class UserController {
   @PostMapping("/users/batch")
   @ApiOperation("批量删除用户")
   public Response<ModifiedRecordCountDTO> userBatchOperation(
-      @RequestParam String action, @RequestBody List<Long> ids) {
+      @RequestParam("action") String action, @RequestBody List<Long> ids) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
     if (action.equals("delete")) {
       Integer res = userService.deleteUsers(ids);
       response.setSuc(new ModifiedRecordCountDTO(res));
     } else {
-      // todo: 参数不合法
+      logger.warn("[Parameter wrong], action: {}", SerialUtil.toJsonStr(action));
+      throw new ParameterException(ResponseEnum.ILLEGAL_PARAM.getMsg());
     }
     return response;
   }
 
   @PatchMapping("/users/{id}")
+  @ApiOperation("修改用户信息")
   public Response<ModifiedRecordCountDTO> updateUser(
       @PathVariable Long id, @RequestBody User user) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
     Integer res = userService.updateUser(user);
     response.setSuc(new ModifiedRecordCountDTO(res));
+    return response;
+  }
+
+  // todo: 测试
+  @PostMapping("/users")
+  @ApiOperation("添加用户")
+  public Response<UserDTO> addUser(@RequestBody UserRegisterRequest registerRequest) {
+    JwtUserDTO jwtUserDTO = userService.register(registerRequest);
+    Response<UserDTO> response = new Response<>();
+    response.setSuc(jwtUserDTO.getUser());
     return response;
   }
 }

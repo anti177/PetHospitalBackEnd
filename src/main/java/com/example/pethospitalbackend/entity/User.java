@@ -1,7 +1,9 @@
 package com.example.pethospitalbackend.entity;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,6 +13,8 @@ import java.io.Serializable;
 @Table(
     name = "user",
     indexes = {@Index(columnList = "email")})
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

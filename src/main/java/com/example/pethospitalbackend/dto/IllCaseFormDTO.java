@@ -7,7 +7,6 @@ import java.util.List;
 @Data
 public class IllCaseFormDTO {
 
-  // todo: 编写内容
   String case_title;
   Long disease_id;
   String admission_text;
