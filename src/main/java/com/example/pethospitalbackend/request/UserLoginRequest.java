@@ -18,19 +18,16 @@ import javax.validation.constraints.NotBlank;
 @ToString
 public class UserLoginRequest {
 
-    @NotBlank
-    @Email(message = "邮箱格式不对")
-    @ApiModelProperty(value = "用户邮箱")
-    private String email;
-    @NotBlank
-    @ApiModelProperty(value = "用户密码")
-    private String password;
+  @NotBlank
+  @Email(message = "邮箱格式不对")
+  @ApiModelProperty(value = "用户邮箱")
+  private String email;
 
-    /**
-     * 是否记住我，默认 false
-     */
-    @ApiModelProperty(value = "是否记住我")
-    private Boolean rememberMe = false;
+  @NotBlank
+  @ApiModelProperty(value = "用户密码")
+  private String password;
 
-
+  /** 是否记住我，默认 false */
+  @ApiModelProperty(value = "是否记住我")
+  private Boolean rememberMe = false;
 }

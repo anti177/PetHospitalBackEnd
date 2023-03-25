@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ModifiedRecordCountDTO {
-    
-    Integer modifiedRecordCount;
+
+  Integer modifiedRecordCount;
 }

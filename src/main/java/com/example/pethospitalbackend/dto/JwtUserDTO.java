@@ -7,28 +7,28 @@ package com.example.pethospitalbackend.dto;
  */
 public class JwtUserDTO {
 
-    private UserDTO user;
+  private UserDTO user;
 
-    private String token;
+  private String token;
 
-    public JwtUserDTO(String token, UserDTO user) {
-        this.user = user;
-        this.token = token;
-    }
+  public JwtUserDTO(String token, UserDTO user) {
+    this.user = user;
+    this.token = token;
+  }
 
-    public UserDTO getUser() {
-        return user;
-    }
+  public UserDTO getUser() {
+    return user;
+  }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
-    }
+  public void setUser(UserDTO user) {
+    this.user = user;
+  }
 
-    public String getToken() {
-        return token;
-    }
+  public String getToken() {
+    return token;
+  }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+  public void setToken(String token) {
+    this.token = token;
+  }
 }

@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "oss")
 public class OSSConfig {
-    private  String endpoint;
+  private String endpoint;
 
-    private  String accessKeyId;
+  private String accessKeyId;
 
-    private  String accessKeySecret;
+  private String accessKeySecret;
 }
