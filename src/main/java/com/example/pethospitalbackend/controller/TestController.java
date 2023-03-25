@@ -22,7 +22,7 @@ public class TestController {
 	TestService testService;
 
 	@GetMapping("/category")
-	@ApiOperation(value = "获得角色内容和职责")
+	@ApiOperation(value = "获得考试目录")
 	public ResponseEntity<Response<List<TestCategoryDTO>>> getTotalCategory() {
 		Response<List<TestCategoryDTO>> response =  testService.getTestCategoryList();
 		return new ResponseEntity<>(response, HttpStatus.OK);
@@ -45,7 +45,7 @@ public class TestController {
 
 
 	@PostMapping("/answer/{testId}")
-	@ApiOperation(value = "获得考试题目")
+	@ApiOperation(value = "提交考试答案")
 	public ResponseEntity<Response<Boolean>>getTestContent(@RequestBody List<RecordRequest> recordRequests, @PathVariable long testId) {
 		Response<Boolean> response =  testService.recordAnswer(recordRequests,testId);
 		return new ResponseEntity<>(response, HttpStatus.OK);
