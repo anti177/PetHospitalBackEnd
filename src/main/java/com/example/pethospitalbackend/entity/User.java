@@ -32,5 +32,5 @@ public class User implements Serializable {
 
   @Column(name = "user_class")
   @ApiModelProperty(value = "班级")
-  private String user_class;
+  private String userClass;
 }

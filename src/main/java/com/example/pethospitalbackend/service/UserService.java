@@ -27,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -176,7 +177,32 @@ public class UserService {
     return response;
   }
 
-  public List<User> getAllUsers() {
-    return userDao.selectAll();
+  // ---------------------------------------后台-------------------------------------------
+
+  public Integer updateUser(User user) {
+    return userDao.updateByPrimaryKeySelective(user);
+  }
+
+  public Integer deleteUser(Long id) {
+    return userDao.deleteByPrimaryKey(id);
+  }
+
+  public Integer deleteUsers(List<Long> ids) {
+    Example example = new Example(User.class);
+    Example.Criteria criteria = example.createCriteria().andIn("user_id", ids);
+    return userDao.deleteByExample(criteria);
+  }
+
+  public UserDTO getUserDTOById(Long id) {
+    return userDao.getUserByUserId(id);
+  }
+
+  public List<UserDTO> getAllUsers() {
+    return userDao.selectAllUserDTOs();
+  }
+
+  // 仅用于测试
+  public Integer insertUser(User user) {
+    return userDao.insert(user);
   }
 }
