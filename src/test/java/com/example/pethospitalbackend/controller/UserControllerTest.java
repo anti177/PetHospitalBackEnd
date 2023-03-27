@@ -1,9 +1,11 @@
 package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.BaseTest;
+import com.example.pethospitalbackend.dto.JwtUserDTO;
 import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.entity.User;
+import com.example.pethospitalbackend.request.UserRegisterRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,9 +38,10 @@ public class UserControllerTest extends BaseTest {
 
   @InjectMocks private UserController userController;
 
-  private JacksonTester<User> jsonUser;
-  private JacksonTester<Response> jsonResponse;
-  private JacksonTester<List<Long>> jsonIdList;
+  private JacksonTester<User> userJacksonTester;
+  private JacksonTester<UserRegisterRequest> userRegisterRequestJacksonTester;
+  private JacksonTester<Response> responseJacksonTester;
+  private JacksonTester<List<Long>> listJacksonTester;
 
   UserDTO userDTO1 = new UserDTO(1L, "role", "email", "userClass");
   UserDTO userDTO2 = new UserDTO(2L, "role", "email", "userClass");
@@ -63,8 +66,8 @@ public class UserControllerTest extends BaseTest {
     // Verify the results
     assertEquals(HttpStatus.OK.value(), response.getStatus());
     assertEquals(
-        jsonResponse.write(expectedResponseContent).getJson(),
-        response.getContentAsString(StandardCharsets.UTF_8));
+        responseJacksonTester.write(expectedResponseContent).getJson(),
+        response.getContentAsString(StandardCharsets.UTF_8)); // 防止中文乱码
   }
 
   @Test
@@ -80,7 +83,7 @@ public class UserControllerTest extends BaseTest {
         mockMvc
             .perform(
                 patch("/users/{id}", 0)
-                    .content(jsonUser.write(user).getJson())
+                    .content(userJacksonTester.write(user).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()
@@ -89,7 +92,7 @@ public class UserControllerTest extends BaseTest {
     // Verify the results
     assertEquals(HttpStatus.OK.value(), response.getStatus());
     assertEquals(
-        jsonResponse.write(expectedResponseContent).getJson(),
+        responseJacksonTester.write(expectedResponseContent).getJson(),
         response.getContentAsString(StandardCharsets.UTF_8));
   }
 
@@ -111,7 +114,7 @@ public class UserControllerTest extends BaseTest {
     // Verify the results
     assertEquals(HttpStatus.OK.value(), response.getStatus());
     assertEquals(
-        jsonResponse.write(expectedResponseContent).getJson(),
+        responseJacksonTester.write(expectedResponseContent).getJson(),
         response.getContentAsString(StandardCharsets.UTF_8));
   }
 
@@ -132,7 +135,7 @@ public class UserControllerTest extends BaseTest {
     // Verify the results
     assertEquals(HttpStatus.OK.value(), response.getStatus());
     assertEquals(
-        jsonResponse.write(expectedResponseContent).getJson(),
+        responseJacksonTester.write(expectedResponseContent).getJson(),
         response.getContentAsString(StandardCharsets.UTF_8));
   }
 
@@ -150,7 +153,7 @@ public class UserControllerTest extends BaseTest {
             .perform(
                 post("/users/batch")
                     .param("action", "delete")
-                    .content(jsonIdList.write(userIdList).getJson())
+                    .content(listJacksonTester.write(userIdList).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()
@@ -159,7 +162,37 @@ public class UserControllerTest extends BaseTest {
     // Verify the results
     assertEquals(HttpStatus.OK.value(), response.getStatus());
     assertEquals(
-        jsonResponse.write(expectedResponseContent).getJson(),
+        responseJacksonTester.write(expectedResponseContent).getJson(),
+        response.getContentAsString(StandardCharsets.UTF_8));
+  }
+
+  @Test
+  public void testAddUser() throws Exception {
+    // Setup
+    // Configure UserService.register(...).
+    final JwtUserDTO jwtUserDTO =
+        new JwtUserDTO("bearer token", new UserDTO(0L, "role", "123456@qq.com", "userClass"));
+    UserRegisterRequest userRegisterRequest =
+        new UserRegisterRequest("123456", "123456@qq.com", "email", "userClass");
+    when(userService.register(userRegisterRequest)).thenReturn(jwtUserDTO);
+    Response<UserDTO> expectedResponseContent = new Response<>();
+    expectedResponseContent.setSuc(jwtUserDTO.getUser());
+
+    // Run the test
+    final MockHttpServletResponse response =
+        mockMvc
+            .perform(
+                post("/users")
+                    .content(userRegisterRequestJacksonTester.write(userRegisterRequest).getJson())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andReturn()
+            .getResponse();
+
+    // Verify the results
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(
+        responseJacksonTester.write(expectedResponseContent).getJson(),
         response.getContentAsString(StandardCharsets.UTF_8));
   }
 }
