@@ -43,5 +43,5 @@ public class UserRegisterRequest {
   private String role;
 
   @ApiModelProperty(value = "班级")
-  private String user_class;
+  private String userClass;
 }
