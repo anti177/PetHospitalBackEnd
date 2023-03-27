@@ -75,7 +75,7 @@ public class UserService {
     user.setPassword(cryptPassword);
     // TODO：没有检验用户是否能成为管理员
     try {
-      userDao.insertUser(user);
+      userDao.insert(user);
     } catch (DataIntegrityViolationException e) {
       // 如果预检查没有检查到重复，就利用数据库的完整性检查
       logger.error(
