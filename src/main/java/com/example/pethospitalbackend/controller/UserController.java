@@ -150,7 +150,6 @@ public class UserController {
     return response;
   }
 
-  // todo: 测试
   @PostMapping("/users")
   @ApiOperation("添加用户")
   public Response<UserDTO> addUser(@RequestBody UserRegisterRequest registerRequest) {
