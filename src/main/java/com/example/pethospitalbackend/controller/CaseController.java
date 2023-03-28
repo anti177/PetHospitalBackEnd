@@ -22,14 +22,14 @@ public class CaseController {
   @Resource CaseService caseService;
 
   @GetMapping("/categories")
-  @ApiOperation(value = "获得角色内容和职责")
+  @ApiOperation(value = "获得病种目录")
   public ResponseEntity<Response<List<CategoryDTO>>> getTotalCategory() {
     Response<List<CategoryDTO>> response = caseService.getTotalCategory();
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @GetMapping("/diseases/{diseaseId}/cases")
-  @ApiOperation(value = "获得角色内容和职责")
+  @ApiOperation(value = "获得疾病病例目录")
   public ResponseEntity<Response<List<CaseCategoryDTO>>> getCaseCategory(
       @PathVariable Long diseaseId) {
     Response<List<CaseCategoryDTO>> response = caseService.getCaseCategoryByDiseaseId(diseaseId);
@@ -39,7 +39,7 @@ public class CaseController {
   @GetMapping("/cases/{caseId}")
   @ApiOperation(value = "获得具体病例")
   public ResponseEntity<Response<CaseFrontDetailDTO>> getCaseByCaseId(
-      @PathVariable Long caseId, @RequestParam Boolean front) {
+      @PathVariable Long caseId, @RequestParam("front") Boolean front) {
     Response response = new Response<>();
     if (front) {
       response = caseService.getFrontCaseByCaseId(caseId);

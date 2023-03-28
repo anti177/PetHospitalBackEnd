@@ -187,7 +187,7 @@ public class TestService {
 
   public Response<List<FrontTestAnswerDTO>> getRecord(long testId) {
     String userId = JwtUtils.getUserId();
-    List<FrontTestAnswerDTO> answerDTOS;
+    List<FrontTestAnswerDTO> answerDTOS = new ArrayList<>();
     Response<List<FrontTestAnswerDTO>> response = new Response<>();
     try{
       answerDTOS = answerRecordDao.getTestAnswer(testId,Long.parseLong(userId));
@@ -201,7 +201,11 @@ public class TestService {
               SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
     }
-    response.setSuc(answerDTOS);
+    if(answerDTOS.size() == 0){
+      response.setSuc(answerDTOS);
+      response.setMessage("用户错过了考试");
+      testUserDao.updateTestUserSates(Long.parseLong(userId),testId,3);
+    }else response.setSuc(answerDTOS);
     return response;
 
 }

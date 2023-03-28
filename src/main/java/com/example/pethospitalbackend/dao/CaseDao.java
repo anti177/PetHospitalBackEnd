@@ -23,7 +23,7 @@ public interface CaseDao extends Mapper<IllCase> {
 
   @ResultType(IllCase.class)
   @Select(
-      "SELECT ill_case_id as caseId, case_name as caseName, admission_text as admissionText "
+      "SELECT ill_case_id as caseId, case_name as caseName, admission_text as admissionText, "
           + "diagnostic_info as diagnosticInfo, treatment_text as treatmentInfo "
           + " FROM ill_case WHERE ill_case_id = #{id}")
   IllCase getCaseByCaseId(@Param("id") long caseId);
