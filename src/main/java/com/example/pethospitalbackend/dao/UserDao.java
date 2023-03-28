@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserDao extends Mapper<User> {
 
   @Insert(
-      "INSERT INTO user(password,email,role,userClass) VALUES (#{password},#{email},#{role},#{user_class});")
+      "INSERT INTO user(password,email,role,user_class) VALUES (#{password},#{email},#{role},#{userClass});")
   int insertUser(User user);
 
   @ResultType(UserDTO.class)

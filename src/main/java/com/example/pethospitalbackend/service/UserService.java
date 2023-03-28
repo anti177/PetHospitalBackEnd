@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
  * UserService
  *
  * @author yyx
+ * @author zjy19
  */
 @Service
 public class UserService {
@@ -74,7 +75,7 @@ public class UserService {
     user.setPassword(cryptPassword);
     // TODO：没有检验用户是否能成为管理员
     try {
-      userDao.insertUser(user);
+      userDao.insert(user);
     } catch (DataIntegrityViolationException e) {
       // 如果预检查没有检查到重复，就利用数据库的完整性检查
       logger.error(
@@ -179,30 +180,62 @@ public class UserService {
 
   // ---------------------------------------后台-------------------------------------------
 
-  public Integer updateUser(User user) {
-    return userDao.updateByPrimaryKeySelective(user);
+  public int updateUser(User user) {
+    try {
+      return userDao.updateByPrimaryKeySelective(user);
+    } catch (Exception e) {
+      logger.error(
+          "[update user fail], userId: {}, error msg: {}",
+          SerialUtil.toJsonStr(user.getUserId()),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
-  public Integer deleteUser(Long id) {
-    return userDao.deleteByPrimaryKey(id);
+  public int deleteUser(Long id) {
+    try {
+      return userDao.deleteByPrimaryKey(id);
+    } catch (Exception e) {
+      logger.error(
+          "[delete user fail], userId: {}, error msg: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
-  public Integer deleteUsers(List<Long> ids) {
-    Example example = new Example(User.class);
-    Example.Criteria criteria = example.createCriteria().andIn("user_id", ids);
-    return userDao.deleteByExample(criteria);
+  public int deleteUsers(List<Long> ids) {
+    try {
+      Example example = new Example(User.class);
+      Example.Criteria criteria = example.createCriteria().andIn("userId", ids);
+      return userDao.deleteByExample(example);
+    } catch (Exception e) {
+      logger.error(
+          "[delete users fail], userIds: {}, error msg: {}",
+          SerialUtil.toJsonStr(ids),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
   public UserDTO getUserDTOById(Long id) {
-    return userDao.getUserByUserId(id);
+    try {
+      return userDao.getUserByUserId(id);
+    } catch (Exception e) {
+      logger.error(
+          "[get user fail], userId: {}, error msg: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
-  public List<UserDTO> getAllUsers() {
-    return userDao.selectAllUserDTOs();
-  }
-
-  // 仅用于测试
-  public Integer insertUser(User user) {
-    return userDao.insert(user);
+  public List<UserDTO> getAllUserDTOs() {
+    try {
+      return userDao.selectAllUserDTOs();
+    } catch (Exception e) {
+      logger.error("[get all users fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 }

@@ -2,7 +2,9 @@ package com.example.pethospitalbackend.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.validation.constraints.Email;
@@ -16,6 +18,8 @@ import javax.validation.constraints.Size;
  */
 @ApiModel("用户注册模型")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString
 public class UserRegisterRequest {
   //    @NotBlank
@@ -39,5 +43,5 @@ public class UserRegisterRequest {
   private String role;
 
   @ApiModelProperty(value = "班级")
-  private String user_class;
+  private String userClass;
 }
