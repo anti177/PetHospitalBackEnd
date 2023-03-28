@@ -28,8 +28,8 @@ public class TestUser {
   @ApiModelProperty(value = "用户id")
   private Long userId;
 
-  // 1.还未考试，2.已经考试，3.错过考试）
-  @Column(name = "has_tested")
-  @ApiModelProperty(value = "是否参考")
-  private Long hasTested;
+  // 是否提交答案：true已经提交 false 未提交
+  @Column(name = "has_submit")
+  @ApiModelProperty(value = "是否提交")
+  private Boolean hasSubmit = false;
 }

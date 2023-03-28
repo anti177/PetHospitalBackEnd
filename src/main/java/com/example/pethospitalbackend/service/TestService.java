@@ -158,9 +158,9 @@ public class TestService {
           SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
     }
-    // 4.修改test_user表 user参考状态
+    // 4.修改test_user表 user提交状态
     try {
-      testUserDao.updateTestUserSates(Long.parseLong(userId), testId, 2);
+      testUserDao.updateTestUserSates(Long.parseLong(userId), testId, true);
       response.setSuc(true);
     } catch (Exception e) {
       logger.error(
@@ -174,13 +174,17 @@ public class TestService {
 
   private long getAnsScore(List<RecordRequest> userAnsList, List<Question> rightAnsList) {
     long score = 0;
-    if (userAnsList.size() != rightAnsList.size()) return 0;
+    if (userAnsList.size() != rightAnsList.size()) {
+        return 0;
+    }
     for (int i = 0; i < userAnsList.size(); i++) {
       RecordRequest userAns = userAnsList.get(i);
       Question question = rightAnsList.get(i);
       if (userAns.getAns().equals(question.getAns())) {
         score += userAns.getScore();
-      } else userAns.setScore(0);
+      } else {
+          userAns.setScore(0);
+      }
     }
     return score;
   }
@@ -203,9 +207,11 @@ public class TestService {
     }
     if(answerDTOS.size() == 0){
       response.setSuc(answerDTOS);
-      response.setMessage("用户错过了考试");
-      testUserDao.updateTestUserSates(Long.parseLong(userId),testId,3);
-    }else response.setSuc(answerDTOS);
+      response.setMessage("用户错过了考试,无法查看考试答案");
+      testUserDao.updateTestUserSates(Long.parseLong(userId),testId,false);
+    } else {
+      response.setSuc(answerDTOS);
+    }
     return response;
 
 }

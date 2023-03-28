@@ -36,8 +36,8 @@ public class EndTestCategoryDTO implements Serializable {
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private Date endDate;
 
-  // 2.已经参加考试，3.未参加考试错过考试
   @NotBlank
-  @ApiModelProperty(value = "是否参加考试")
-  private long hasTested;
+  @ApiModelProperty(value = "是否提交答案")
+  private Boolean hasSubmit;
+
 }

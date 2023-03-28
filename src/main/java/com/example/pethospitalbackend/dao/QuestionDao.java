@@ -27,7 +27,7 @@ public interface QuestionDao extends Mapper<Question> {
 
   @ResultType(Question.class)
   @Select(
-      "SELECT question_id as questionId,ans, score, choice, description, question_type as questionType "
+      "SELECT question_id as questionId, ans, score, choice, description, question_type as questionType "
           + "from rel_question_paper NATURAL JOIN question "
           + "where paper_id = (SELECT paper_id from test where test_id = #{id}) ORDER BY index_num")
   List<Question> getQuestionAnsByTestId(@Param("id") long testId);

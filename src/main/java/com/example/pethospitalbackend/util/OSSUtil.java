@@ -111,8 +111,9 @@ public class OSSUtil {
     // 关闭OSSClient。
     ossClient.shutdown();
 
-    if (objectMetadata != null) return true;
-    else {
+    if (objectMetadata != null) {
+        return true;
+    } else {
       logger.error(
           "[downloadFile Ex], filename: {}, destinationPath: {}",
           SerialUtil.toJsonStr(filename),
