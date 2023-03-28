@@ -178,6 +178,19 @@ public class UserService {
     return response;
   }
 
+  public UserDTO getUserDTOByToken() {
+    long id = Long.parseLong(JwtUtils.getUserId());
+    try {
+      return userDao.getUserByUserId(id);
+    } catch (Exception e) {
+      logger.error(
+              "[get user fail], userId: {}, error msg: {}",
+              SerialUtil.toJsonStr(id),
+              SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
   // ---------------------------------------后台-------------------------------------------
 
   public int updateUser(User user) {
