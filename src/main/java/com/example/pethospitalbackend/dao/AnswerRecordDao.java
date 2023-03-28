@@ -9,7 +9,7 @@ import tk.mybatis.mapper.common.Mapper;import java.util.List;
 public interface AnswerRecordDao extends Mapper<AnswerRecord> {
   @ResultType(TestRecordDao.class)
   @Select(
-      "SELECT answer_record.question_id as question_id, answer_record.score as getScore, "
+      "SELECT answer_record.question_id as questionId, answer_record.score as getScore, "
           + "rel_question_paper.score as score,choice, user_answer as userAns, "
           + "ans,description,question_type as questionType "
           + "from answer_record NATURAL JOIN question "
