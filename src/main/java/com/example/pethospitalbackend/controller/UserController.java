@@ -84,18 +84,27 @@ public class UserController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @PatchMapping("user/password/forget")
+  @PatchMapping("/user/password/forget")
   @ApiOperation(value = "忘记密码")
   public ResponseEntity sendCode(@RequestBody ForgetPasswordRequest changePasswordDTO) {
     Response response = userService.forgetPassword(changePasswordDTO);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @PatchMapping("user/password/change")
+  @PatchMapping("/user/password/change")
   @ApiOperation(value = "修改密码")
   public ResponseEntity changePassword(@RequestBody ChangePasswordRequest changePasswordDTO) {
     Response response = userService.changePassword(changePasswordDTO);
     return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("/user")
+  @ApiOperation("获取单个用户")
+  public Response<UserDTO> getUser() {
+    UserDTO user = userService.getUserDTOByToken();
+    Response<UserDTO> response = new Response<>();
+    response.setSuc(user);
+    return response;
   }
 
   @GetMapping("/users")
