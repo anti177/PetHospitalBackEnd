@@ -96,7 +96,7 @@ public class CaseController {
 
   @PostMapping("/diseases")
   @ApiOperation("后台添加疾病")
-  Response<Disease> postDisease(Disease disease) {
+  Response<Disease> postDisease(@RequestBody Disease disease) {
     Disease diseaseRecord = caseService.addDisease(disease);
     Response<Disease> response = new Response<>();
     response.setSuc(diseaseRecord);
@@ -114,7 +114,7 @@ public class CaseController {
 
   @PutMapping("/diseases/{id}")
   @ApiOperation("后台修改疾病")
-  Response<ModifiedRecordCountDTO> putDisease(@PathVariable Long id, Disease disease) {
+  Response<ModifiedRecordCountDTO> putDisease(@PathVariable Long id, @RequestBody Disease disease) {
     Integer res = caseService.updateDisease(disease);
     Response<ModifiedRecordCountDTO> response = new Response<>();
     response.setSuc(new ModifiedRecordCountDTO(res));

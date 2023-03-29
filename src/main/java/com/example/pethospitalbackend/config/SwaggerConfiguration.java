@@ -32,7 +32,9 @@ public class SwaggerConfiguration {
         // 描述
         .description("restful 风格接口")
         // 创建人
-        .contact(new Contact("team8", "https://blog.csdn.net", "2359470826@qq.com"))
+        .contact(
+            new Contact(
+                "team 8", "https://github.com/anti177/PetHospitalBackEnd", "2359470826@qq.com"))
         // 版本号
         .version("1.0")
         .build();
