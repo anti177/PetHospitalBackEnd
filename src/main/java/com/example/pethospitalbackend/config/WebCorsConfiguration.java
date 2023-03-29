@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * WebCorsConfiguration 跨域配置
@@ -31,17 +32,11 @@ public class WebCorsConfiguration implements WebMvcConfigurer {
   public CorsFilter corsFilter() {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     CorsConfiguration config = new CorsConfiguration();
-    config.addAllowedHeader("*");
     config.setAllowCredentials(true);
-    // config.addAllowedOrigins(Collections.singletonList("*"));// 似乎是spring版本的原因这两个函数的含义变了
-    config.addAllowedOrigin("*");
-    config.addAllowedMethod("OPTIONS");
-    config.addAllowedMethod("POST");
-    config.addAllowedMethod("DELETE");
-    config.addAllowedMethod("PUT");
-    config.addAllowedMethod("PATCH");
-    config.addAllowedMethod("GET");
-    config.addAllowedHeader("*");
+    //config.setAllowedOrigins(Collections.singletonList("*"));似乎是spring版本的原因这两个函数的含义变了
+    config.setAllowedOriginPatterns(Collections.singletonList("*"));
+    config.setAllowedMethods(Collections.singletonList("*"));
+    config.setAllowedHeaders(Collections.singletonList("*"));
     // 暴露 header 中的其他属性给客户端应用程序
     config.setExposedHeaders(
         Arrays.asList(
