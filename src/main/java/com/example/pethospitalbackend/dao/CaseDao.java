@@ -17,7 +17,7 @@ public interface CaseDao extends Mapper<IllCase> {
 
   @ResultType(CaseCategoryDTO.class)
   @Select(
-      "SELECT ill_case_id as caseId, case_name as caseName, admission_text as admissionText "
+      "SELECT ill_case_id as caseId, case_name as caseName, admission_text as admissionText,front_graph as frontGraph "
           + "FROM ill_case WHERE disease_id = #{id}")
   List<CaseCategoryDTO> getCaseByDiseaseId(@Param("id") long diseaseId);
 
