@@ -18,8 +18,8 @@ public class UserServiceTest extends BaseTest {
 
   @Resource UserDao userDao;
 
-  User user1 = new User(1L, "password", "role", "email", "userClass");
-  User user2 = new User(2L, "password", "role", "email", "userClass");
+  User user1 = new User(0L, "password", "role", "email", "userClass");
+  User user2 = new User(1L, "password", "role", "email", "userClass");
 
   @Test
   public void testGetAllUsers() {
