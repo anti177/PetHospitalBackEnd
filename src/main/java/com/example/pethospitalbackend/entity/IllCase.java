@@ -40,4 +40,9 @@ public class IllCase implements Serializable {
   @Column(name = "treatment_text")
   @ApiModelProperty(value = "治疗方案介绍")
   private String treatmentInfo;
+
+  @Column(name = "front_graph")
+  @ApiModelProperty(value = "前台封面图片")
+  private String frontGraph;
+
 }

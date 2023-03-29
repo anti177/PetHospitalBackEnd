@@ -3,6 +3,7 @@ package com.example.pethospitalbackend.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import java.util.List;
 
 @ApiModel("病例目录模型")
 @Data
@@ -15,4 +16,7 @@ public class CaseCategoryDTO {
 
   @ApiModelProperty(value = "接诊文字")
   private String admissionText;
+
+  @ApiModelProperty(value = "接诊图片")
+  private String frontGraph;
 }
