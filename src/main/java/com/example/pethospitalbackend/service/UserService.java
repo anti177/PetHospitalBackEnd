@@ -194,14 +194,24 @@ public class UserService {
   // ---------------------------------------后台-------------------------------------------
 
   public int updateUser(User user) {
-    try {
-      return userDao.updateByPrimaryKeySelective(user);
-    } catch (Exception e) {
+    Example example = new Example(User.class);
+    Example.Criteria criteria = example.createCriteria().andEqualTo("email", user.getEmail());
+    if (userDao.selectByExample(example).size() == 0) {
+      try {
+        return userDao.updateByPrimaryKeySelective(user);
+      } catch (Exception e) {
+        logger.error(
+            "[update user fail], userId: {}, error msg: {}",
+            SerialUtil.toJsonStr(user.getUserId()),
+            SerialUtil.toJsonStr(e.getMessage()));
+        throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+      }
+    } else {
       logger.error(
-          "[update user fail], userId: {}, error msg: {}",
+          "[update user fail because the user email already exists], userId: {}, email: {}",
           SerialUtil.toJsonStr(user.getUserId()),
-          SerialUtil.toJsonStr(e.getMessage()));
-      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+          SerialUtil.toJsonStr(user.getEmail()));
+      throw new UserRelatedException(ResponseEnum.MAIL_HAS_REGISTERED.getMsg());
     }
   }
 
@@ -218,9 +228,9 @@ public class UserService {
   }
 
   public int deleteUsers(List<Long> ids) {
+    Example example = new Example(User.class);
+    Example.Criteria criteria = example.createCriteria().andIn("userId", ids);
     try {
-      Example example = new Example(User.class);
-      Example.Criteria criteria = example.createCriteria().andIn("userId", ids);
       return userDao.deleteByExample(example);
     } catch (Exception e) {
       logger.error(
