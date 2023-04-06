@@ -22,6 +22,12 @@ public class TestCategoryDTO implements Serializable {
   @ApiModelProperty(value = "考试名称")
   private String testName;
 
+  @ApiModelProperty(value = "考试介绍")
+  private String intro;
+
+  @ApiModelProperty(value = "考试tag")
+  private String tag;
+
   @NotBlank
   @ApiModelProperty(value = "考试开始时间")
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
