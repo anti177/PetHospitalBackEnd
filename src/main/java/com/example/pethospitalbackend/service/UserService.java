@@ -184,9 +184,9 @@ public class UserService {
       return userDao.getUserByUserId(id);
     } catch (Exception e) {
       logger.error(
-              "[get user fail], userId: {}, error msg: {}",
-              SerialUtil.toJsonStr(id),
-              SerialUtil.toJsonStr(e.getMessage()));
+          "[get user fail], userId: {}, error msg: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
   }
@@ -195,23 +195,16 @@ public class UserService {
 
   public int updateUser(User user) {
     Example example = new Example(User.class);
+    User originalUser = userDao.selectByPrimaryKey(user.getUserId());
     Example.Criteria criteria = example.createCriteria().andEqualTo("email", user.getEmail());
-    if (userDao.selectByExample(example).size() == 0) {
-      try {
-        return userDao.updateByPrimaryKeySelective(user);
-      } catch (Exception e) {
-        logger.error(
-            "[update user fail], userId: {}, error msg: {}",
-            SerialUtil.toJsonStr(user.getUserId()),
-            SerialUtil.toJsonStr(e.getMessage()));
-        throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
-      }
-    } else {
+    try {
+      return userDao.updateByPrimaryKeySelective(user);
+    } catch (Exception e) {
       logger.error(
-          "[update user fail because the user email already exists], userId: {}, email: {}",
+          "[update user fail], userId: {}, error msg: {}",
           SerialUtil.toJsonStr(user.getUserId()),
-          SerialUtil.toJsonStr(user.getEmail()));
-      throw new UserRelatedException(ResponseEnum.MAIL_HAS_REGISTERED.getMsg());
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
   }
 
