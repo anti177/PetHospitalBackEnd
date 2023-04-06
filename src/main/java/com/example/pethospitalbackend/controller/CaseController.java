@@ -69,24 +69,24 @@ public class CaseController {
   }
 
   @PostMapping("/cases")
-  @ApiOperation("后台上传病例")
+  @ApiOperation("管理员后台上传病例")
   ResponseEntity<Response<IllCase>> postCase(@RequestBody IllCaseFormDTO form) {
     caseService.addCase(form);
     return new ResponseEntity<>(null, HttpStatus.OK);
   }
 
   @PutMapping("/cases/{id}")
-  @ApiOperation("后台修改病例")
+  @ApiOperation("管理员后台修改病例")
   Response<ModifiedRecordCountDTO> putCase(
       @PathVariable Long id, @RequestBody IllCaseFormDTO form) {
-    Integer res = caseService.updateCase(form);
+    Integer res = caseService.updateCase(id, form);
     Response<ModifiedRecordCountDTO> response = new Response<>();
     response.setSuc(new ModifiedRecordCountDTO(res));
     return response;
   }
 
   @DeleteMapping("/cases/{id}")
-  @ApiOperation("后台删除病例")
+  @ApiOperation("管理员删除病例")
   Response<ModifiedRecordCountDTO> deleteCase(@PathVariable Long id) {
     Integer res = caseService.deleteCase(id);
     Response<ModifiedRecordCountDTO> response = new Response<>();
@@ -95,7 +95,7 @@ public class CaseController {
   }
 
   @PostMapping("/diseases")
-  @ApiOperation("后台添加疾病")
+  @ApiOperation("管理员添加疾病")
   Response<Disease> postDisease(@RequestBody Disease disease) {
     Disease diseaseRecord = caseService.addDisease(disease);
     Response<Disease> response = new Response<>();
@@ -104,7 +104,7 @@ public class CaseController {
   }
 
   @DeleteMapping("/diseases/{id}")
-  @ApiOperation("后台删除疾病")
+  @ApiOperation("管理员删除疾病")
   Response<ModifiedRecordCountDTO> deleteDisease(@PathVariable Long id) {
     Integer res = caseService.deleteDisease(id);
     Response<ModifiedRecordCountDTO> response = new Response<>();
@@ -113,7 +113,7 @@ public class CaseController {
   }
 
   @PutMapping("/diseases/{id}")
-  @ApiOperation("后台修改疾病")
+  @ApiOperation("管理员修改疾病")
   Response<ModifiedRecordCountDTO> putDisease(@PathVariable Long id, @RequestBody Disease disease) {
     Integer res = caseService.updateDisease(disease);
     Response<ModifiedRecordCountDTO> response = new Response<>();
@@ -122,7 +122,7 @@ public class CaseController {
   }
 
   @GetMapping("/diseases")
-  @ApiOperation("后台获取全部疾病")
+  @ApiOperation("管理员获取全部疾病")
   Response<List<Disease>> getAllDiseases() {
     Response<List<Disease>> response = new Response<>();
     response.setSuc(caseService.getAllDiseases());
