@@ -25,6 +25,14 @@ public class Test {
   @ApiModelProperty(value = "考试名称")
   private String testName;
 
+  @Column(name = "intro")
+  @ApiModelProperty(value = "考试介绍")
+  private String intro;
+
+  @Column(name = "tag")
+  @ApiModelProperty(value = "考试tag")
+  private String tag;
+
   @Column(name = "paper_id")
   @ApiModelProperty(value = "试卷ID")
   private Long paperID;
