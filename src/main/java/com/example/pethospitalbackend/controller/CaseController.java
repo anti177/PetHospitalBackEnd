@@ -69,14 +69,14 @@ public class CaseController {
   }
 
   @PostMapping("/cases")
-  @ApiOperation("上传病例")
+  @ApiOperation("后台上传病例")
   ResponseEntity<Response<IllCase>> postCase(@RequestBody IllCaseFormDTO form) {
     caseService.addCase(form);
     return new ResponseEntity<>(null, HttpStatus.OK);
   }
 
   @PutMapping("/cases/{id}")
-  @ApiOperation("修改病例")
+  @ApiOperation("后台修改病例")
   Response<ModifiedRecordCountDTO> putCase(
       @PathVariable Long id, @RequestBody IllCaseFormDTO form) {
     Integer res = caseService.updateCase(form);
@@ -86,7 +86,7 @@ public class CaseController {
   }
 
   @DeleteMapping("/cases/{id}")
-  @ApiOperation("删除病例")
+  @ApiOperation("后台删除病例")
   Response<ModifiedRecordCountDTO> deleteCase(@PathVariable Long id) {
     Integer res = caseService.deleteCase(id);
     Response<ModifiedRecordCountDTO> response = new Response<>();
@@ -95,8 +95,8 @@ public class CaseController {
   }
 
   @PostMapping("/diseases")
-  @ApiOperation("添加疾病")
-  Response<Disease> postDisease(Disease disease) {
+  @ApiOperation("后台添加疾病")
+  Response<Disease> postDisease(@RequestBody Disease disease) {
     Disease diseaseRecord = caseService.addDisease(disease);
     Response<Disease> response = new Response<>();
     response.setSuc(diseaseRecord);
@@ -104,7 +104,7 @@ public class CaseController {
   }
 
   @DeleteMapping("/diseases/{id}")
-  @ApiOperation("删除疾病")
+  @ApiOperation("后台删除疾病")
   Response<ModifiedRecordCountDTO> deleteDisease(@PathVariable Long id) {
     Integer res = caseService.deleteDisease(id);
     Response<ModifiedRecordCountDTO> response = new Response<>();
@@ -113,8 +113,8 @@ public class CaseController {
   }
 
   @PutMapping("/diseases/{id}")
-  @ApiOperation("修改疾病")
-  Response<ModifiedRecordCountDTO> putDisease(@PathVariable Long id, Disease disease) {
+  @ApiOperation("后台修改疾病")
+  Response<ModifiedRecordCountDTO> putDisease(@PathVariable Long id, @RequestBody Disease disease) {
     Integer res = caseService.updateDisease(disease);
     Response<ModifiedRecordCountDTO> response = new Response<>();
     response.setSuc(new ModifiedRecordCountDTO(res));
@@ -122,17 +122,15 @@ public class CaseController {
   }
 
   @GetMapping("/diseases")
-  @ApiOperation("分页获取疾病")
-  Response<PageInfo<Disease>> getAllDiseases(
-      @RequestParam Integer pageNum, @RequestParam Integer pageSize) {
-    PageInfo<Disease> diseasePageInfo = caseService.getDiseasePageInfo(pageNum, pageSize);
-    Response<PageInfo<Disease>> response = new Response<>();
-    response.setSuc(diseasePageInfo);
+  @ApiOperation("后台获取全部疾病")
+  Response<List<Disease>> getAllDiseases() {
+    Response<List<Disease>> response = new Response<>();
+    response.setSuc(caseService.getAllDiseases());
     return response;
   }
 
   @GetMapping("/diseases/{id}")
-  @ApiOperation("获取疾病详细信息")
+  @ApiOperation("后台获取疾病详细信息")
   Response<Disease> getDisease(@PathVariable Long id) {
     Disease diseaseRecord = caseService.getDisease(id);
     Response<Disease> response = new Response<>();
