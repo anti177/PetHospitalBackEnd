@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class IllCaseFormDTO {
-
+  Long case_id;
   String case_title;
   Long disease_id;
   String admission_text;

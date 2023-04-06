@@ -42,6 +42,7 @@ public interface UserDao extends Mapper<User> {
   @Select("SELECT password FROM user WHERE email = #{email}")
   String getUserPassword(@Param("email") String email);
 
-  @Select("SELECT user_id as userId,email,role,user_class as userClass FROM user")
+  @ResultType(UserDTO.class)
+  @Select("SELECT user_id as userId, email, role, user_class as userClass FROM user")
   List<UserDTO> selectAllUserDTOs();
 }

@@ -1,5 +1,6 @@
 package com.example.pethospitalbackend.dao;
 
+import com.example.pethospitalbackend.dto.QuestionBackBriefDTO;
 import com.example.pethospitalbackend.dto.QuestionDTO;
 import com.example.pethospitalbackend.dto.TestPaperDTO;
 import com.example.pethospitalbackend.entity.Question;
@@ -31,4 +32,9 @@ public interface QuestionDao extends Mapper<Question> {
           + "from rel_question_paper NATURAL JOIN question "
           + "where paper_id = (SELECT paper_id from test where test_id = #{id}) ORDER BY index_num")
   List<Question> getQuestionAnsByTestId(@Param("id") long testId);
+
+  @ResultType(QuestionBackBriefDTO.class)
+  @Select(
+      "SELECT question_id as questionId, choice, description, question_type as questionType from question")
+  List<QuestionBackBriefDTO> getAllQuestions();
 }

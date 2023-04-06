@@ -1,9 +1,7 @@
 package com.example.pethospitalbackend.controller;
 
-import com.example.pethospitalbackend.dto.EndTestCategoryDTO;
-import com.example.pethospitalbackend.dto.FrontTestAnswerDTO;
-import com.example.pethospitalbackend.dto.TestCategoryDTO;
-import com.example.pethospitalbackend.dto.TestPaperDTO;
+import com.example.pethospitalbackend.dto.*;
+import com.example.pethospitalbackend.entity.Question;
 import com.example.pethospitalbackend.request.RecordRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.TestService;
@@ -17,7 +15,6 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mytest")
 @Api(tags = {"考试"})
 public class TestController {
 
@@ -58,5 +55,47 @@ public class TestController {
       @PathVariable long testId) {
     Response<List<FrontTestAnswerDTO>> response = testService.getRecord(testId);
     return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("/questions")
+  @ApiOperation(value = "管理员获取全部问题列表")
+  public Response<List<QuestionBackBriefDTO>> getAllQuestions() {
+    Response<List<QuestionBackBriefDTO>> response = new Response<>();
+    response.setSuc(testService.getAllQuestions());
+    return response;
+  }
+
+  @GetMapping("/questions/{id}")
+  @ApiOperation(value = "管理员获取某问题具体信息")
+  public Response<QuestionBackDetailDTO> getQuestion(@PathVariable Long id) {
+    Response<QuestionBackDetailDTO> response = new Response<>();
+    response.setSuc(testService.getQuestion(id));
+    return response;
+  }
+
+  @PostMapping("/questions")
+  @ApiOperation("管理员上传问题")
+  public Response<Question> addQuestion(@RequestBody QuestionFormDTO questionForm) {
+    Response<Question> response = new Response<>();
+    response.setSuc(testService.addQuestion(questionForm));
+    return response;
+  }
+
+  @DeleteMapping("/questions/{id}")
+  @ApiOperation("管理员删除问题")
+  public Response<ModifiedRecordCountDTO> deleteQuestion(@PathVariable Long id) {
+    Response<ModifiedRecordCountDTO> response = new Response<>();
+    response.setSuc(new ModifiedRecordCountDTO(testService.deleteQuestion(id)));
+    return response;
+  }
+
+  @PutMapping("/questions/{id}")
+  @ApiOperation("管理员更新问题")
+  public Response<ModifiedRecordCountDTO> updateQuestions(
+      @PathVariable Long id, @RequestBody QuestionFormDTO questionForm) {
+    questionForm.setQuestionId(id);
+    Response<ModifiedRecordCountDTO> response = new Response<>();
+    response.setSuc(new ModifiedRecordCountDTO(testService.updateQuestion(questionForm)));
+    return response;
   }
 }

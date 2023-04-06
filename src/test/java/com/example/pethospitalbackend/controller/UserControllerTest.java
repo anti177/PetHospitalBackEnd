@@ -43,8 +43,8 @@ public class UserControllerTest extends BaseTest {
   private JacksonTester<Response> responseJacksonTester;
   private JacksonTester<List<Long>> listJacksonTester;
 
-  UserDTO userDTO1 = new UserDTO(1L, "role", "email", "userClass");
-  UserDTO userDTO2 = new UserDTO(2L, "role", "email", "userClass");
+  UserDTO userDTO1 = new UserDTO(1L, "role", "email1", "userClass");
+  UserDTO userDTO2 = new UserDTO(2L, "role", "email2", "userClass");
 
   @Before
   public void before() {
