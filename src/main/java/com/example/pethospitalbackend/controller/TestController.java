@@ -4,6 +4,7 @@ import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Paper;
 import com.example.pethospitalbackend.entity.Question;
 import com.example.pethospitalbackend.entity.Test;
+import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.request.RecordRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.TestService;
@@ -89,7 +90,15 @@ public class TestController {
   @ApiOperation("管理员删除问题")
   public Response<ModifiedRecordCountDTO> deleteQuestion(@PathVariable Long id) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
-    response.setSuc(new ModifiedRecordCountDTO(testService.deleteQuestion(id)));
+    int result = testService.deleteQuestion(id);
+    ModifiedRecordCountDTO modifiedRecordCountDTO = new ModifiedRecordCountDTO(result);
+    if (result == -1) {
+      response.setMessage("当前存在包含该试题的试卷，删除失败。请修改或删除相关试卷后重试。");
+      response.setStatus(ResponseEnum.CONFLICT.getCode());
+      response.setResult(modifiedRecordCountDTO);
+    } else {
+      response.setSuc(modifiedRecordCountDTO);
+    }
     return response;
   }
 
@@ -102,8 +111,6 @@ public class TestController {
     response.setSuc(new ModifiedRecordCountDTO(testService.updateQuestion(questionForm)));
     return response;
   }
-
-  // todo: 管理考试场次
 
   @GetMapping("/papers")
   @ApiOperation(value = "管理员获取全部试卷列表")
@@ -143,7 +150,15 @@ public class TestController {
   @ApiOperation(value = "管理员删除试卷")
   public Response<ModifiedRecordCountDTO> deletePaper(@PathVariable Long id) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
-    response.setSuc(new ModifiedRecordCountDTO(testService.deletePaper(id)));
+    int result = testService.deletePaper(id);
+    ModifiedRecordCountDTO modifiedRecordCountDTO = new ModifiedRecordCountDTO(result);
+    if (result == -1) {
+      response.setMessage("当前存在包含该试卷的考试，删除失败。请修改或删除相关考试后重试。");
+      response.setStatus(ResponseEnum.CONFLICT.getCode());
+      response.setResult(modifiedRecordCountDTO);
+    } else {
+      response.setSuc(modifiedRecordCountDTO);
+    }
     return response;
   }
 

@@ -19,7 +19,9 @@ public enum ResponseEnum {
   VERIFY_MSG_CODE_OR_MAIL_INVALID(107, "验证码过期或者邮箱错误"),
   VERIFY_INVALID(108, "验证过期,请重新登陆"),
   UPLOAD_OSS_FAILURE(109, "上传文件失败"),
-  DATABASE_FAIL(110, "数据库操作失败");
+  DATABASE_FAIL(110, "数据库操作失败"),
+
+  CONFLICT(409, "资源发生冲突");
 
   private final int code;
   private final String msg;

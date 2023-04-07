@@ -42,19 +42,15 @@ import java.util.concurrent.TimeUnit;
 public class UserService {
 
   private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
-  @Resource UserDao userDao;
-
-  @Resource EmailUtil emailUtil;
-
-  @Resource BCryptPasswordEncoder bCryptPasswordEncoder;
-
   final Cache<String, String> mailVerifyCodeCache =
       Caffeine.newBuilder()
           .expireAfterWrite(600, TimeUnit.SECONDS)
           .initialCapacity(5)
           .maximumSize(25)
           .build();
+  @Resource UserDao userDao;
+  @Resource EmailUtil emailUtil;
+  @Resource BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Transactional(rollbackFor = Exception.class)
   public JwtUserDTO register(UserRegisterRequest dto) {
