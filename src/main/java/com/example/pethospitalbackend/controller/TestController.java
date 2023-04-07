@@ -103,8 +103,6 @@ public class TestController {
     return response;
   }
 
-  // todo: 管理考试场次
-
   @GetMapping("/papers")
   @ApiOperation(value = "管理员获取全部试卷列表")
   public Response<List<Paper>> getAllPapers() {

@@ -21,13 +21,11 @@ import java.util.UUID;
 public class FileService {
 
   private static final Logger logger = LoggerFactory.getLogger(FileService.class);
-
-  @Resource OSSUtil ossUtil;
-
-  @Resource TreatmentVideoDao treatmentVideoDao;
-
   private final String videoBucketName = "pet-hospital-back-end-video";
   private final String graphBucketName = "pet-hospital-back-end-graph";
+  @Resource OSSUtil ossUtil;
+  @Resource TreatmentVideoDao treatmentVideoDao;
+
   // 上传视频的例子
   public void addVideo(MultipartFile video_mp4) {
 

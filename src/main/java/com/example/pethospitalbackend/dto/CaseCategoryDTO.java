@@ -3,7 +3,6 @@ package com.example.pethospitalbackend.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import java.util.List;
 
 @ApiModel("病例目录模型")
 @Data
