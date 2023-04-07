@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class FileService {
@@ -58,9 +59,12 @@ public class FileService {
   public List<String> addGraphs(MultipartFile[] graphs) {
     List<String> urlList = new LinkedList<>();
     for (MultipartFile graph : graphs) {
-      String code = RandomStringUtils.randomNumeric(5);
       String filename =
-          code + "graph_publisher" + JwtUtils.getUserId() + "/" + graph.getOriginalFilename();
+          "graph_publisher"
+              + JwtUtils.getUserId()
+              + "/"
+              + UUID.randomUUID()
+              + graph.getOriginalFilename();
       String url = ossUtil.uploadFile(graphBucketName, graph, filename);
       if (StringUtils.isBlank(url)) {
         logger.error(
@@ -76,9 +80,12 @@ public class FileService {
   public List<String> addVideos(MultipartFile[] videos) {
     List<String> urlList = new LinkedList<>();
     for (MultipartFile video : videos) {
-      String code = RandomStringUtils.randomNumeric(5);
       String filename =
-          code + "video_publisher" + JwtUtils.getUserId() + "/" + video.getOriginalFilename();
+          "video_publisher_"
+              + JwtUtils.getUserId()
+              + "/"
+              + UUID.randomUUID()
+              + video.getOriginalFilename();
       String url = ossUtil.uploadFile(videoBucketName, video, filename);
       if (StringUtils.isBlank(url)) {
         logger.error(
