@@ -256,7 +256,7 @@ public class TestService {
 
   public int updateQuestion(QuestionBackFormDTO questionForm) {
     Question question = changeFormToQuestion(questionForm);
-    return questionDao.updateByPrimaryKey(question);
+    return questionDao.updateByPrimaryKeySelective(question);
   }
 
   public Question changeFormToQuestion(QuestionBackFormDTO questionForm) {
@@ -315,7 +315,7 @@ public class TestService {
   @Transactional(rollbackFor = Exception.class)
   public int updatePaper(PaperBackDTO paperBackDTO) {
     Paper paper = paperBackDTO.getPaper();
-    paperDao.updateByPrimaryKey(paper);
+    paperDao.updateByPrimaryKeySelective(paper);
 
     // 删除该试卷之前的所有题目
     relQuestionPaperDao.deleteByPaperId(paper.getPaperId());
@@ -361,7 +361,7 @@ public class TestService {
     return test;
   }
 
-  public Integer updateTest(Test test) {
+  public int updateTest(Test test) {
     return testDao.updateByPrimaryKeySelective(test);
   }
 }
