@@ -57,22 +57,22 @@ public class TestServiceTest extends BaseTest {
     questionBackFormDTO.setKeyword("keyword");
     questionBackFormDTO.setDiseaseId(1L);
 
-    final Question expectedResult = new Question();
-    expectedResult.setQuestionId(1L);
-    expectedResult.setQuestionType("questionType");
-    expectedResult.setDescription("description");
-    expectedResult.setChoice("choice1;choice2");
-    expectedResult.setAns("ans1;ans2");
-    expectedResult.setKeyword("keyword");
-    expectedResult.setDiseaseId(1L);
+    final Question question = new Question();
+    question.setQuestionId(1L);
+    question.setQuestionType("questionType");
+    question.setDescription("description");
+    question.setChoice("choice1;choice2");
+    question.setAns("ans1;ans2");
+    question.setKeyword("keyword");
+    question.setDiseaseId(1L);
 
-    when(questionDao.insert(expectedResult)).thenReturn(1);
+    when(questionDao.insert(question)).thenReturn(1);
 
     // Run the test
     final Question result = testService.addQuestion(questionBackFormDTO);
 
     // Verify the results
-    assertEquals(expectedResult, result);
+    assertEquals(question, result);
   }
 
   @Test
@@ -135,8 +135,8 @@ public class TestServiceTest extends BaseTest {
     questionForm.setQuestionId(0L);
     questionForm.setQuestionType("questionType");
     questionForm.setDescription("description");
-    questionForm.setChoice(Arrays.asList("value"));
-    questionForm.setAns(Arrays.asList("value"));
+    questionForm.setChoice(Collections.singletonList("value"));
+    questionForm.setAns(Collections.singletonList("value"));
     questionForm.setKeyword("keyword");
     questionForm.setDiseaseId(0L);
 
@@ -226,14 +226,14 @@ public class TestServiceTest extends BaseTest {
     paper.setPaperId(0L);
     paper.setPaperName("paperName");
     paper.setScore(0L);
-    final List<Paper> expectedResult = Arrays.asList(paper);
+    final List<Paper> expectedResult = Collections.singletonList(paper);
 
     // Configure PaperDao.selectAll(...).
     final Paper paper1 = new Paper();
     paper1.setPaperId(0L);
     paper1.setPaperName("paperName");
     paper1.setScore(0L);
-    final List<Paper> papers = Arrays.asList(paper1);
+    final List<Paper> papers = Collections.singletonList(paper1);
     when(paperDao.selectAll()).thenReturn(papers);
 
     // Run the test

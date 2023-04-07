@@ -5,7 +5,6 @@ import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.*;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
-import com.example.pethospitalbackend.exception.ParameterException;
 import com.example.pethospitalbackend.exception.UserMailNotRegisterOrPasswordWrongException;
 import com.example.pethospitalbackend.request.RecordRequest;
 import com.example.pethospitalbackend.response.Response;
@@ -234,32 +233,208 @@ public class TestService {
     return choiceList;
   }
 
-  // todo: 错误处理
   public List<QuestionBackBriefDTO> getAllQuestions() {
-    return questionDao.getAllQuestionBackBriefDTOs();
+    try {
+      return questionDao.getAllQuestionBackBriefDTOs();
+    } catch (Exception e) {
+      logger.error("[get all questions fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
   public Question addQuestion(QuestionBackFormDTO questionBackFormDTO) {
-    Question question = changeFormToQuestion(questionBackFormDTO);
-    questionDao.insert(question);
-    return question;
+    try {
+      Question question = changeFormToQuestion(questionBackFormDTO);
+      questionDao.insert(question);
+      return question;
+    } catch (Exception e) {
+      logger.error("[insert question fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
   public int deleteQuestion(Long id) {
     if (!relQuestionPaperDao.existsWithQuestionId(id)) {
-      return questionDao.deleteByPrimaryKey(id);
+      try {
+        return questionDao.deleteByPrimaryKey(id);
+      } catch (Exception e) {
+        logger.error(
+            "[delete question fail], questionId: {}, error msg: {}",
+            SerialUtil.toJsonStr(id),
+            SerialUtil.toJsonStr(e.getMessage()));
+        throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+      }
     } else {
-      // todo: 打印报错信息
-      throw new ParameterException("存在相关试卷，删除失败");
+      return -1;
     }
   }
 
   public int updateQuestion(QuestionBackFormDTO questionForm) {
     Question question = changeFormToQuestion(questionForm);
-    return questionDao.updateByPrimaryKeySelective(question);
+    try {
+      return questionDao.updateByPrimaryKeySelective(question);
+    } catch (Exception e) {
+      logger.error(
+          "[update question fail], questionId: {}, error msg: {}",
+          SerialUtil.toJsonStr(question.getQuestionId()),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
-  public Question changeFormToQuestion(QuestionBackFormDTO questionForm) {
+  public QuestionBackDetailDTO getQuestion(Long id) {
+    try {
+      Question question = questionDao.selectByPrimaryKey(id);
+      QuestionBackDetailDTO questionFormDTO = new QuestionBackDetailDTO();
+      BeanUtils.copyProperties(question, questionFormDTO);
+      questionFormDTO.setAns(Arrays.asList(question.getAns().split(";")));
+      questionFormDTO.setChoice(Arrays.asList(question.getChoice().split(";")));
+      questionFormDTO.setDisease(diseaseDao.selectByPrimaryKey(question.getDiseaseId()));
+      return questionFormDTO;
+    } catch (Exception e) {
+      logger.error(
+          "[get question fail], questionId: {}, error msg: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public List<Paper> getAllPapers() {
+    try {
+      return paperDao.selectAll();
+    } catch (Exception e) {
+      logger.error("[get all papers fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public Paper getPaperById(Long id) {
+    try {
+      return paperDao.selectByPrimaryKey(id);
+    } catch (Exception e) {
+      logger.error(
+          "[get paper fail], questionId: {}, error msg: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public Paper addPaper(PaperBackDTO paperBackDTO) {
+    try {
+      Paper paper = paperBackDTO.getPaper();
+      paperDao.insert(paper);
+      List<RelQuestionPaper> relQuestionPaperList =
+          getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
+      relQuestionPaperDao.insertList(relQuestionPaperList);
+      return paper;
+    } catch (Exception e) {
+      logger.error("[insert paper fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public int updatePaper(PaperBackDTO paperBackDTO) {
+    Paper paper = paperBackDTO.getPaper();
+    try {
+      paperDao.updateByPrimaryKeySelective(paper);
+
+      // 删除该试卷之前的所有题目
+      relQuestionPaperDao.deleteByPaperId(paper.getPaperId());
+
+      // 重新添加
+      List<RelQuestionPaper> relQuestionPaperList =
+          getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
+      relQuestionPaperDao.insertList(relQuestionPaperList);
+      return 1;
+    } catch (Exception e) {
+      logger.error(
+          "[update paper fail], paperId: {}, error msg: {}",
+          SerialUtil.toJsonStr(paper.getPaperId()),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public int deletePaper(Long id) {
+    // 如果存在相关考试场次则无法删除
+    if (!testDao.existsWithPaperId(id)) {
+      try {
+        relQuestionPaperDao.deleteByPaperId(id);
+        return paperDao.deleteByPrimaryKey(id);
+      } catch (Exception e) {
+        logger.error(
+            "[delete paper fail], paperId: {}, error msg: {}",
+            SerialUtil.toJsonStr(id),
+            SerialUtil.toJsonStr(e.getMessage()));
+        throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+      }
+    } else {
+      return -1;
+    }
+  }
+
+  public List<Test> getAllTests() {
+    try {
+      return testDao.selectAll();
+    } catch (Exception e) {
+      logger.error("[get all tests fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public TestDetailBackDTO getTest(Long id) {
+    try {
+      return testDao.selectDetailBackDTOById(id);
+    } catch (Exception e) {
+      logger.error(
+          "[get test fail], testId: {}, error msg: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public int deleteTest(Long id) {
+    try {
+      Test test = testDao.selectByPrimaryKey(id);
+      return testDao.deleteByPrimaryKey(id);
+    } catch (Exception e) {
+      logger.error(
+          "[delete test fail], testId: {}, error msg: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public Test addTest(Test test) {
+    try {
+      testDao.insert(test);
+      return test;
+    } catch (Exception e) {
+      logger.error("[insert test fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public int updateTest(Test test) {
+    try {
+      return testDao.updateByPrimaryKeySelective(test);
+    } catch (Exception e) {
+      logger.error(
+          "[update paper fail], paperId: {}, error msg: {}",
+          SerialUtil.toJsonStr(test.getTestId()),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  private Question changeFormToQuestion(QuestionBackFormDTO questionForm) {
     Question question = new Question();
     BeanUtils.copyProperties(questionForm, question);
     String ans = String.join(";", questionForm.getAns());
@@ -267,34 +442,6 @@ public class TestService {
     question.setAns(ans);
     question.setChoice(choice);
     return question;
-  }
-
-  public QuestionBackDetailDTO getQuestion(Long id) {
-    Question question = questionDao.selectByPrimaryKey(id);
-    QuestionBackDetailDTO questionFormDTO = new QuestionBackDetailDTO();
-    BeanUtils.copyProperties(question, questionFormDTO);
-    questionFormDTO.setAns(Arrays.asList(question.getAns().split(";")));
-    questionFormDTO.setChoice(Arrays.asList(question.getChoice().split(";")));
-    questionFormDTO.setDisease(diseaseDao.selectByPrimaryKey(question.getDiseaseId()));
-    return questionFormDTO;
-  }
-
-  public List<Paper> getAllPapers() {
-    return paperDao.selectAll();
-  }
-
-  public Paper getPaperById(Long id) {
-    return paperDao.selectByPrimaryKey(id);
-  }
-
-  @Transactional(rollbackFor = Exception.class)
-  public Paper addPaper(PaperBackDTO paperBackDTO) {
-    Paper paper = paperBackDTO.getPaper();
-    paperDao.insert(paper);
-    List<RelQuestionPaper> relQuestionPaperList =
-        getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
-    relQuestionPaperDao.insertList(relQuestionPaperList);
-    return paper;
   }
 
   private List<RelQuestionPaper> getRelQuestionPaperList(
@@ -310,58 +457,5 @@ public class TestService {
       relQuestionPaperList.add(relQuestionPaper);
     }
     return relQuestionPaperList;
-  }
-
-  @Transactional(rollbackFor = Exception.class)
-  public int updatePaper(PaperBackDTO paperBackDTO) {
-    Paper paper = paperBackDTO.getPaper();
-    paperDao.updateByPrimaryKeySelective(paper);
-
-    // 删除该试卷之前的所有题目
-    relQuestionPaperDao.deleteByPaperId(paper.getPaperId());
-
-    // 重新添加
-    List<RelQuestionPaper> relQuestionPaperList =
-        getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
-    relQuestionPaperDao.insertList(relQuestionPaperList);
-    return 1;
-  }
-
-  @Transactional(rollbackFor = Exception.class)
-  public int deletePaper(Long id) {
-    // 如果存在相关考试场次则无法删除
-    if (!testDao.existsWithPaperId(id)) {
-      relQuestionPaperDao.deleteByPaperId(id);
-      return paperDao.deleteByPrimaryKey(id);
-    } else {
-      logger.warn(""); // todo: 完善
-      throw new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
-    }
-  }
-
-  public List<Test> getAllTests() {
-    return testDao.selectAll();
-  }
-
-  public TestDetailBackDTO getTest(Long id) {
-    return testDao.selectDetailBackDTOById(id);
-  }
-
-  public int deleteTest(Long id) {
-    Test test = testDao.selectByPrimaryKey(id);
-    if (!paperDao.existsWithPrimaryKey(test.getPaperID())) {
-      return testDao.deleteByPrimaryKey(id);
-    } else {
-      throw new ParameterException(""); // todo: 补充
-    }
-  }
-
-  public Test addTest(Test test) {
-    testDao.insert(test);
-    return test;
-  }
-
-  public int updateTest(Test test) {
-    return testDao.updateByPrimaryKeySelective(test);
   }
 }
