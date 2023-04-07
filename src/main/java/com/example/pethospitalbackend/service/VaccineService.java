@@ -31,4 +31,39 @@ public class VaccineService {
     response.setSuc(vaccineList);
     return response;
   }
+
+  public Vaccine addVaccine(Vaccine vaccine) {
+    try {
+      vaccineDao.insert(vaccine);
+      return vaccine;
+    } catch (Exception e) {
+      logger.error(
+          "[insert vaccine Fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public int deleteVaccine(Long id) {
+    try {
+      return vaccineDao.deleteByPrimaryKey(id);
+    } catch (Exception e) {
+      logger.error(
+          "[delete vaccine Fail], vaccineId: {}, error message: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public int updateVaccine(Vaccine vaccine) {
+    try {
+      return vaccineDao.updateByPrimaryKeySelective(vaccine);
+    } catch (Exception e) {
+      logger.error(
+          "[update vaccine Fail], vaccineId: {}, error message: {}",
+          SerialUtil.toJsonStr(vaccine.getId()),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
 }

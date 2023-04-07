@@ -6,9 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -20,7 +18,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @Api(tags = {"上传文件的例子"})
-public class UploadFileExampleController {
+public class FileController {
 
   @Resource FileService fileService;
 
@@ -49,6 +47,22 @@ public class UploadFileExampleController {
     Response<String> response = new Response<>();
     String url = fileService.addGraphs(graph);
     response.setSuc(url);
+    return response;
+  }
+
+  @DeleteMapping("/graphs")
+  @ApiOperation("删除图片")
+  public Response<Boolean> deleteGraphs(@RequestBody String url) {
+    Response<Boolean> response = new Response<>();
+    response.setSuc(fileService.deleteGraph(url));
+    return response;
+  }
+
+  @DeleteMapping("/videos")
+  @ApiOperation("删除视频")
+  public Response<Boolean> deleteVideos(@RequestBody String url) {
+    Response<Boolean> response = new Response<>();
+    response.setSuc(fileService.deleteVideo(url));
     return response;
   }
 }

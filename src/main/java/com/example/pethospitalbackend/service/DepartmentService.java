@@ -32,4 +32,8 @@ public class DepartmentService {
     response.setSuc(departments);
     return response;
   }
+
+  public int updateDepartment(Department department) {
+    return departmentDao.updateByPrimaryKeySelective(department);
+  }
 }

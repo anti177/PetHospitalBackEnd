@@ -87,4 +87,12 @@ public class FileService {
       return url;
     }
   }
+
+  public boolean deleteGraph(String url) {
+    return ossUtil.deleteFile(graphBucketName, url);
+  }
+
+  public Boolean deleteVideo(String url) {
+    return ossUtil.deleteFile(videoBucketName, url);
+  }
 }
