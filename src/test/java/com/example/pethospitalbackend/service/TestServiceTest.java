@@ -2,17 +2,18 @@ package com.example.pethospitalbackend.service;
 
 import com.example.pethospitalbackend.BaseTest;
 import com.example.pethospitalbackend.dao.DiseaseDao;
+import com.example.pethospitalbackend.dao.PaperDao;
 import com.example.pethospitalbackend.dao.QuestionDao;
-import com.example.pethospitalbackend.dto.QuestionBackBriefDTO;
-import com.example.pethospitalbackend.dto.QuestionBackDetailDTO;
-import com.example.pethospitalbackend.dto.QuestionFormDTO;
+import com.example.pethospitalbackend.dao.RelQuestionPaperDao;
+import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Disease;
+import com.example.pethospitalbackend.entity.Paper;
 import com.example.pethospitalbackend.entity.Question;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
@@ -21,14 +22,25 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class TestServiceTest extends BaseTest {
 
   @InjectMocks @Resource TestService testService;
 
-  @Mock QuestionDao questionDao;
-  @Mock DiseaseDao diseaseDao;
+  @MockBean(name = "questionDao")
+  QuestionDao questionDao;
+
+  @MockBean(name = "diseaseDao")
+  DiseaseDao diseaseDao;
+
+  @MockBean(name = "relQuestionPaperDao")
+  RelQuestionPaperDao relQuestionPaperDao;
+
+  @MockBean(name = "paperDao")
+  PaperDao paperDao;
 
   @Before
   public void init() {
@@ -167,5 +179,116 @@ public class TestServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(expectedResult, result);
+  }
+
+  @Test
+  public void testAddPaper() {
+    // Setup
+    final PaperBackDTO paperBackDTO = new PaperBackDTO();
+    final Paper paper = new Paper();
+    paper.setPaperId(0L);
+    paper.setPaperName("paperName");
+    paper.setScore(0L);
+    paperBackDTO.setPaper(paper);
+    final QuestionWithScoreDTO questionWithScoreDTO = new QuestionWithScoreDTO();
+    questionWithScoreDTO.setQuestion_id(0L);
+    questionWithScoreDTO.setScore(0L);
+    paperBackDTO.setList(Collections.singletonList(questionWithScoreDTO));
+
+    final Paper expectedResult = new Paper();
+    expectedResult.setPaperId(0L);
+    expectedResult.setPaperName("paperName");
+    expectedResult.setScore(0L);
+
+    // Run the test
+    final Paper result = testService.addPaper(paperBackDTO);
+
+    // Verify the results
+    assertEquals(expectedResult, result);
+  }
+
+  @Test
+  public void testDeletePaper() {
+    // Setup
+    when(relQuestionPaperDao.deleteByPaperId(0L)).thenReturn(1);
+    when(paperDao.deleteByPrimaryKey(0L)).thenReturn(1);
+
+    // Run the test
+    final int result = testService.deletePaper(0L);
+
+    // Verify the results
+    assertEquals(1, result);
+    verify(relQuestionPaperDao).deleteByPaperId(0L);
+  }
+
+  @Test
+  public void testGetAllPapers() {
+    // Setup
+    final Paper paper = new Paper();
+    paper.setPaperId(0L);
+    paper.setPaperName("paperName");
+    paper.setScore(0L);
+    final List<Paper> expectedResult = Arrays.asList(paper);
+
+    // Configure PaperDao.selectAll(...).
+    final Paper paper1 = new Paper();
+    paper1.setPaperId(0L);
+    paper1.setPaperName("paperName");
+    paper1.setScore(0L);
+    final List<Paper> papers = Arrays.asList(paper1);
+    when(paperDao.selectAll()).thenReturn(papers);
+
+    // Run the test
+    final List<Paper> result = testService.getAllPapers();
+
+    // Verify the results
+    assertEquals(expectedResult, result);
+  }
+
+  @Test
+  public void testGetPaperById() {
+    // Setup
+    final Paper expectedResult = new Paper();
+    expectedResult.setPaperId(0L);
+    expectedResult.setPaperName("paperName");
+    expectedResult.setScore(0L);
+
+    // Configure PaperDao.selectByPrimaryKey(...).
+    final Paper paper = new Paper();
+    paper.setPaperId(0L);
+    paper.setPaperName("paperName");
+    paper.setScore(0L);
+    when(paperDao.selectByPrimaryKey(0L)).thenReturn(paper);
+
+    // Run the test
+    final Paper result = testService.getPaperById(0L);
+
+    // Verify the results
+    assertEquals(expectedResult, result);
+  }
+
+  @Test
+  public void testUpdatePaper() {
+    // Setup
+    final PaperBackDTO paperBackDTO = new PaperBackDTO();
+    final Paper paper = new Paper();
+    paper.setPaperId(0L);
+    paper.setPaperName("paperName");
+    paper.setScore(0L);
+    paperBackDTO.setPaper(paper);
+    final QuestionWithScoreDTO questionWithScoreDTO = new QuestionWithScoreDTO();
+    questionWithScoreDTO.setQuestion_id(0L);
+    questionWithScoreDTO.setScore(0L);
+    paperBackDTO.setList(Collections.singletonList(questionWithScoreDTO));
+
+    when(paperDao.updateByPrimaryKey(any(Paper.class))).thenReturn(1);
+    when(relQuestionPaperDao.deleteByPaperId(0L)).thenReturn(1);
+    when(relQuestionPaperDao.insertList(anyList())).thenReturn(1);
+
+    // Run the test
+    final int result = testService.updatePaper(paperBackDTO);
+
+    // Verify the results
+    assertEquals(1, result);
   }
 }

@@ -133,6 +133,7 @@ public class TestController {
   public Response<ModifiedRecordCountDTO> updatePaper(
       @PathVariable Long id, @RequestBody PaperBackDTO paperBackDTO) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
+    paperBackDTO.getPaper().setPaperId(id);
     response.setSuc(new ModifiedRecordCountDTO(testService.updatePaper(paperBackDTO)));
     return response;
   }

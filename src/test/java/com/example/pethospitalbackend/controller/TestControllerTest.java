@@ -1,11 +1,9 @@
 package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.BaseTest;
-import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
-import com.example.pethospitalbackend.dto.QuestionBackBriefDTO;
-import com.example.pethospitalbackend.dto.QuestionBackDetailDTO;
-import com.example.pethospitalbackend.dto.QuestionFormDTO;
+import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Disease;
+import com.example.pethospitalbackend.entity.Paper;
 import com.example.pethospitalbackend.entity.Question;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.TestService;
@@ -44,6 +42,7 @@ public class TestControllerTest extends BaseTest {
 
   private JacksonTester<Response> responseJacksonTester;
   private JacksonTester<QuestionFormDTO> questionFormDTOJacksonTester;
+  private JacksonTester<PaperBackDTO> paperBackDTOJacksonTester;
 
   @Before
   public void before() {
@@ -140,7 +139,7 @@ public class TestControllerTest extends BaseTest {
   }
 
   @Test
-  public void testAddQuestions() throws Exception {
+  public void testAddQuestion() throws Exception {
     // Setup
     // Configure TestService.addQuestion(...).
     final Question question = new Question();
@@ -151,7 +150,6 @@ public class TestControllerTest extends BaseTest {
     question.setAns("ans");
     question.setKeyword("keyword");
     question.setDiseaseId(0L);
-
     QuestionFormDTO questionFormDTO = new QuestionFormDTO();
     BeanUtils.copyProperties(question, questionFormDTO);
     questionFormDTO.setChoice(Collections.singletonList("choice"));
@@ -190,6 +188,143 @@ public class TestControllerTest extends BaseTest {
     final MockHttpServletResponse response =
         mockMvc
             .perform(delete("/questions/{id}", 0).accept(MediaType.APPLICATION_JSON))
+            .andReturn()
+            .getResponse();
+
+    // Verify the results
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(
+        responseJacksonTester.write(expectedResponseContent).getJson(),
+        response.getContentAsString(StandardCharsets.UTF_8));
+  }
+
+  @Test
+  public void testGetAllPapers() throws Exception {
+    // Setup
+    // Configure TestService.getAllPapers(...).
+    final Paper paper = new Paper();
+    paper.setPaperId(0L);
+    paper.setPaperName("paperName");
+    paper.setScore(0L);
+    final List<Paper> papers = Collections.singletonList(paper);
+    when(testService.getAllPapers()).thenReturn(papers);
+    Response<List<Paper>> expectedResponseContent = new Response<>();
+    expectedResponseContent.setSuc(papers);
+
+    // Run the test
+    final MockHttpServletResponse response =
+        mockMvc
+            .perform(get("/papers").accept(MediaType.APPLICATION_JSON))
+            .andReturn()
+            .getResponse();
+
+    // Verify the results
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(
+        responseJacksonTester.write(expectedResponseContent).getJson(),
+        response.getContentAsString(StandardCharsets.UTF_8));
+  }
+
+  @Test
+  public void testUpdatePaper() throws Exception {
+    // Setup
+    when(testService.updatePaper(any(PaperBackDTO.class))).thenReturn(1);
+    Response<ModifiedRecordCountDTO> expectedResponseContent = new Response<>();
+    expectedResponseContent.setSuc(new ModifiedRecordCountDTO(1));
+    final Paper paper = new Paper();
+    paper.setPaperId(0L);
+    paper.setPaperName("paperName");
+    paper.setScore(0L);
+    PaperBackDTO paperBackDTO = new PaperBackDTO();
+    paperBackDTO.setPaper(paper);
+
+    // Run the test
+    final MockHttpServletResponse response =
+        mockMvc
+            .perform(
+                put("/papers/{id}", 0)
+                    .content(paperBackDTOJacksonTester.write(paperBackDTO).getJson())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andReturn()
+            .getResponse();
+
+    // Verify the results
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(
+        responseJacksonTester.write(expectedResponseContent).getJson(),
+        response.getContentAsString(StandardCharsets.UTF_8));
+  }
+
+  @Test
+  public void testAddPaper() throws Exception {
+    // Setup
+    // Configure TestService.addPaper(...).
+    final Paper paper = new Paper();
+    paper.setPaperId(0L);
+    paper.setPaperName("paperName");
+    paper.setScore(0L);
+    when(testService.addPaper(any(PaperBackDTO.class))).thenReturn(paper);
+    Response<Paper> expectedResponseContent = new Response<>();
+    expectedResponseContent.setSuc(paper);
+    PaperBackDTO paperBackDTO = new PaperBackDTO();
+    paperBackDTO.setPaper(paper);
+
+    // Run the test
+    final MockHttpServletResponse response =
+        mockMvc
+            .perform(
+                post("/papers")
+                    .content(paperBackDTOJacksonTester.write(paperBackDTO).getJson())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andReturn()
+            .getResponse();
+
+    // Verify the results
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(
+        responseJacksonTester.write(expectedResponseContent).getJson(),
+        response.getContentAsString(StandardCharsets.UTF_8));
+  }
+
+  @Test
+  public void testDeletePaper() throws Exception {
+    // Setup
+    when(testService.deletePaper(0L)).thenReturn(1);
+    Response<ModifiedRecordCountDTO> expectedResponseContent = new Response<>();
+    expectedResponseContent.setSuc(new ModifiedRecordCountDTO(1));
+
+    // Run the test
+    final MockHttpServletResponse response =
+        mockMvc
+            .perform(delete("/papers/{id}", 0).accept(MediaType.APPLICATION_JSON))
+            .andReturn()
+            .getResponse();
+
+    // Verify the results
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(
+        responseJacksonTester.write(expectedResponseContent).getJson(),
+        response.getContentAsString(StandardCharsets.UTF_8));
+  }
+
+  @Test
+  public void testGetPaper() throws Exception {
+    // Setup
+    // Configure TestService.getPaperById(...).
+    final Paper paper = new Paper();
+    paper.setPaperId(0L);
+    paper.setPaperName("paperName");
+    paper.setScore(0L);
+    when(testService.getPaperById(0L)).thenReturn(paper);
+    Response<Paper> expectedResponseContent = new Response<>();
+    expectedResponseContent.setSuc(paper);
+
+    // Run the test
+    final MockHttpServletResponse response =
+        mockMvc
+            .perform(get("/papers/{id}", 0).accept(MediaType.APPLICATION_JSON))
             .andReturn()
             .getResponse();
 
