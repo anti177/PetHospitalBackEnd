@@ -1,6 +1,7 @@
 package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.dto.*;
+import com.example.pethospitalbackend.entity.Paper;
 import com.example.pethospitalbackend.entity.Question;
 import com.example.pethospitalbackend.request.RecordRequest;
 import com.example.pethospitalbackend.response.Response;
@@ -101,5 +102,54 @@ public class TestController {
     return response;
   }
 
-  // todo: 管理试卷 & 管理考试
+  // todo: 管理考试场次
+
+  @GetMapping("/papers")
+  @ApiOperation(value = "管理员获取全部试卷列表")
+  public Response<List<Paper>> getAllPapers() {
+    Response<List<Paper>> response = new Response<>();
+    response.setSuc(testService.getAllPapers());
+    return response;
+  }
+
+  @GetMapping("/papers/{id}")
+  @ApiOperation(value = "管理员获取试卷信息")
+  public Response<Paper> getPaper(@PathVariable Long id) {
+    Response<Paper> response = new Response<>();
+    response.setSuc(testService.getPaperById(id));
+    return response;
+  }
+
+  @PostMapping("/papers")
+  @ApiOperation(value = "管理员生成试卷")
+  public Response<Paper> addPaper(@RequestBody PaperBackDTO paperBackDTO) {
+    Response<Paper> response = new Response<>();
+    response.setSuc(testService.addPaper(paperBackDTO));
+    return response;
+  }
+
+  @PutMapping("/papers/{id}")
+  @ApiOperation(value = "管理员修改试卷")
+  public Response<ModifiedRecordCountDTO> updatePaper(
+      @PathVariable Long id, @RequestBody PaperBackDTO paperBackDTO) {
+    Response<ModifiedRecordCountDTO> response = new Response<>();
+    response.setSuc(new ModifiedRecordCountDTO(testService.updatePaper(paperBackDTO)));
+    return response;
+  }
+
+  @DeleteMapping("/papers/{id}")
+  @ApiOperation(value = "管理员删除试卷")
+  public Response<ModifiedRecordCountDTO> deletePaper(@PathVariable Long id) {
+    Response<ModifiedRecordCountDTO> response = new Response<>();
+    response.setSuc(new ModifiedRecordCountDTO(testService.deletePaper(id)));
+    return response;
+  }
+
+  @GetMapping("/tests")
+  @ApiOperation(value = "管理员获取全部考试场次列表")
+  public Response<List<TestBackFormDTO>> getAllTests() {
+    Response<List<TestBackFormDTO>> response = new Response<>();
+    response.setSuc(testService.getAllTests());
+    return response;
+  }
 }

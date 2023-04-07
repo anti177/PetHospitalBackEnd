@@ -51,8 +51,6 @@ public class TestControllerTest extends BaseTest {
     mockMvc = MockMvcBuilders.standaloneSetup(testController).build();
   }
 
-  // todo: 测试
-
   @Test
   public void testGetQuestion() throws Exception {
     // Setup
