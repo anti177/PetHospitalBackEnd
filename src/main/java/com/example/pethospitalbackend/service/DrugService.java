@@ -31,4 +31,38 @@ public class DrugService {
     response.setSuc(drugList);
     return response;
   }
+
+  public Drug addDrug(Drug drug) {
+    try {
+      drugDao.insert(drug);
+      return drug;
+    } catch (Exception e) {
+      logger.error("[insert drug Fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public int deleteDrug(Long id) {
+    try {
+      return drugDao.deleteByPrimaryKey(id);
+    } catch (Exception e) {
+      logger.error(
+          "[delete drug Fail], drugId: {}, error message: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public int updateDrug(Drug drug) {
+    try {
+      return drugDao.updateByPrimaryKeySelective(drug);
+    } catch (Exception e) {
+      logger.error(
+          "[update drug Fail], drugId: {}, error message: {}",
+          SerialUtil.toJsonStr(drug.getId()),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
 }
