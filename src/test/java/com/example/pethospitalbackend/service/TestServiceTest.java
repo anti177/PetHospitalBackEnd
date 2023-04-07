@@ -140,7 +140,7 @@ public class TestServiceTest extends BaseTest {
     questionForm.setKeyword("keyword");
     questionForm.setDiseaseId(0L);
 
-    when(questionDao.updateByPrimaryKeySelective(any())).thenReturn(1);
+    when(questionDao.updateByPrimaryKey(any())).thenReturn(1);
 
     // Run the test
     final int result = testService.updateQuestion(questionForm);
@@ -425,7 +425,7 @@ public class TestServiceTest extends BaseTest {
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
 
-    when(testDao.updateByPrimaryKeySelective(any())).thenReturn(1);
+    when(testDao.updateByPrimaryKey(test)).thenReturn(1);
 
     // Run the test
     final int result = testService.updateTest(test);

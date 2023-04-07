@@ -71,4 +71,22 @@ class DepartmentServiceTest {
     // Verify the results
     assertThat(result).isEqualTo(expectedResult);
   }
+
+  @Test
+  void testUpdateDepartment() {
+    // Setup
+    final Department department = new Department();
+    department.setDepartmentId(0L);
+    department.setDepartmentName("departmentName");
+    department.setIntro("intro");
+    department.setPeopleList("peopleList");
+
+    when(departmentServiceUnderTest.departmentDao.updateByPrimaryKey(department)).thenReturn(1);
+
+    // Run the test
+    final int result = departmentServiceUnderTest.updateDepartment(department);
+
+    // Verify the results
+    assertThat(result).isEqualTo(1);
+  }
 }

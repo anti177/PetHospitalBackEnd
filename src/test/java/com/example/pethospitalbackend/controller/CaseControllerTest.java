@@ -1,6 +1,7 @@
 package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.BaseTest;
+import com.example.pethospitalbackend.dto.InspectionItemBackDTO;
 import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.response.Response;
@@ -36,6 +37,7 @@ public class CaseControllerTest extends BaseTest {
   @Mock private CaseService caseService;
 
   private JacksonTester<Response> responseJacksonTester;
+  private JacksonTester<Disease> diseaseJacksonTester;
 
   @Before
   public void before() {
@@ -116,7 +118,11 @@ public class CaseControllerTest extends BaseTest {
   @Test
   public void testPutDisease() throws Exception {
     // Setup
-    when(caseService.updateDisease(new Disease())).thenReturn(1);
+    final Disease disease = new Disease();
+    disease.setDiseaseId(0L);
+    disease.setDiseaseName("diseaseName");
+    disease.setTypeName("typeName");
+    when(caseService.updateDisease(disease)).thenReturn(1);
     Response<ModifiedRecordCountDTO> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(new ModifiedRecordCountDTO(1));
 
@@ -125,7 +131,7 @@ public class CaseControllerTest extends BaseTest {
         mockMvc
             .perform(
                 put("/diseases/{id}", 0)
-                    .content("content")
+                    .content(diseaseJacksonTester.write(disease).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()
@@ -146,7 +152,7 @@ public class CaseControllerTest extends BaseTest {
     disease.setDiseaseId(0L);
     disease.setDiseaseName("diseaseName");
     disease.setTypeName("typeName");
-    when(caseService.addDisease(new Disease())).thenReturn(disease);
+    when(caseService.addDisease(disease)).thenReturn(disease);
     Response<Disease> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(disease);
     // Run the test
@@ -154,7 +160,7 @@ public class CaseControllerTest extends BaseTest {
         mockMvc
             .perform(
                 post("/diseases")
-                    .content("content")
+                    .content(diseaseJacksonTester.write(disease).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()
@@ -166,4 +172,33 @@ public class CaseControllerTest extends BaseTest {
         responseJacksonTester.write(expectedResponseContent).getJson(),
         response.getContentAsString(StandardCharsets.UTF_8));
   }
+
+  @Test
+  public void testGetAllInspectionItems() throws Exception {
+    // Setup
+    // Configure CaseService.getAllInspectionItems(...).
+    final InspectionItemBackDTO inspectionItemBackDTO = new InspectionItemBackDTO();
+    inspectionItemBackDTO.setItemId(0L);
+    inspectionItemBackDTO.setItemName("itemName");
+    final List<InspectionItemBackDTO> inspectionItemBackDTOS =
+        Collections.singletonList(inspectionItemBackDTO);
+    when(caseService.getAllInspectionItems()).thenReturn(inspectionItemBackDTOS);
+    Response<List<InspectionItemBackDTO>> expectedResponseContent = new Response<>();
+    expectedResponseContent.setSuc(inspectionItemBackDTOS);
+
+    // Run the test
+    final MockHttpServletResponse response =
+        mockMvc
+            .perform(get("/inspections/items").accept(MediaType.APPLICATION_JSON))
+            .andReturn()
+            .getResponse();
+
+    // Verify the results
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(
+        responseJacksonTester.write(expectedResponseContent).getJson(),
+        response.getContentAsString(StandardCharsets.UTF_8));
+  }
+
+  // todo: 病例相关接口测试
 }

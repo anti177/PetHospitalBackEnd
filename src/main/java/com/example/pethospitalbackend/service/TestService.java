@@ -272,7 +272,7 @@ public class TestService {
   public int updateQuestion(QuestionBackFormDTO questionForm) {
     Question question = changeFormToQuestion(questionForm);
     try {
-      return questionDao.updateByPrimaryKeySelective(question);
+      return questionDao.updateByPrimaryKey(question);
     } catch (Exception e) {
       logger.error(
           "[update question fail], questionId: {}, error msg: {}",
@@ -340,7 +340,7 @@ public class TestService {
   public int updatePaper(PaperBackDTO paperBackDTO) {
     Paper paper = paperBackDTO.getPaper();
     try {
-      paperDao.updateByPrimaryKeySelective(paper);
+      paperDao.updateByPrimaryKey(paper);
 
       // 删除该试卷之前的所有题目
       relQuestionPaperDao.deleteByPaperId(paper.getPaperId());
@@ -424,7 +424,7 @@ public class TestService {
 
   public int updateTest(Test test) {
     try {
-      return testDao.updateByPrimaryKeySelective(test);
+      return testDao.updateByPrimaryKey(test);
     } catch (Exception e) {
       logger.error(
           "[update paper fail], paperId: {}, error msg: {}",
