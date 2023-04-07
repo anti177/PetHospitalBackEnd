@@ -41,7 +41,8 @@ public interface InspectionCaseDao
       })
   List<FileDTO> getInspectionGraphDTOByInspectionCaseId(@Param("id") long inspectionCaseId);
 
-  @Select("SELECT * FROM inspection_item WHERE inspection_item_id = #{id}")
+  @Select(
+      "SELECT inspection_item_id, item_name FROM inspection_item WHERE inspection_item_id = #{id}")
   @Results(
       id = "inspectionItem",
       value = {
@@ -50,7 +51,8 @@ public interface InspectionCaseDao
       })
   InspectionItemBackDTO getInspectionItemById(@Param("id") long itemId);
 
-  @Select("SELECT * from inspection_case where case_id = #{id} ORDER BY sort_num")
+  @Select(
+      "SELECT inspection_case_id, item_id, result from inspection_case where case_id = #{id} ORDER BY sort_num")
   @Results(
       id = "inspection_case_list",
       value = {
@@ -81,4 +83,13 @@ public interface InspectionCaseDao
 
   @Select("SELECT inspection_case_id from inspection_case where case_id = #{id}")
   List<Long> selectAllInspectionCaseIdByIllCaseId(@Param("id") long illCaseId);
+
+  @Select("SELECT inspection_item_id, item_name from inspection_item")
+  @Results(
+      id = "inspection_item_list",
+      value = {
+        @Result(id = true, column = "inspection_item_id", property = "itemId"),
+        @Result(column = "item_name", property = "itemName")
+      })
+  List<InspectionItemBackDTO> selectAllInspectionItems();
 }

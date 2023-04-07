@@ -211,7 +211,7 @@ public class CaseService {
           inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
       Example example = new Example(InspectionGraph.class);
       Example.Criteria criteria =
-          example.createCriteria().andIn("inspection_id", inspectionCaseIdList);
+          example.createCriteria().andIn("inspectionId", inspectionCaseIdList);
       inspectionCaseDao.deleteByExample(criteria); // 删除检查情况
       inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(caseId); // 删除检查情况中的照片
       caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
@@ -378,6 +378,10 @@ public class CaseService {
           "[get all diseases fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
+  }
+
+  public List<InspectionItemBackDTO> getAllInspectionItems() {
+    return inspectionCaseDao.selectAllInspectionItems();
   }
 
   // 目前不需要这个方法
