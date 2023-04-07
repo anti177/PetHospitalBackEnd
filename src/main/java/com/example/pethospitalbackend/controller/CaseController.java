@@ -137,4 +137,12 @@ public class CaseController {
     response.setSuc(diseaseRecord);
     return response;
   }
+
+  // todo: 测试
+  @GetMapping("/inspections/items")
+  Response<List<InspectionItemBackDTO>> getAllInspectionItems() {
+    Response<List<InspectionItemBackDTO>> response = new Response<>();
+    response.setSuc(caseService.getAllInspectionItems());
+    return response;
+  }
 }

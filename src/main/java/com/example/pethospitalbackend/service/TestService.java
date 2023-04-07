@@ -2,9 +2,7 @@ package com.example.pethospitalbackend.service;
 
 import com.example.pethospitalbackend.dao.*;
 import com.example.pethospitalbackend.dto.*;
-import com.example.pethospitalbackend.entity.AnswerRecord;
-import com.example.pethospitalbackend.entity.Question;
-import com.example.pethospitalbackend.entity.TestRecord;
+import com.example.pethospitalbackend.entity.*;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.exception.ParameterException;
@@ -17,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -41,6 +41,8 @@ public class TestService {
   @Resource RelQuestionPaperDao relQuestionPaperDao;
 
   @Resource DiseaseDao diseaseDao;
+
+  @Resource PaperDao paperDao;
 
   public Response<List<TestCategoryDTO>> getTestCategoryList() {
     String userId = JwtUtils.getUserId();
@@ -276,5 +278,76 @@ public class TestService {
     questionFormDTO.setChoice(Arrays.asList(question.getChoice().split(";")));
     questionFormDTO.setDisease(diseaseDao.selectByPrimaryKey(question.getDiseaseId()));
     return questionFormDTO;
+  }
+
+  // todo: 测试
+  public List<Paper> getAllPapers() {
+    return paperDao.selectAll();
+  }
+
+  public Paper getPaperById(Long id) {
+    return paperDao.selectByPrimaryKey(id);
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public Paper addPaper(PaperBackDTO paperBackDTO) {
+    Paper paper = paperBackDTO.getPaper();
+    paperDao.insert(paper);
+    List<RelQuestionPaper> relQuestionPaperList =
+        getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
+    relQuestionPaperDao.insertList(relQuestionPaperList);
+    return paper;
+  }
+
+  private List<RelQuestionPaper> getRelQuestionPaperList(
+      List<QuestionWithScoreDTO> list, Long paperId) {
+    List<RelQuestionPaper> relQuestionPaperList = new ArrayList<>();
+    for (int i = 0; i < list.size(); i++) {
+      QuestionWithScoreDTO questionWIthScoreDTO = list.get(i);
+      RelQuestionPaper relQuestionPaper = new RelQuestionPaper();
+      relQuestionPaper.setIndex_num((long) i);
+      relQuestionPaper.setPaperId(paperId);
+      relQuestionPaper.setQuestionId(questionWIthScoreDTO.getQuestion_id());
+      relQuestionPaper.setScore(questionWIthScoreDTO.getScore());
+      relQuestionPaperList.add(relQuestionPaper);
+    }
+    return relQuestionPaperList;
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public int updatePaper(PaperBackDTO paperBackDTO) {
+    Paper paper = paperBackDTO.getPaper();
+    paperDao.updateByPrimaryKey(paper);
+
+    // 删除该试卷之前的所有题目
+    Example example = new Example(RelQuestionPaper.class);
+    Example.Criteria criteria = example.createCriteria().andEqualTo("paperId", paper.getPaperId());
+    relQuestionPaperDao.deleteByExample(example);
+
+    // 重新添加
+    List<RelQuestionPaper> relQuestionPaperList =
+        getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
+    relQuestionPaperDao.insertList(relQuestionPaperList);
+    return 1;
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public int deletePaper(Long id) {
+    // todo: 如果存在相关考试场次则无法删除
+    if (!testDao.existsWithPaperId(id)) {
+      Example example = new Example(RelQuestionPaper.class);
+      Example.Criteria criteria = example.createCriteria().andEqualTo("paperId", id);
+      relQuestionPaperDao.deleteByExample(example);
+
+      return paperDao.deleteByPrimaryKey(id);
+    } else {
+      logger.warn(""); // todo: 完善
+      throw new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
+    }
+  }
+
+  // todo: 补充考试场次管理
+  public List<TestBackFormDTO> getAllTests() {
+    return null;
   }
 }

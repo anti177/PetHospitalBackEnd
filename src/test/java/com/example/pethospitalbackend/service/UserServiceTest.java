@@ -7,8 +7,8 @@ import com.example.pethospitalbackend.entity.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
@@ -22,7 +22,8 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest extends BaseTest {
   @InjectMocks @Resource UserService userService;
 
-  @Mock UserDao userDao;
+  @MockBean(name = "userDao")
+  UserDao userDao;
 
   @Before
   public void init() {
@@ -32,13 +33,13 @@ public class UserServiceTest extends BaseTest {
   @Test
   public void testDeleteUser() {
     // Setup
-    when(userDao.deleteByPrimaryKey(0L)).thenReturn(0);
+    when(userDao.deleteByPrimaryKey(0L)).thenReturn(1);
 
     // Run the test
     final int result = userService.deleteUser(0L);
 
     // Verify the results
-    assertEquals(0, result);
+    assertEquals(1, result);
   }
 
   @Test
@@ -50,25 +51,25 @@ public class UserServiceTest extends BaseTest {
     final User user1 = new User(0L, "password", "role", "email", "userClass");
     when(userDao.selectByPrimaryKey(0L)).thenReturn(user1);
 
-    when(userDao.updateByPrimaryKeySelective(any())).thenReturn(0);
+    when(userDao.updateByPrimaryKeySelective(any())).thenReturn(1);
 
     // Run the test
     final int result = userService.updateUser(user);
 
     // Verify the results
-    assertEquals(0, result);
+    assertEquals(1, result);
   }
 
   @Test
   public void testDeleteUsers() {
     // Setup
-    when(userDao.deleteByExample(any(Object.class))).thenReturn(0);
+    when(userService.userDao.deleteByIdList(Arrays.asList(0L, 1L))).thenReturn(2);
 
     // Run the test
     final int result = userService.deleteUsers(Arrays.asList(0L, 1L));
 
     // Verify the results
-    assertEquals(0, result);
+    assertEquals(2, result);
   }
 
   @Test
@@ -90,20 +91,20 @@ public class UserServiceTest extends BaseTest {
   @Test
   public void testGetAllUserDTOs() {
     // Setup
-    final List<UserDTO> expectedResult =
-        Collections.singletonList(new UserDTO(0L, "role", "email", "userClass"));
+    UserDTO userDTO = new UserDTO();
+    userDTO.setUserId(0L);
+    userDTO.setEmail("xxx");
+    userDTO.setRole("xxx");
+    userDTO.setUserClass("xxx");
 
     // Configure UserDao.selectAllUserDTOs(...).
-    final List<UserDTO> userDTOS =
-        Collections.singletonList(new UserDTO(0L, "role", "email", "userClass"));
+    final List<UserDTO> userDTOS = Collections.singletonList(userDTO);
     when(userDao.selectAllUserDTOs()).thenReturn(userDTOS);
 
     // Run the test
     final List<UserDTO> result = userService.getAllUserDTOs();
 
     // Verify the results
-    assertEquals(expectedResult, result);
+    assertEquals(userDTOS, result);
   }
-
-  // todo: get测试谜之出错
 }

@@ -9,7 +9,6 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.Objects;
 
 @ApiModel("用户登录模型")
 @Data
@@ -31,15 +30,4 @@ public class UserDTO implements Serializable {
 
   @ApiModelProperty(value = "班级")
   private String userClass;
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    UserDTO userDTO = (UserDTO) o;
-    return userId == userDTO.userId
-        && Objects.equals(role, userDTO.role)
-        && Objects.equals(email, userDTO.email)
-        && Objects.equals(userClass, userDTO.userClass);
-  }
 }
