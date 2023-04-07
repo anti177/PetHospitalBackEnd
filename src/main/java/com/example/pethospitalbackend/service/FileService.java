@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -56,45 +54,39 @@ public class FileService {
     }
   }
 
-  public List<String> addGraphs(MultipartFile[] graphs) {
-    List<String> urlList = new LinkedList<>();
-    for (MultipartFile graph : graphs) {
-      String filename =
-          "graph_publisher"
-              + JwtUtils.getUserId()
-              + "/"
-              + UUID.randomUUID()
-              + graph.getOriginalFilename();
-      String url = ossUtil.uploadFile(graphBucketName, graph, filename);
-      if (StringUtils.isBlank(url)) {
-        logger.error(
-            "[addGraph Fail], graph: {}", SerialUtil.toJsonStr(graph.getOriginalFilename()));
-        throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
-      }
-      // 在数据添加url
-      urlList.add(url);
+  public String addGraphs(MultipartFile graph) {
+    String filename =
+        "graph_publisher"
+            + JwtUtils.getUserId()
+            + "/"
+            + UUID.randomUUID()
+            + graph.getOriginalFilename();
+    String url = ossUtil.uploadFile(graphBucketName, graph, filename);
+
+    if (StringUtils.isBlank(url)) {
+      logger.error("[addGraph Fail], graph: {}", SerialUtil.toJsonStr(graph.getOriginalFilename()));
+      throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
+    } else {
+      return url;
     }
-    return urlList;
   }
 
-  public List<String> addVideos(MultipartFile[] videos) {
-    List<String> urlList = new LinkedList<>();
-    for (MultipartFile video : videos) {
-      String filename =
-          "video_publisher_"
-              + JwtUtils.getUserId()
-              + "/"
-              + UUID.randomUUID()
-              + video.getOriginalFilename();
-      String url = ossUtil.uploadFile(videoBucketName, video, filename);
-      if (StringUtils.isBlank(url)) {
-        logger.error(
-            "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
-        throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
-      }
-      // 在数据添加url
-      urlList.add(url);
+  public String addVideos(MultipartFile video) {
+    String filename =
+        "video_publisher_"
+            + JwtUtils.getUserId()
+            + "/"
+            + UUID.randomUUID()
+            + video.getOriginalFilename();
+    String url = ossUtil.uploadFile(videoBucketName, video, filename);
+    if (StringUtils.isBlank(url)) {
+      logger.error(
+          "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
+      throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
     }
-    return urlList;
+    // 在数据添加url
+    else {
+      return url;
+    }
   }
 }

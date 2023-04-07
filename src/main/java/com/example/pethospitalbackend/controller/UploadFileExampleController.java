@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * 使用oos上传文件的例子
@@ -36,20 +35,20 @@ public class UploadFileExampleController {
   }
 
   @PostMapping("/videos")
-  @ApiOperation("添加多个视频")
-  public Response<List<String>> addVideos(@RequestParam("videos") MultipartFile[] videos) {
-    Response<List<String>> response = new Response<>();
-    List<String> urlList = fileService.addVideos(videos);
-    response.setSuc(urlList);
+  @ApiOperation("添加视频")
+  public Response<String> addVideos(@RequestParam("videos") MultipartFile video) {
+    Response<String> response = new Response<>();
+    String url = fileService.addVideos(video);
+    response.setSuc(url);
     return response;
   }
 
   @PostMapping("/graphs")
-  @ApiOperation("添加多个图片")
-  public Response<List<String>> addGraphs(@RequestParam("graphs") MultipartFile[] graphs) {
-    Response<List<String>> response = new Response<>();
-    List<String> urlList = fileService.addGraphs(graphs);
-    response.setSuc(urlList);
+  @ApiOperation("添加图片")
+  public Response<String> addGraphs(@RequestParam("graphs") MultipartFile graph) {
+    Response<String> response = new Response<>();
+    String url = fileService.addGraphs(graph);
+    response.setSuc(url);
     return response;
   }
 }
