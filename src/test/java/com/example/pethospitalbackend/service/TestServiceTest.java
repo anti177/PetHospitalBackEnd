@@ -66,34 +66,6 @@ public class TestServiceTest extends BaseTest {
   }
 
   @Test
-  public void testGetAllQuestions() {
-    // Setup
-    final QuestionBackBriefDTO questionBackBriefDTO = new QuestionBackBriefDTO();
-    questionBackBriefDTO.setQuestionId(0L);
-    questionBackBriefDTO.setChoice("choice");
-    questionBackBriefDTO.setDescription("description");
-    questionBackBriefDTO.setQuestionType("questionType");
-    final List<QuestionBackBriefDTO> expectedResult =
-        Collections.singletonList(questionBackBriefDTO);
-
-    // Configure QuestionDao.getAllQuestions(...).
-    final QuestionBackBriefDTO questionBackBriefDTO1 = new QuestionBackBriefDTO();
-    questionBackBriefDTO1.setQuestionId(0L);
-    questionBackBriefDTO1.setChoice("choice");
-    questionBackBriefDTO1.setDescription("description");
-    questionBackBriefDTO1.setQuestionType("questionType");
-    final List<QuestionBackBriefDTO> questionBackBriefDTOS =
-        Collections.singletonList(questionBackBriefDTO1);
-    when(questionDao.getAllQuestions()).thenReturn(questionBackBriefDTOS);
-
-    // Run the test
-    final List<QuestionBackBriefDTO> result = testService.getAllQuestions();
-
-    // Verify the results
-    assertEquals(expectedResult, result);
-  }
-
-  @Test
   public void testDeleteQuestion() {
     // Setup
     when(questionDao.deleteByExample(0L)).thenReturn(1);
@@ -165,5 +137,35 @@ public class TestServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(1, result);
+  }
+
+  @Test
+  public void testGetAllQuestions() {
+    // Setup
+    final QuestionBackBriefDTO questionBackBriefDTO = new QuestionBackBriefDTO();
+    questionBackBriefDTO.setQuestionId(0L);
+    questionBackBriefDTO.setDescription("description");
+    questionBackBriefDTO.setQuestionType("questionType");
+    questionBackBriefDTO.setKeyword("keyword");
+    questionBackBriefDTO.setDiseaseName("diseaseName");
+    final List<QuestionBackBriefDTO> expectedResult =
+        Collections.singletonList(questionBackBriefDTO);
+
+    // Configure QuestionDao.getAllQuestionBackBriefDTOs(...).
+    final QuestionBackBriefDTO questionBackBriefDTO1 = new QuestionBackBriefDTO();
+    questionBackBriefDTO1.setQuestionId(0L);
+    questionBackBriefDTO1.setDescription("description");
+    questionBackBriefDTO1.setQuestionType("questionType");
+    questionBackBriefDTO1.setKeyword("keyword");
+    questionBackBriefDTO1.setDiseaseName("diseaseName");
+    final List<QuestionBackBriefDTO> questionBackBriefDTOS =
+        Collections.singletonList(questionBackBriefDTO1);
+    when(questionDao.getAllQuestionBackBriefDTOs()).thenReturn(questionBackBriefDTOS);
+
+    // Run the test
+    final List<QuestionBackBriefDTO> result = testService.getAllQuestions();
+
+    // Verify the results
+    assertEquals(expectedResult, result);
   }
 }

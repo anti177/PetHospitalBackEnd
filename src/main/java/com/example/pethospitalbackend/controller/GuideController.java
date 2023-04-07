@@ -9,17 +9,16 @@ import com.example.pethospitalbackend.service.DrugService;
 import com.example.pethospitalbackend.service.VaccineService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.List;
-import javax.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 @RestController
-@Api(tags = {"导览"})
-@RequestMapping("/guide")
+@Api(tags = {"科室管理与导览"})
 public class GuideController {
   @Resource DepartmentService departmentService;
 
@@ -47,4 +46,6 @@ public class GuideController {
     Response<List<Vaccine>> response = vaccineService.getAllVaccines();
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
+
+  // todo: 科室信息修改 & 药品管理 & 疫苗管理
 }

@@ -20,28 +20,28 @@ public class TestController {
 
   @Resource TestService testService;
 
-  @GetMapping("/category")
+  @GetMapping("/mytest/category")
   @ApiOperation(value = "获得考试目录")
   public ResponseEntity<Response<List<TestCategoryDTO>>> getTotalCategory() {
     Response<List<TestCategoryDTO>> response = testService.getTestCategoryList();
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @GetMapping("/records/category")
+  @GetMapping("/mytest/records/category")
   @ApiOperation(value = "获得答题记录")
   public ResponseEntity<Response<List<EndTestCategoryDTO>>> getEndTestCategory() {
     Response<List<EndTestCategoryDTO>> response = testService.getEndTestCategoryList();
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @GetMapping("/{testId}")
+  @GetMapping("/mytest/{testId}")
   @ApiOperation(value = "获得考试题目")
   public ResponseEntity<Response<TestPaperDTO>> getTestContent(@PathVariable Long testId) {
     Response<TestPaperDTO> response = testService.getTestContent(testId);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @PostMapping("/answer/{testId}")
+  @PostMapping("/mytest/answer/{testId}")
   @ApiOperation(value = "提交考试答案")
   public ResponseEntity<Response<Boolean>> postTestAnswer(
       @RequestBody List<RecordRequest> recordRequests, @PathVariable long testId) {
@@ -49,13 +49,15 @@ public class TestController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  @GetMapping("/record/{testId}")
+  @GetMapping("/mytest/record/{testId}")
   @ApiOperation(value = "查看考试答案")
   public ResponseEntity<Response<List<FrontTestAnswerDTO>>> getTestAnswer(
       @PathVariable long testId) {
     Response<List<FrontTestAnswerDTO>> response = testService.getRecord(testId);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
+
+  // -----------------------------------------------------------------后台---------------------------------------------------------------
 
   @GetMapping("/questions")
   @ApiOperation(value = "管理员获取全部问题列表")
@@ -98,4 +100,6 @@ public class TestController {
     response.setSuc(new ModifiedRecordCountDTO(testService.updateQuestion(questionForm)));
     return response;
   }
+
+  // todo: 管理试卷 & 管理考试
 }

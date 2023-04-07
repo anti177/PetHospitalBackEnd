@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -92,11 +93,11 @@ public class TestControllerTest extends BaseTest {
     // Configure TestService.getAllQuestions(...).
     final QuestionBackBriefDTO questionBackBriefDTO = new QuestionBackBriefDTO();
     questionBackBriefDTO.setQuestionId(0L);
-    questionBackBriefDTO.setChoice("choice");
     questionBackBriefDTO.setDescription("description");
     questionBackBriefDTO.setQuestionType("questionType");
-    final List<QuestionBackBriefDTO> questionBackBriefDTOS =
-        Collections.singletonList(questionBackBriefDTO);
+    questionBackBriefDTO.setKeyword("keyword");
+    questionBackBriefDTO.setDiseaseName("diseaseName");
+    final List<QuestionBackBriefDTO> questionBackBriefDTOS = Arrays.asList(questionBackBriefDTO);
     when(testService.getAllQuestions()).thenReturn(questionBackBriefDTOS);
     Response<List<QuestionBackBriefDTO>> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(questionBackBriefDTOS);

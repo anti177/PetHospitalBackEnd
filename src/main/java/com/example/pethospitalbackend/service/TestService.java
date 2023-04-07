@@ -26,7 +26,7 @@ import java.util.List;
 
 @Service
 public class TestService {
-  private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+  private static final Logger logger = LoggerFactory.getLogger(TestService.class);
 
   @Resource private TestDao testDao;
 
@@ -235,7 +235,7 @@ public class TestService {
 
   // todo: 错误处理
   public List<QuestionBackBriefDTO> getAllQuestions() {
-    return questionDao.getAllQuestions();
+    return questionDao.getAllQuestionBackBriefDTOs();
   }
 
   public Question addQuestion(QuestionFormDTO questionFormDTO) {
