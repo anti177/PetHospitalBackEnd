@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -38,11 +37,11 @@ public class TestService {
 
   @Resource private AnswerRecordDao answerRecordDao;
 
-  @Resource RelQuestionPaperDao relQuestionPaperDao;
+  @Resource private RelQuestionPaperDao relQuestionPaperDao;
 
-  @Resource DiseaseDao diseaseDao;
+  @Resource private DiseaseDao diseaseDao;
 
-  @Resource PaperDao paperDao;
+  @Resource private PaperDao paperDao;
 
   public Response<List<TestCategoryDTO>> getTestCategoryList() {
     String userId = JwtUtils.getUserId();
@@ -320,9 +319,7 @@ public class TestService {
     paperDao.updateByPrimaryKey(paper);
 
     // 删除该试卷之前的所有题目
-    Example example = new Example(RelQuestionPaper.class);
-    Example.Criteria criteria = example.createCriteria().andEqualTo("paperId", paper.getPaperId());
-    relQuestionPaperDao.deleteByExample(example);
+    relQuestionPaperDao.deleteByPaperId(paper.getPaperId());
 
     // 重新添加
     List<RelQuestionPaper> relQuestionPaperList =
@@ -333,12 +330,9 @@ public class TestService {
 
   @Transactional(rollbackFor = Exception.class)
   public int deletePaper(Long id) {
-    // todo: 如果存在相关考试场次则无法删除
+    // 如果存在相关考试场次则无法删除
     if (!testDao.existsWithPaperId(id)) {
-      Example example = new Example(RelQuestionPaper.class);
-      Example.Criteria criteria = example.createCriteria().andEqualTo("paperId", id);
-      relQuestionPaperDao.deleteByExample(example);
-
+      relQuestionPaperDao.deleteByPaperId(id);
       return paperDao.deleteByPrimaryKey(id);
     } else {
       logger.warn(""); // todo: 完善
