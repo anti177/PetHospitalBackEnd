@@ -3,6 +3,7 @@ package com.example.pethospitalbackend.controller;
 import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Paper;
 import com.example.pethospitalbackend.entity.Question;
+import com.example.pethospitalbackend.entity.Test;
 import com.example.pethospitalbackend.request.RecordRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.TestService;
@@ -78,7 +79,7 @@ public class TestController {
 
   @PostMapping("/questions")
   @ApiOperation("管理员上传问题")
-  public Response<Question> addQuestion(@RequestBody QuestionFormDTO questionForm) {
+  public Response<Question> addQuestion(@RequestBody QuestionBackFormDTO questionForm) {
     Response<Question> response = new Response<>();
     response.setSuc(testService.addQuestion(questionForm));
     return response;
@@ -95,7 +96,7 @@ public class TestController {
   @PutMapping("/questions/{id}")
   @ApiOperation("管理员更新问题")
   public Response<ModifiedRecordCountDTO> updateQuestions(
-      @PathVariable Long id, @RequestBody QuestionFormDTO questionForm) {
+      @PathVariable Long id, @RequestBody QuestionBackFormDTO questionForm) {
     questionForm.setQuestionId(id);
     Response<ModifiedRecordCountDTO> response = new Response<>();
     response.setSuc(new ModifiedRecordCountDTO(testService.updateQuestion(questionForm)));
@@ -146,11 +147,46 @@ public class TestController {
     return response;
   }
 
+  // todo: 添加一个接口用于在新建考试时获取全部试卷的id和名字
+
   @GetMapping("/tests")
   @ApiOperation(value = "管理员获取全部考试场次列表")
-  public Response<List<TestBackFormDTO>> getAllTests() {
-    Response<List<TestBackFormDTO>> response = new Response<>();
+  public Response<List<Test>> getAllTests() {
+    Response<List<Test>> response = new Response<>();
     response.setSuc(testService.getAllTests());
+    return response;
+  }
+
+  @DeleteMapping("/tests/{id}")
+  @ApiOperation(value = "管理员删除考试")
+  public Response<ModifiedRecordCountDTO> deleteTest(@PathVariable Long id) {
+    Response<ModifiedRecordCountDTO> response = new Response<>();
+    response.setSuc(new ModifiedRecordCountDTO(testService.deleteTest(id)));
+    return response;
+  }
+
+  @GetMapping("/tests/{id}")
+  @ApiOperation(value = "管理员获取考试具体信息")
+  public Response<TestDetailBackDTO> getTest(@PathVariable Long id) {
+    Response<TestDetailBackDTO> response = new Response<>();
+    response.setSuc(testService.getTest(id));
+    return response;
+  }
+
+  @PostMapping("/tests")
+  @ApiOperation(value = "管理员添加考试")
+  public Response<Test> addTest(@RequestBody Test test) {
+    Response<Test> response = new Response<>();
+    response.setSuc(testService.addTest(test));
+    return response;
+  }
+
+  @PutMapping("/tests/{id}")
+  @ApiOperation(value = "管理员更新考试")
+  public Response<ModifiedRecordCountDTO> updateTest(
+      @PathVariable Long id, @RequestBody Test test) {
+    Response<ModifiedRecordCountDTO> response = new Response<>();
+    response.setSuc(new ModifiedRecordCountDTO(testService.updateTest(test)));
     return response;
   }
 }

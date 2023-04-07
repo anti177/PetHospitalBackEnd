@@ -41,7 +41,7 @@ public class TestControllerTest extends BaseTest {
   @Mock private TestService testService;
 
   private JacksonTester<Response> responseJacksonTester;
-  private JacksonTester<QuestionFormDTO> questionFormDTOJacksonTester;
+  private JacksonTester<QuestionBackFormDTO> questionFormDTOJacksonTester;
   private JacksonTester<PaperBackDTO> paperBackDTOJacksonTester;
 
   @Before
@@ -125,7 +125,8 @@ public class TestControllerTest extends BaseTest {
         mockMvc
             .perform(
                 put("/questions/{id}", 0)
-                    .content(questionFormDTOJacksonTester.write(new QuestionFormDTO()).getJson())
+                    .content(
+                        questionFormDTOJacksonTester.write(new QuestionBackFormDTO()).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()
@@ -150,12 +151,12 @@ public class TestControllerTest extends BaseTest {
     question.setAns("ans");
     question.setKeyword("keyword");
     question.setDiseaseId(0L);
-    QuestionFormDTO questionFormDTO = new QuestionFormDTO();
-    BeanUtils.copyProperties(question, questionFormDTO);
-    questionFormDTO.setChoice(Collections.singletonList("choice"));
-    questionFormDTO.setAns(Collections.singletonList("ans"));
+    QuestionBackFormDTO questionBackFormDTO = new QuestionBackFormDTO();
+    BeanUtils.copyProperties(question, questionBackFormDTO);
+    questionBackFormDTO.setChoice(Collections.singletonList("choice"));
+    questionBackFormDTO.setAns(Collections.singletonList("ans"));
 
-    when(testService.addQuestion(questionFormDTO)).thenReturn(question);
+    when(testService.addQuestion(questionBackFormDTO)).thenReturn(question);
     Response<Question> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(question);
 
@@ -164,7 +165,7 @@ public class TestControllerTest extends BaseTest {
         mockMvc
             .perform(
                 post("/questions")
-                    .content(questionFormDTOJacksonTester.write(questionFormDTO).getJson())
+                    .content(questionFormDTOJacksonTester.write(questionBackFormDTO).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()

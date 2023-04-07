@@ -50,14 +50,14 @@ public class TestServiceTest extends BaseTest {
   @Test
   public void testAddQuestion() {
     // Setup
-    final QuestionFormDTO questionFormDTO = new QuestionFormDTO();
-    questionFormDTO.setQuestionId(1L);
-    questionFormDTO.setQuestionType("questionType");
-    questionFormDTO.setDescription("description");
-    questionFormDTO.setChoice(Arrays.asList("choice1", "choice2"));
-    questionFormDTO.setAns(Arrays.asList("ans1", "ans2"));
-    questionFormDTO.setKeyword("keyword");
-    questionFormDTO.setDiseaseId(1L);
+    final QuestionBackFormDTO questionBackFormDTO = new QuestionBackFormDTO();
+    questionBackFormDTO.setQuestionId(1L);
+    questionBackFormDTO.setQuestionType("questionType");
+    questionBackFormDTO.setDescription("description");
+    questionBackFormDTO.setChoice(Arrays.asList("choice1", "choice2"));
+    questionBackFormDTO.setAns(Arrays.asList("ans1", "ans2"));
+    questionBackFormDTO.setKeyword("keyword");
+    questionBackFormDTO.setDiseaseId(1L);
 
     final Question expectedResult = new Question();
     expectedResult.setQuestionId(1L);
@@ -71,7 +71,7 @@ public class TestServiceTest extends BaseTest {
     when(questionDao.insert(expectedResult)).thenReturn(1);
 
     // Run the test
-    final Question result = testService.addQuestion(questionFormDTO);
+    final Question result = testService.addQuestion(questionBackFormDTO);
 
     // Verify the results
     assertEquals(expectedResult, result);
@@ -133,7 +133,7 @@ public class TestServiceTest extends BaseTest {
   @Test
   public void testUpdateQuestion() {
     // Setup
-    final QuestionFormDTO questionForm = new QuestionFormDTO();
+    final QuestionBackFormDTO questionForm = new QuestionBackFormDTO();
     questionForm.setQuestionId(0L);
     questionForm.setQuestionType("questionType");
     questionForm.setDescription("description");

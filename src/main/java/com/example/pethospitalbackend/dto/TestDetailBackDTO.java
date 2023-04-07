@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Data
-public class TestBackFormDTO {
+public class TestDetailBackDTO {
   @NotBlank
   @ApiModelProperty(value = "考试id")
   Long testId;
@@ -18,8 +18,8 @@ public class TestBackFormDTO {
   String testName;
 
   @NotBlank
-  @ApiModelProperty(value = "试卷id")
-  Long paperId;
+  @ApiModelProperty(value = "试卷名")
+  Long paperName;
 
   @NotBlank
   @ApiModelProperty(value = "考试开始时间")
@@ -30,4 +30,10 @@ public class TestBackFormDTO {
   @ApiModelProperty(value = "考试开始时间")
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private Date endDate;
+
+  @ApiModelProperty(value = "简介")
+  private String intro;
+
+  @ApiModelProperty(value = "标签")
+  private String tag;
 }

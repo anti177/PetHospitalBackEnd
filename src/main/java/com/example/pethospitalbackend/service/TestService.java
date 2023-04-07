@@ -239,8 +239,8 @@ public class TestService {
     return questionDao.getAllQuestionBackBriefDTOs();
   }
 
-  public Question addQuestion(QuestionFormDTO questionFormDTO) {
-    Question question = changeFormToQuestion(questionFormDTO);
+  public Question addQuestion(QuestionBackFormDTO questionBackFormDTO) {
+    Question question = changeFormToQuestion(questionBackFormDTO);
     questionDao.insert(question);
     return question;
   }
@@ -254,12 +254,12 @@ public class TestService {
     }
   }
 
-  public int updateQuestion(QuestionFormDTO questionForm) {
+  public int updateQuestion(QuestionBackFormDTO questionForm) {
     Question question = changeFormToQuestion(questionForm);
     return questionDao.updateByPrimaryKey(question);
   }
 
-  public Question changeFormToQuestion(QuestionFormDTO questionForm) {
+  public Question changeFormToQuestion(QuestionBackFormDTO questionForm) {
     Question question = new Question();
     BeanUtils.copyProperties(questionForm, question);
     String ans = String.join(";", questionForm.getAns());
@@ -279,7 +279,6 @@ public class TestService {
     return questionFormDTO;
   }
 
-  // todo: 测试
   public List<Paper> getAllPapers() {
     return paperDao.selectAll();
   }
@@ -340,8 +339,29 @@ public class TestService {
     }
   }
 
-  // todo: 补充考试场次管理
-  public List<TestBackFormDTO> getAllTests() {
-    return null;
+  public List<Test> getAllTests() {
+    return testDao.selectAll();
+  }
+
+  public TestDetailBackDTO getTest(Long id) {
+    return testDao.selectDetailBackDTOById(id);
+  }
+
+  public int deleteTest(Long id) {
+    Test test = testDao.selectByPrimaryKey(id);
+    if (!paperDao.existsWithPrimaryKey(test.getPaperID())) {
+      return testDao.deleteByPrimaryKey(id);
+    } else {
+      throw new ParameterException(""); // todo: 补充
+    }
+  }
+
+  public Test addTest(Test test) {
+    testDao.insert(test);
+    return test;
+  }
+
+  public Integer updateTest(Test test) {
+    return testDao.updateByPrimaryKeySelective(test);
   }
 }
