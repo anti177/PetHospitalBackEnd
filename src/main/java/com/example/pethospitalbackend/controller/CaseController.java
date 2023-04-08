@@ -5,7 +5,6 @@ import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.CaseService;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
@@ -50,22 +49,12 @@ public class CaseController {
   }
 
   @GetMapping("/cases")
-  @ApiOperation("分页获取病例基本信息")
-  Response getAllCases(
-      @RequestParam(required = false) Integer pageNum,
-      @RequestParam(required = false) Integer pageSize) {
-    if (pageNum == null) {
-      List<CaseBackBriefDTO> caseBackBriefDTOS = caseService.getAllCaseBackBriefDTOs();
-      Response<List<CaseBackBriefDTO>> response = new Response<>();
-      response.setSuc(caseBackBriefDTOS);
-      return response;
-    } else {
-      PageInfo<CaseBackBriefDTO> illCaseDTOPageInfo =
-          caseService.getCasePageInfo(pageNum, pageSize);
-      Response<PageInfo<CaseBackBriefDTO>> response = new Response<>();
-      response.setSuc(illCaseDTOPageInfo);
-      return response;
-    }
+  @ApiOperation("管理员获取全部病例")
+  Response getAllCases() {
+    List<CaseBackBriefDTO> caseBackBriefDTOS = caseService.getAllCaseBackBriefDTOs();
+    Response<List<CaseBackBriefDTO>> response = new Response<>();
+    response.setSuc(caseBackBriefDTOS);
+    return response;
   }
 
   @PostMapping("/cases")

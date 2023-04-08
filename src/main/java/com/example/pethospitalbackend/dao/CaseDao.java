@@ -85,6 +85,7 @@ public interface CaseDao extends Mapper<IllCase> {
       value = {
         @Result(id = true, column = "ill_case_id", property = "caseId"),
         @Result(column = "case_name", property = "caseName"),
+        @Result(column = "front_graph", property = "frontGraph"),
         @Result(
             property = "disease",
             column = "disease_id",

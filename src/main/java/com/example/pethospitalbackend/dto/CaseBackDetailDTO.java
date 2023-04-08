@@ -21,6 +21,9 @@ public class CaseBackDetailDTO {
   @ApiModelProperty(value = "接诊文字")
   private String admissionText;
 
+  @ApiModelProperty(value = "封面图")
+  private String frontGraph;
+
   @ApiModelProperty(value = "接诊图片列表")
   private List<FileDTO> admissionGraphList;
 
