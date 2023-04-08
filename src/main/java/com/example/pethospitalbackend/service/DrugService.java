@@ -56,7 +56,7 @@ public class DrugService {
 
   public int updateDrug(Drug drug) {
     try {
-      return drugDao.updateByPrimaryKeySelective(drug);
+      return drugDao.updateByPrimaryKey(drug);
     } catch (Exception e) {
       logger.error(
           "[update drug Fail], drugId: {}, error message: {}",

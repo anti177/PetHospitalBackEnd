@@ -57,7 +57,7 @@ public class VaccineService {
 
   public int updateVaccine(Vaccine vaccine) {
     try {
-      return vaccineDao.updateByPrimaryKeySelective(vaccine);
+      return vaccineDao.updateByPrimaryKey(vaccine);
     } catch (Exception e) {
       logger.error(
           "[update vaccine Fail], vaccineId: {}, error message: {}",

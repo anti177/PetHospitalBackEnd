@@ -46,7 +46,7 @@ public interface TestDao extends Mapper<Test> {
             javaType = String.class,
             one =
                 @One(
-                    select = "com.example.pethospitalbackend.dao.paperDao.selectNameByPrimaryKey",
+                    select = "com.example.pethospitalbackend.dao.PaperDao.selectNameByPrimaryKey",
                     fetchType = FetchType.EAGER)),
         @Result(column = "intro", property = "intro"),
         @Result(column = "tag", property = "tag"),

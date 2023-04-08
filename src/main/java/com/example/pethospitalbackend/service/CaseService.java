@@ -142,7 +142,7 @@ public class CaseService {
   // ---------------------------------后台方法------------------------------
 
   @Transactional(rollbackFor = Exception.class)
-  public void addCase(IllCaseFormDTO form) {
+  public IllCase addCase(IllCaseFormDTO form) {
     // todo: 测试
     try {
       // 插入病例基本类
@@ -185,8 +185,10 @@ public class CaseService {
           caseDao.insertInspectionGraphs(inspectionGraphList);
         }
       }
+      return illCase;
     } catch (Exception e) {
-      // todo: 异常处理
+      // todo: 报错信息
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
   }
 
@@ -256,7 +258,8 @@ public class CaseService {
   //  }
 
   @Transactional(rollbackFor = Exception.class)
-  public int updateCase(Long id, IllCaseFormDTO formDTO) {
+  public int updateCase(IllCaseFormDTO formDTO) {
+    Long id = formDTO.getCase_id();
     try {
       deleteCase(id);
       formDTO.setCase_id(id);
@@ -272,9 +275,10 @@ public class CaseService {
   }
 
   // 工具方法，用于转换前端表单类到实体类
-  public IllCase transformIllCaseFormToIllCase(IllCaseFormDTO form) {
+  private IllCase transformIllCaseFormToIllCase(IllCaseFormDTO form) {
     IllCase illCase = new IllCase();
     illCase.setCaseId(form.getCase_id());
+    illCase.setFrontGraph(form.getFront_graph());
     illCase.setCaseName(form.getCase_title());
     illCase.setDiseaseId(form.getDisease_id());
     illCase.setDiagnosticInfo(form.getDiagnostic_result());
@@ -384,7 +388,7 @@ public class CaseService {
     return inspectionCaseDao.selectAllInspectionItems();
   }
 
-  // 目前不需要这个方法
+  // 目前不需要这个方法，考虑删除
   public PageInfo<Disease> getDiseasePageInfo(Integer pageNum, Integer pageSize) {
     try {
       PageHelper.startPage(pageNum, pageSize);

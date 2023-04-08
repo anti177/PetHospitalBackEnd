@@ -51,7 +51,7 @@ public class UserServiceTest extends BaseTest {
     final User user1 = new User(0L, "password", "role", "email", "userClass");
     when(userDao.selectByPrimaryKey(0L)).thenReturn(user1);
 
-    when(userDao.updateByPrimaryKeySelective(any())).thenReturn(1);
+    when(userDao.updateByPrimaryKey(any())).thenReturn(1);
 
     // Run the test
     final int result = userService.updateUser(user);

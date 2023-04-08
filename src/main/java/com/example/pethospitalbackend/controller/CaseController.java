@@ -69,17 +69,19 @@ public class CaseController {
   }
 
   @PostMapping("/cases")
-  @ApiOperation("管理员后台上传病例")
-  ResponseEntity<Response<IllCase>> postCase(@RequestBody IllCaseFormDTO form) {
-    caseService.addCase(form);
-    return new ResponseEntity<>(null, HttpStatus.OK);
+  @ApiOperation("管理员上传病例")
+  Response<IllCase> postCase(@RequestBody IllCaseFormDTO form) {
+    Response<IllCase> response = new Response<>();
+    response.setSuc(caseService.addCase(form));
+    return response;
   }
 
   @PutMapping("/cases/{id}")
-  @ApiOperation("管理员后台修改病例")
+  @ApiOperation("管理员修改病例")
   Response<ModifiedRecordCountDTO> putCase(
       @PathVariable Long id, @RequestBody IllCaseFormDTO form) {
-    Integer res = caseService.updateCase(id, form);
+    form.setCase_id(id);
+    Integer res = caseService.updateCase(form);
     Response<ModifiedRecordCountDTO> response = new Response<>();
     response.setSuc(new ModifiedRecordCountDTO(res));
     return response;
@@ -130,7 +132,7 @@ public class CaseController {
   }
 
   @GetMapping("/diseases/{id}")
-  @ApiOperation("后台获取疾病详细信息")
+  @ApiOperation("管理员获取疾病详细信息")
   Response<Disease> getDisease(@PathVariable Long id) {
     Disease diseaseRecord = caseService.getDisease(id);
     Response<Disease> response = new Response<>();
@@ -138,8 +140,8 @@ public class CaseController {
     return response;
   }
 
-  // todo: 测试
   @GetMapping("/inspections/items")
+  @ApiOperation("管理员获取所有检查项目（新建病例用）")
   Response<List<InspectionItemBackDTO>> getAllInspectionItems() {
     Response<List<InspectionItemBackDTO>> response = new Response<>();
     response.setSuc(caseService.getAllInspectionItems());

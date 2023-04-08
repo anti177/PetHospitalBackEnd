@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@Api(tags = {"科室管理与导览"})
+@Api(tags = {"科室导览与管理"})
 public class GuideController {
   @Resource DepartmentService departmentService;
 
