@@ -389,7 +389,11 @@ public class TestService {
 
   public TestDetailBackDTO getTest(Long id) {
     try {
-      return testDao.selectDetailBackDTOById(id);
+      TestDetailBackDTO testDetailBackDTO = new TestDetailBackDTO();
+      Test test = testDao.selectByPrimaryKey(id);
+      testDetailBackDTO.setTest(test);
+      testDetailBackDTO.setUserList(testDao.selectRelatedUserNameByTestId(id));
+      return testDetailBackDTO;
     } catch (Exception e) {
       logger.error(
           "[get test fail], testId: {}, error msg: {}",
@@ -399,9 +403,10 @@ public class TestService {
     }
   }
 
+  @Transactional(rollbackFor = Exception.class)
   public int deleteTest(Long id) {
     try {
-      Test test = testDao.selectByPrimaryKey(id);
+      testUserDao.deleteTestUsers(id);
       return testDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
       logger.error(
@@ -412,9 +417,14 @@ public class TestService {
     }
   }
 
-  public Test addTest(Test test) {
+  @Transactional(rollbackFor = Exception.class)
+  public Test addTest(TestFormBackDTO testFormBackDTO) {
     try {
+      Test test = testFormBackDTO.getTest();
       testDao.insert(test);
+      List<TestUser> testUserList =
+          getTestUserList(testFormBackDTO.getUserList(), test.getTestId());
+      testUserDao.insertList(testUserList);
       return test;
     } catch (Exception e) {
       logger.error("[insert test fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
@@ -422,8 +432,14 @@ public class TestService {
     }
   }
 
-  public int updateTest(Test test) {
+  @Transactional(rollbackFor = Exception.class)
+  public int updateTest(TestFormBackDTO testFormBackDTO) {
+    Test test = testFormBackDTO.getTest();
     try {
+      testUserDao.deleteTestUsers(test.getTestId());
+      List<TestUser> testUserList =
+          getTestUserList(testFormBackDTO.getUserList(), test.getTestId());
+      testUserDao.insertList(testUserList);
       return testDao.updateByPrimaryKey(test);
     } catch (Exception e) {
       logger.error(
@@ -457,5 +473,17 @@ public class TestService {
       relQuestionPaperList.add(relQuestionPaper);
     }
     return relQuestionPaperList;
+  }
+
+  private List<TestUser> getTestUserList(List<Long> list, Long testId) {
+    List<TestUser> testUserList = new ArrayList<>();
+    for (Long userId : list) {
+      TestUser testUser = new TestUser();
+      testUser.setUserId(userId);
+      testUser.setTestId(testId);
+      testUser.setHasSubmit(false);
+      testUserList.add(testUser);
+    }
+    return testUserList;
   }
 }

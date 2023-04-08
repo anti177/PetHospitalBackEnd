@@ -2,10 +2,10 @@ package com.example.pethospitalbackend.dao;
 
 import com.example.pethospitalbackend.dto.EndTestCategoryDTO;
 import com.example.pethospitalbackend.dto.TestCategoryDTO;
-import com.example.pethospitalbackend.dto.TestDetailBackDTO;
 import com.example.pethospitalbackend.entity.Test;
-import org.apache.ibatis.annotations.*;
-import org.apache.ibatis.mapping.FetchType;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultType;
+import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
@@ -31,25 +31,9 @@ public interface TestDao extends Mapper<Test> {
   @Select("select exists(select 1 from test where paper_id=#{paperId})")
   boolean existsWithPaperId(@Param("paperId") Long id);
 
+  @ResultType(TestCategoryDTO.class)
   @Select(
-      "select test_id, begin_date, end_date, test_name, paper_id, intro, tag from test where test_id = #{testId}")
-  @Results(
-      id = "test",
-      value = {
-        @Result(id = true, column = "test_id", property = "testId"),
-        @Result(column = "test_name", property = "testName"),
-        @Result(column = "begin_date", property = "beginDate"),
-        @Result(column = "end_date", property = "endDate"),
-        @Result(
-            property = "paperName",
-            column = "paper_id",
-            javaType = String.class,
-            one =
-                @One(
-                    select = "com.example.pethospitalbackend.dao.PaperDao.selectNameByPrimaryKey",
-                    fetchType = FetchType.EAGER)),
-        @Result(column = "intro", property = "intro"),
-        @Result(column = "tag", property = "tag"),
-      })
-  TestDetailBackDTO selectDetailBackDTOById(@Param("testId") Long id);
+      "SELECT user.email from test_user JOIN user on user.user_id = test_user.user_id "
+          + "WHERE test_user.test_id = #{testId}")
+  List<String> selectRelatedUserNameByTestId(@Param("testId") long testId);
 }

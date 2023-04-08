@@ -190,19 +190,19 @@ public class TestController {
 
   @PostMapping("/tests")
   @ApiOperation(value = "管理员添加考试")
-  public Response<Test> addTest(@RequestBody Test test) {
+  public Response<Test> addTest(@RequestBody TestFormBackDTO testFormBackDTO) {
     Response<Test> response = new Response<>();
-    response.setSuc(testService.addTest(test));
+    response.setSuc(testService.addTest(testFormBackDTO));
     return response;
   }
 
   @PutMapping("/tests/{id}")
   @ApiOperation(value = "管理员更新考试")
   public Response<ModifiedRecordCountDTO> updateTest(
-      @PathVariable Long id, @RequestBody Test test) {
-    test.setPaperID(id);
+      @PathVariable Long id, @RequestBody TestFormBackDTO testFormBackDTO) {
+    testFormBackDTO.getTest().setTestId(id);
     Response<ModifiedRecordCountDTO> response = new Response<>();
-    response.setSuc(new ModifiedRecordCountDTO(testService.updateTest(test)));
+    response.setSuc(new ModifiedRecordCountDTO(testService.updateTest(testFormBackDTO)));
     return response;
   }
 }
