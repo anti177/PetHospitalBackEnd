@@ -200,6 +200,7 @@ public class TestController {
   @ApiOperation(value = "管理员更新考试")
   public Response<ModifiedRecordCountDTO> updateTest(
       @PathVariable Long id, @RequestBody Test test) {
+    test.setPaperID(id);
     Response<ModifiedRecordCountDTO> response = new Response<>();
     response.setSuc(new ModifiedRecordCountDTO(testService.updateTest(test)));
     return response;

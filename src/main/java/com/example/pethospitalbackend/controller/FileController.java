@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  * @author yyx
  */
 @RestController
-@Api(tags = {"上传文件的例子"})
+@Api(tags = {"文件管理"})
 public class FileController {
 
   @Resource FileService fileService;

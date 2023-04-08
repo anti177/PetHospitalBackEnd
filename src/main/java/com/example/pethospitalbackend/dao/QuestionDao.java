@@ -3,7 +3,6 @@ package com.example.pethospitalbackend.dao;
 import com.example.pethospitalbackend.dto.QuestionBackBriefDTO;
 import com.example.pethospitalbackend.dto.QuestionDTO;
 import com.example.pethospitalbackend.dto.TestPaperDTO;
-import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.Question;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
@@ -44,10 +43,10 @@ public interface QuestionDao extends Mapper<Question> {
         @Result(
             property = "diseaseName",
             column = "disease_id",
-            javaType = Disease.class,
+            javaType = String.class,
             one =
                 @One(
-                    select = "com.example.pethospitalbackend.dao.DiseaseDao.selectByPrimaryKey",
+                    select = "com.example.pethospitalbackend.dao.DiseaseDao.selectNameByPrimaryKey",
                     fetchType = FetchType.EAGER))
       })
   List<QuestionBackBriefDTO> getAllQuestionBackBriefDTOs();

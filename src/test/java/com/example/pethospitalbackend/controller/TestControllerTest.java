@@ -23,7 +23,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -93,7 +96,8 @@ public class TestControllerTest extends BaseTest {
     questionBackBriefDTO.setQuestionType("questionType");
     questionBackBriefDTO.setKeyword("keyword");
     questionBackBriefDTO.setDiseaseName("diseaseName");
-    final List<QuestionBackBriefDTO> questionBackBriefDTOS = Arrays.asList(questionBackBriefDTO);
+    final List<QuestionBackBriefDTO> questionBackBriefDTOS =
+        Collections.singletonList(questionBackBriefDTO);
     when(testService.getAllQuestions()).thenReturn(questionBackBriefDTOS);
     Response<List<QuestionBackBriefDTO>> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(questionBackBriefDTOS);
@@ -348,7 +352,7 @@ public class TestControllerTest extends BaseTest {
     test.setPaperID(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    final List<com.example.pethospitalbackend.entity.Test> tests = Arrays.asList(test);
+    final List<com.example.pethospitalbackend.entity.Test> tests = Collections.singletonList(test);
     when(testService.getAllTests()).thenReturn(tests);
     Response<List<com.example.pethospitalbackend.entity.Test>> expectedResponseContent =
         new Response<>();
@@ -372,7 +376,7 @@ public class TestControllerTest extends BaseTest {
     final TestDetailBackDTO testDetailBackDTO = new TestDetailBackDTO();
     testDetailBackDTO.setTestId(0L);
     testDetailBackDTO.setTestName("testName");
-    testDetailBackDTO.setPaperName(0L);
+    testDetailBackDTO.setPaperName("paperName");
     testDetailBackDTO.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     testDetailBackDTO.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     testDetailBackDTO.setIntro("intro");

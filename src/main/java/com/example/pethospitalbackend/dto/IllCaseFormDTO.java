@@ -7,6 +7,7 @@ import java.util.List;
 @Data
 public class IllCaseFormDTO {
   Long case_id;
+  String front_graph;
   String case_title;
   Long disease_id;
   String admission_text;

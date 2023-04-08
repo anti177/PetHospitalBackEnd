@@ -19,7 +19,7 @@ public class TestDetailBackDTO {
 
   @NotBlank
   @ApiModelProperty(value = "试卷名")
-  Long paperName;
+  String paperName;
 
   @NotBlank
   @ApiModelProperty(value = "考试开始时间")

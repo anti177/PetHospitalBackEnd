@@ -353,7 +353,7 @@ public class TestServiceTest extends BaseTest {
     final TestDetailBackDTO expectedResult = new TestDetailBackDTO();
     expectedResult.setTestId(0L);
     expectedResult.setTestName("testName");
-    expectedResult.setPaperName(0L);
+    expectedResult.setPaperName("paperName");
     expectedResult.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     expectedResult.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     expectedResult.setIntro("intro");
@@ -363,7 +363,7 @@ public class TestServiceTest extends BaseTest {
     final TestDetailBackDTO testDetailBackDTO = new TestDetailBackDTO();
     testDetailBackDTO.setTestId(0L);
     testDetailBackDTO.setTestName("testName");
-    testDetailBackDTO.setPaperName(0L);
+    testDetailBackDTO.setPaperName("paperName");
     testDetailBackDTO.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     testDetailBackDTO.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     testDetailBackDTO.setIntro("intro");
