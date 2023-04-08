@@ -7,7 +7,6 @@ import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
 import com.example.pethospitalbackend.entity.InspectionCase;
-import com.example.pethospitalbackend.entity.InspectionGraph;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.response.Response;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -211,10 +209,7 @@ public class CaseService {
     try {
       List<Long> inspectionCaseIdList =
           inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
-      Example example = new Example(InspectionGraph.class);
-      Example.Criteria criteria =
-          example.createCriteria().andIn("inspectionId", inspectionCaseIdList);
-      inspectionCaseDao.deleteByExample(criteria); // 删除检查情况
+      inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(caseId); // 删除检查情况
       inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(caseId); // 删除检查情况中的照片
       caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
       caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
@@ -282,7 +277,7 @@ public class CaseService {
     illCase.setCaseName(form.getCase_title());
     illCase.setDiseaseId(form.getDisease_id());
     illCase.setDiagnosticInfo(form.getDiagnostic_result());
-    illCase.setTreatmentInfo(form.getAdmission_text());
+    illCase.setTreatmentInfo(form.getTreatment_info());
     illCase.setAdmissionText(form.getAdmission_text());
     return illCase;
   }

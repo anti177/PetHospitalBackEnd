@@ -81,6 +81,9 @@ public interface InspectionCaseDao
   @Delete("Delete FROM inspection_graph WHERE inspection_case_id = #{id}")
   int deleteInspectionGraphsByInspectionCaseId(@Param("id") long caseId);
 
+  @Delete("Delete FROM inspection_case WHERE inspection_case_id = #{id}")
+  int deleteInspectionCasesByInspectionCaseId(@Param("id") long caseId);
+
   @Select("SELECT inspection_case_id from inspection_case where case_id = #{id}")
   List<Long> selectAllInspectionCaseIdByIllCaseId(@Param("id") long illCaseId);
 
