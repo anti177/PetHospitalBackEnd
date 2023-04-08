@@ -44,5 +44,4 @@ public class IllCase implements Serializable {
   @Column(name = "front_graph")
   @ApiModelProperty(value = "前台封面图片")
   private String frontGraph;
-
 }

@@ -42,5 +42,5 @@ public class Question {
 
   @Column(name = "disease_id")
   @ApiModelProperty(value = "对应疾病id")
-  private String diseaseId;
+  private Long diseaseId;
 }

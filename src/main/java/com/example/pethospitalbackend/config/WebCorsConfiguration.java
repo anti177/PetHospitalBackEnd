@@ -33,7 +33,7 @@ public class WebCorsConfiguration implements WebMvcConfigurer {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
-    //config.setAllowedOrigins(Collections.singletonList("*"));似乎是spring版本的原因这两个函数的含义变了
+    // config.setAllowedOrigins(Collections.singletonList("*"));似乎是spring版本的原因这两个函数的含义变了
     config.setAllowedOriginPatterns(Collections.singletonList("*"));
     config.setAllowedMethods(Collections.singletonList("*"));
     config.setAllowedHeaders(Collections.singletonList("*"));

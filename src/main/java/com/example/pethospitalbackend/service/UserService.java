@@ -27,7 +27,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -43,19 +42,15 @@ import java.util.concurrent.TimeUnit;
 public class UserService {
 
   private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
-  @Resource private UserDao userDao;
-
-  @Resource private EmailUtil emailUtil;
-
-  @Resource private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-  private final Cache<String, String> mailVerifyCodeCache =
+  final Cache<String, String> mailVerifyCodeCache =
       Caffeine.newBuilder()
           .expireAfterWrite(600, TimeUnit.SECONDS)
           .initialCapacity(5)
           .maximumSize(25)
           .build();
+  @Resource UserDao userDao;
+  @Resource EmailUtil emailUtil;
+  @Resource BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Transactional(rollbackFor = Exception.class)
   public JwtUserDTO register(UserRegisterRequest dto) {
@@ -184,9 +179,9 @@ public class UserService {
       return userDao.getUserByUserId(id);
     } catch (Exception e) {
       logger.error(
-              "[get user fail], userId: {}, error msg: {}",
-              SerialUtil.toJsonStr(id),
-              SerialUtil.toJsonStr(e.getMessage()));
+          "[get user fail], userId: {}, error msg: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
   }
@@ -194,29 +189,20 @@ public class UserService {
   // ---------------------------------------后台-------------------------------------------
 
   public int updateUser(User user) {
-    Example example = new Example(User.class);
-    Example.Criteria criteria = example.createCriteria().andEqualTo("email", user.getEmail());
-    if (userDao.selectByExample(example).size() == 0) {
-      try {
-        return userDao.updateByPrimaryKeySelective(user);
-      } catch (Exception e) {
-        logger.error(
-            "[update user fail], userId: {}, error msg: {}",
-            SerialUtil.toJsonStr(user.getUserId()),
-            SerialUtil.toJsonStr(e.getMessage()));
-        throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
-      }
-    } else {
+    try {
+      return userDao.updateByPrimaryKeySelective(user);
+    } catch (Exception e) {
       logger.error(
-          "[update user fail because the user email already exists], userId: {}, email: {}",
+          "[update user fail], userId: {}, error msg: {}",
           SerialUtil.toJsonStr(user.getUserId()),
-          SerialUtil.toJsonStr(user.getEmail()));
-      throw new UserRelatedException(ResponseEnum.MAIL_HAS_REGISTERED.getMsg());
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
   }
 
   public int deleteUser(Long id) {
     try {
+      // todo: 删除和考试场次的关联信息
       return userDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
       logger.error(
@@ -228,10 +214,8 @@ public class UserService {
   }
 
   public int deleteUsers(List<Long> ids) {
-    Example example = new Example(User.class);
-    Example.Criteria criteria = example.createCriteria().andIn("userId", ids);
     try {
-      return userDao.deleteByExample(example);
+      return userDao.deleteByIdList(ids);
     } catch (Exception e) {
       logger.error(
           "[delete users fail], userIds: {}, error msg: {}",

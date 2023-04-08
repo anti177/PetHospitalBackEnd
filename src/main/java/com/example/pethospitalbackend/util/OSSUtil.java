@@ -112,7 +112,7 @@ public class OSSUtil {
     ossClient.shutdown();
 
     if (objectMetadata != null) {
-        return true;
+      return true;
     } else {
       logger.error(
           "[downloadFile Ex], filename: {}, destinationPath: {}",

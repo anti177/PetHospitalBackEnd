@@ -4,87 +4,107 @@ import com.example.pethospitalbackend.BaseTest;
 import com.example.pethospitalbackend.dao.UserDao;
 import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.entity.User;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 public class UserServiceTest extends BaseTest {
-  @Resource UserService userService;
+  @InjectMocks @Resource UserService userService;
 
-  @Resource UserDao userDao;
+  @MockBean(name = "userDao")
+  UserDao userDao;
 
-  User user1 = new User(0L, "password", "role", "email", "userClass");
-  User user2 = new User(1L, "password", "role", "email", "userClass");
-
-  @Test
-  public void testGetAllUsers() {
-    userDao.insert(user1);
-    userDao.insert(user2);
-    List<UserDTO> list = userService.getAllUserDTOs();
-    Assert.assertEquals(2, list.size());
-  }
-
-  @Test
-  public void testUpdateUser() {
-    // Setup
-    userDao.insert(user1);
-    User user = new User();
-    user.setUserId(1L);
-    user.setPassword("password1");
-    user.setRole("role1");
-    user.setEmail("email1");
-    user.setUserClass("userClass1");
-
-    // Run the test
-    int result = userService.updateUser(user);
-
-    // Verify the results
-    Assert.assertEquals(1, result);
+  @Before
+  public void init() {
+    MockitoAnnotations.openMocks(this);
   }
 
   @Test
   public void testDeleteUser() {
     // Setup
-    userDao.insert(user1);
+    when(userDao.deleteByPrimaryKey(0L)).thenReturn(1);
+
     // Run the test
-    int result = userService.deleteUser(1L);
+    final int result = userService.deleteUser(0L);
 
     // Verify the results
-    Assert.assertEquals(result, 1);
+    assertEquals(1, result);
+  }
+
+  @Test
+  public void testUpdateUser() {
+    // Setup
+    final User user = new User(0L, "password", "role", "email", "userClass");
+
+    // Configure UserDao.selectByPrimaryKey(...).
+    final User user1 = new User(0L, "password", "role", "email", "userClass");
+    when(userDao.selectByPrimaryKey(0L)).thenReturn(user1);
+
+    when(userDao.updateByPrimaryKeySelective(any())).thenReturn(1);
+
+    // Run the test
+    final int result = userService.updateUser(user);
+
+    // Verify the results
+    assertEquals(1, result);
   }
 
   @Test
   public void testDeleteUsers() {
     // Setup
-    userDao.insert(user1);
-    userDao.insert(user2);
+    when(userService.userDao.deleteByIdList(Arrays.asList(0L, 1L))).thenReturn(2);
+
     // Run the test
-    int result = userService.deleteUsers(Arrays.asList(1L, 2L));
+    final int result = userService.deleteUsers(Arrays.asList(0L, 1L));
 
     // Verify the results
-    Assert.assertEquals(2, result);
+    assertEquals(2, result);
   }
 
   @Test
   public void testGetUserDTOById() {
     // Setup
-    userDao.insert(user1);
+    final UserDTO expectedResult = new UserDTO(0L, "role", "email", "userClass");
 
-    final UserDTO expectedResult = new UserDTO();
-    expectedResult.setUserId(1L);
-    expectedResult.setRole("role");
-    expectedResult.setEmail("email");
-    expectedResult.setUserClass("userClass");
+    // Configure UserDao.getUserByUserId(...).
+    final UserDTO userDTO = new UserDTO(0L, "role", "email", "userClass");
+    when(userDao.getUserByUserId(0L)).thenReturn(userDTO);
 
     // Run the test
-    final UserDTO result = userService.getUserDTOById(1L);
+    final UserDTO result = userService.getUserDTOById(0L);
 
     // Verify the results
     assertEquals(expectedResult, result);
+  }
+
+  @Test
+  public void testGetAllUserDTOs() {
+    // Setup
+    UserDTO userDTO = new UserDTO();
+    userDTO.setUserId(0L);
+    userDTO.setEmail("xxx");
+    userDTO.setRole("xxx");
+    userDTO.setUserClass("xxx");
+
+    // Configure UserDao.selectAllUserDTOs(...).
+    final List<UserDTO> userDTOS = Collections.singletonList(userDTO);
+    when(userDao.selectAllUserDTOs()).thenReturn(userDTOS);
+
+    // Run the test
+    final List<UserDTO> result = userService.getAllUserDTOs();
+
+    // Verify the results
+    assertEquals(userDTOS, result);
   }
 }

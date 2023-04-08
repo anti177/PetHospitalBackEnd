@@ -32,19 +32,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @AutoConfigureMockMvc
 public class UserControllerTest extends BaseTest {
+  UserDTO userDTO1 = new UserDTO(1L, "role", "email1", "userClass");
+  UserDTO userDTO2 = new UserDTO(2L, "role", "email2", "userClass");
   @Autowired private MockMvc mockMvc;
-
   @Mock private UserService userService;
-
   @InjectMocks private UserController userController;
-
   private JacksonTester<User> userJacksonTester;
   private JacksonTester<UserRegisterRequest> userRegisterRequestJacksonTester;
   private JacksonTester<Response> responseJacksonTester;
   private JacksonTester<List<Long>> listJacksonTester;
-
-  UserDTO userDTO1 = new UserDTO(1L, "role", "email", "userClass");
-  UserDTO userDTO2 = new UserDTO(2L, "role", "email", "userClass");
 
   @Before
   public void before() {

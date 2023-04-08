@@ -45,5 +45,4 @@ public class EndTestCategoryDTO implements Serializable {
   @NotBlank
   @ApiModelProperty(value = "是否提交答案")
   private Boolean hasSubmit;
-
 }

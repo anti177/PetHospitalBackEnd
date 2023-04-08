@@ -2,9 +2,12 @@ package com.example.pethospitalbackend.dao;
 
 import com.example.pethospitalbackend.dto.FrontTestAnswerDTO;
 import com.example.pethospitalbackend.entity.AnswerRecord;
-import org.apache.ibatis.annotations.Param;import org.apache.ibatis.annotations.ResultType;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Select;
-import tk.mybatis.mapper.common.Mapper;import java.util.List;
+import tk.mybatis.mapper.common.Mapper;
+
+import java.util.List;
 
 public interface AnswerRecordDao extends Mapper<AnswerRecord> {
   @ResultType(TestRecordDao.class)

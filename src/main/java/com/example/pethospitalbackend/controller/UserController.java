@@ -99,7 +99,7 @@ public class UserController {
   }
 
   @GetMapping("/user")
-  @ApiOperation("获取单个用户")
+  @ApiOperation("管理员获取单个用户")
   public Response<UserDTO> getUser() {
     UserDTO user = userService.getUserDTOByToken();
     Response<UserDTO> response = new Response<>();
@@ -108,7 +108,7 @@ public class UserController {
   }
 
   @GetMapping("/users")
-  @ApiOperation("获取全部用户")
+  @ApiOperation("管理员获取全部用户")
   public Response<List<UserDTO>> getAllUsers() {
     List<UserDTO> userList = userService.getAllUserDTOs();
     Response<List<UserDTO>> response = new Response<>();
@@ -150,7 +150,7 @@ public class UserController {
   }
 
   @PatchMapping("/users/{id}")
-  @ApiOperation("修改用户信息")
+  @ApiOperation("管理员修改用户信息")
   public Response<ModifiedRecordCountDTO> updateUser(
       @PathVariable Long id, @RequestBody User user) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
@@ -160,7 +160,7 @@ public class UserController {
   }
 
   @PostMapping("/users")
-  @ApiOperation("添加用户")
+  @ApiOperation("管理员添加用户")
   public Response<UserDTO> addUser(@RequestBody UserRegisterRequest registerRequest) {
     JwtUserDTO jwtUserDTO = userService.register(registerRequest);
     Response<UserDTO> response = new Response<>();

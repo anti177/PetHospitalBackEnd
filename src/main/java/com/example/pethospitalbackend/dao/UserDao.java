@@ -3,11 +3,12 @@ package com.example.pethospitalbackend.dao;
 import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.entity.User;
 import org.apache.ibatis.annotations.*;
+import tk.mybatis.mapper.additional.idlist.DeleteByIdListMapper;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
 
-public interface UserDao extends Mapper<User> {
+public interface UserDao extends Mapper<User>, DeleteByIdListMapper<User, Long> {
 
   @Insert(
       "INSERT INTO user(password,email,role,user_class) VALUES (#{password},#{email},#{role},#{userClass});")
@@ -15,7 +16,7 @@ public interface UserDao extends Mapper<User> {
 
   @ResultType(UserDTO.class)
   @Select(
-      "SELECT user_id as userId,email,role,user_class as userClass FROM user WHERE user_id = #{userId}")
+      "SELECT user_id as userId, email, role, user_class as userClass FROM user WHERE user_id = #{userId}")
   UserDTO getUserByUserId(@Param("userId") long userId);
 
   @ResultType(UserDTO.class)
@@ -42,6 +43,7 @@ public interface UserDao extends Mapper<User> {
   @Select("SELECT password FROM user WHERE email = #{email}")
   String getUserPassword(@Param("email") String email);
 
-  @Select("SELECT user_id as userId,email,role,user_class as userClass FROM user")
+  @ResultType(UserDTO.class)
+  @Select("SELECT user_id as userId, role, email, user_class as userClass FROM user")
   List<UserDTO> selectAllUserDTOs();
 }

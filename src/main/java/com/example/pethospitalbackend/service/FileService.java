@@ -15,17 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.UUID;
 
 @Service
-public class VideoService {
+public class FileService {
 
-  private static final Logger logger = LoggerFactory.getLogger(VideoService.class);
-
+  private static final Logger logger = LoggerFactory.getLogger(FileService.class);
+  private final String videoBucketName = "pet-hospital-back-end-video";
+  private final String graphBucketName = "pet-hospital-back-end-graph";
   @Resource OSSUtil ossUtil;
-
   @Resource TreatmentVideoDao treatmentVideoDao;
-
-  private final String bucketName = "pet-hospital-back-end";
 
   // 上传视频的例子
   public void addVideo(MultipartFile video_mp4) {
@@ -33,7 +32,7 @@ public class VideoService {
     String code = RandomStringUtils.randomNumeric(5);
     String filename =
         code + "video_publisher" + JwtUtils.getUserId() + "/" + video_mp4.getOriginalFilename();
-    String url = ossUtil.uploadFile(bucketName, video_mp4, filename);
+    String url = ossUtil.uploadFile(videoBucketName, video_mp4, filename);
     if (StringUtils.isBlank(url)) {
       logger.error(
           "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video_mp4.getOriginalFilename()));
@@ -53,18 +52,47 @@ public class VideoService {
     }
   }
 
-  public void addVideos(MultipartFile[] videos) {
-    for (MultipartFile video : videos) {
-      String code = RandomStringUtils.randomNumeric(5);
-      String filename =
-          code + "video_publisher" + JwtUtils.getUserId() + "/" + video.getOriginalFilename();
-      String url = ossUtil.uploadFile(bucketName, video, filename);
-      if (StringUtils.isBlank(url)) {
-        logger.error(
-            "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
-        throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
-      }
-      // 在数据添加url
+  public String addGraphs(MultipartFile graph) {
+    String filename =
+        "graph_publisher"
+            + JwtUtils.getUserId()
+            + "/"
+            + UUID.randomUUID()
+            + graph.getOriginalFilename();
+    String url = ossUtil.uploadFile(graphBucketName, graph, filename);
+
+    if (StringUtils.isBlank(url)) {
+      logger.error("[addGraph Fail], graph: {}", SerialUtil.toJsonStr(graph.getOriginalFilename()));
+      throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
+    } else {
+      return url;
     }
+  }
+
+  public String addVideos(MultipartFile video) {
+    String filename =
+        "video_publisher_"
+            + JwtUtils.getUserId()
+            + "/"
+            + UUID.randomUUID()
+            + video.getOriginalFilename();
+    String url = ossUtil.uploadFile(videoBucketName, video, filename);
+    if (StringUtils.isBlank(url)) {
+      logger.error(
+          "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
+      throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
+    }
+    // 在数据添加url
+    else {
+      return url;
+    }
+  }
+
+  public boolean deleteGraph(String url) {
+    return ossUtil.deleteFile(graphBucketName, url);
+  }
+
+  public Boolean deleteVideo(String url) {
+    return ossUtil.deleteFile(videoBucketName, url);
   }
 }

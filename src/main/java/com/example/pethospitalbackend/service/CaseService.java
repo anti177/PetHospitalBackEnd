@@ -102,7 +102,7 @@ public class CaseService {
 
         List<String> admissionGraphs = caseDao.getAdmissionGraphByCaseId(caseId);
         if (admissionGraphs != null) {
-          caseFrontDetailDTO.setAdmissionGraphList(admissionGraphs);
+          caseFrontDetailDTO.setAdmissionGraphList(admissionGraphs); // 需要修改一下逻辑让插入的文件sort_num最大
         }
         List<String> treatmentGraphs = caseDao.getTreatmentGraphByCaseId(caseId);
         if (treatmentGraphs != null) {
@@ -190,6 +190,7 @@ public class CaseService {
     }
   }
 
+  // todo: 重构，修改一下方法参数顺序
   public List<FileDTO> getFileDTOList(List<String> urlList, Long caseId) {
     List<FileDTO> fileDTOList = new ArrayList<>();
     for (int i = 0; i < urlList.size(); i++) {
@@ -210,9 +211,9 @@ public class CaseService {
           inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
       Example example = new Example(InspectionGraph.class);
       Example.Criteria criteria =
-          example.createCriteria().andIn("inspection_id", inspectionCaseIdList);
-      inspectionCaseDao.deleteByExample(criteria); // 删除检查情况中的照片
-      inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(caseId); // 删除检查情况
+          example.createCriteria().andIn("inspectionId", inspectionCaseIdList);
+      inspectionCaseDao.deleteByExample(criteria); // 删除检查情况
+      inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(caseId); // 删除检查情况中的照片
       caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
       caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
       caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
@@ -226,16 +227,54 @@ public class CaseService {
     }
   }
 
-  // todo: 编写逻辑
-  public int updateCase(IllCaseFormDTO form) {
-    IllCase illCase = transformIllCaseFormToIllCase(form);
-    caseDao.updateByPrimaryKey(illCase);
-    return 0;
+  //  // todo: 更新图片，更新检查
+  //  @Transactional(rollbackFor = Exception.class)
+  //  public int updateCase(IllCaseFormDTO form) {
+  //    IllCase illCase = transformIllCaseFormToIllCase(form);
+  //    Long caseId = illCase.getCaseId();
+  //    // todo: 重构
+  //    List<String> newAdmissionGraphs = form.getAdmission_graphs();
+  //    List<String> newTreatmentGraphs = form.getTherapy_graphs();
+  //    List<String> newTreatmentVideos = form.getTherapy_videos();
+  //
+  //    // 更新admissionGraph
+  //    caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
+  //    caseDao.insertFiles(getFileDTOList(newAdmissionGraphs, caseId), "admission_graph");
+  //
+  //    // 更新treatmentGraph
+  //    caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
+  //    caseDao.insertFiles(getFileDTOList(newTreatmentGraphs, caseId), "treatment_graph");
+  //
+  //    // 更新treatmentVideo
+  //    caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
+  //    caseDao.insertFiles(getFileDTOList(newTreatmentVideos, caseId), "treatment_video");
+  //
+  //    // 更新inspectionCase
+  //
+  //    caseDao.updateByPrimaryKey(illCase);
+  //    return 0;
+  //  }
+
+  @Transactional(rollbackFor = Exception.class)
+  public int updateCase(Long id, IllCaseFormDTO formDTO) {
+    try {
+      deleteCase(id);
+      formDTO.setCase_id(id);
+      addCase(formDTO);
+      return 1;
+    } catch (Exception e) {
+      logger.error(
+          "[update ill case fail], caseId: {}, error message: {}",
+          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
   // 工具方法，用于转换前端表单类到实体类
   public IllCase transformIllCaseFormToIllCase(IllCaseFormDTO form) {
     IllCase illCase = new IllCase();
+    illCase.setCaseId(form.getCase_id());
     illCase.setCaseName(form.getCase_title());
     illCase.setDiseaseId(form.getDisease_id());
     illCase.setDiagnosticInfo(form.getDiagnostic_result());
@@ -259,7 +298,6 @@ public class CaseService {
   public CaseBackDetailDTO getBackCaseDetailDTOByCaseId(Long caseId) {
     try {
       CaseBackDetailDTO caseBackDetailDTO = caseDao.getBackDetailDTO(caseId); // 先读基本类型属性和疾病属性
-
       caseBackDetailDTO.setAdmissionGraphList(
           caseDao.getFilesByIllCaseId("admission_graph", caseId));
       caseBackDetailDTO.setTreatmentGraphList(
@@ -340,6 +378,10 @@ public class CaseService {
           "[get all diseases fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
+  }
+
+  public List<InspectionItemBackDTO> getAllInspectionItems() {
+    return inspectionCaseDao.selectAllInspectionItems();
   }
 
   // 目前不需要这个方法
