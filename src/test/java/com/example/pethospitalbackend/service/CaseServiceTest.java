@@ -213,7 +213,8 @@ public class CaseServiceTest extends BaseTest {
     when(caseService.inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(0L))
         .thenReturn(Collections.singletonList(0L));
     when(caseService.inspectionCaseDao.deleteByExample(any(Object.class))).thenReturn(0);
-    when(caseService.inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(0L)).thenReturn(0);
+    when(caseService.inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(Arrays.asList(0L)))
+        .thenReturn(0);
     when(caseService.caseDao.deleteFilesByIllCaseId(anyString(), anyLong())).thenReturn(0);
     when(caseService.caseDao.deleteByPrimaryKey(any())).thenReturn(0);
 
@@ -246,7 +247,8 @@ public class CaseServiceTest extends BaseTest {
     when(caseService.inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(0L))
         .thenReturn(Collections.singletonList(0L));
     when(caseService.inspectionCaseDao.deleteByExample(any(Object.class))).thenReturn(1);
-    when(caseService.inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(0L)).thenReturn(1);
+    when(caseService.inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(Arrays.asList(0L)))
+        .thenReturn(1);
     when(caseService.caseDao.deleteFilesByIllCaseId(anyString(), anyLong())).thenReturn(1);
     when(caseService.caseDao.deleteByPrimaryKey(any())).thenReturn(1);
     when(caseService.caseDao.insert(any())).thenReturn(1);
