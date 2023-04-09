@@ -14,7 +14,7 @@ public class IllCaseFormDTO {
   List<String> admission_graphs;
   List<InspectionCaseFrontDTO> inspection_cases;
   String diagnostic_result;
-  String therapy_text;
+  String treatment_info;
   List<String> therapy_graphs;
   List<String> therapy_videos;
 }

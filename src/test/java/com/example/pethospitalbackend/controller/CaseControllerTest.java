@@ -371,7 +371,7 @@ public class CaseControllerTest extends BaseTest {
     illCaseFormDTO.setDisease_id(0L);
     illCaseFormDTO.setAdmission_text("admissionText");
     illCaseFormDTO.setDiagnostic_result("diagnosticInfo");
-    illCaseFormDTO.setTherapy_text("treatmentInfo");
+    illCaseFormDTO.setTreatment_info("treatmentInfo");
     illCaseFormDTO.setFront_graph("frontGraph");
 
     Response<IllCase> expectedResponseContent = new Response<>();
@@ -404,7 +404,7 @@ public class CaseControllerTest extends BaseTest {
     illCaseFormDTO.setDisease_id(0L);
     illCaseFormDTO.setAdmission_text("admissionText");
     illCaseFormDTO.setDiagnostic_result("diagnosticInfo");
-    illCaseFormDTO.setTherapy_text("treatmentInfo");
+    illCaseFormDTO.setTreatment_info("treatmentInfo");
     illCaseFormDTO.setFront_graph("frontGraph");
     when(caseService.updateCase(any())).thenReturn(1);
     Response<ModifiedRecordCountDTO> expectedResponseContent = new Response<>();

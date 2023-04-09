@@ -109,7 +109,7 @@ public interface CaseDao extends Mapper<IllCase> {
     "</script>"
   })
   int insertFiles(
-      @Param(value = "files") List<FileDTO> list, @Param(value = "tableName") String table);
+      @Param(value = "files") List<FileDTO> files, @Param(value = "tableName") String table);
 
   @Insert({
     "<script>",
@@ -119,7 +119,7 @@ public interface CaseDao extends Mapper<IllCase> {
     "</foreach>",
     "</script>"
   })
-  int insertInspectionGraphs(List<FileDTO> inspectionGraphList);
+  int insertInspectionGraphs(@Param("files") List<FileDTO> inspectionGraphList);
 
   @Delete("DELETE * FROM ${table} WHERE url = #{url}")
   void deleteFilesByGraphUrl(@Param("table") String table, @Param("url") String url);
