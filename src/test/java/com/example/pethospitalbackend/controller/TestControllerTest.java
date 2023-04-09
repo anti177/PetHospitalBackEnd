@@ -23,7 +23,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -372,16 +375,13 @@ public class TestControllerTest extends BaseTest {
     // Setup
     // Configure TestService.getTest(...).
     final TestDetailBackDTO testDetailBackDTO = new TestDetailBackDTO();
-    final com.example.pethospitalbackend.entity.Test test =
-        new com.example.pethospitalbackend.entity.Test();
-    test.setTestId(0L);
-    test.setTestName("testName");
-    test.setIntro("intro");
-    test.setTag("tag");
-    test.setPaperID(0L);
-    test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    testDetailBackDTO.setTest(test);
+    testDetailBackDTO.setTestId(0L);
+    testDetailBackDTO.setTestName("testName");
+    testDetailBackDTO.setIntro("intro");
+    testDetailBackDTO.setTag("tag");
+    testDetailBackDTO.setPaperID(0L);
+    testDetailBackDTO.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
+    testDetailBackDTO.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     testDetailBackDTO.setUserList(Collections.singletonList("value"));
     when(testService.getTest(0L)).thenReturn(testDetailBackDTO);
     Response<TestDetailBackDTO> expectedResponseContent = new Response<>();
@@ -413,10 +413,8 @@ public class TestControllerTest extends BaseTest {
     test.setPaperID(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-
     TestFormBackDTO testFormBackDTO = new TestFormBackDTO();
-    testFormBackDTO.setTest(test);
-    testFormBackDTO.setUserList(Arrays.asList(0L, 1L));
+    BeanUtils.copyProperties(test, testFormBackDTO);
 
     when(testService.updateTest(any())).thenReturn(1);
     Response<ModifiedRecordCountDTO> expectedResponseContent = new Response<>();
@@ -474,15 +472,12 @@ public class TestControllerTest extends BaseTest {
     test.setPaperID(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-
     TestFormBackDTO testFormBackDTO = new TestFormBackDTO();
-    testFormBackDTO.setTest(test);
-    testFormBackDTO.setUserList(Arrays.asList(0L, 1L));
-
+    BeanUtils.copyProperties(test, testFormBackDTO);
     when(testService.addTest(any())).thenReturn(test);
+
     Response<com.example.pethospitalbackend.entity.Test> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(test);
-
     // Run the test
     final MockHttpServletResponse response =
         mockMvc
