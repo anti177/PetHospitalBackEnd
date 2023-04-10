@@ -26,6 +26,10 @@ public class Operation {
   @ApiModelProperty(value = "操作名称")
   private String operationName;
 
+  @Column(name = "intro")
+  @ApiModelProperty(value = "操作介绍")
+  private String intro;
+
   @Column(name = "url")
   @ApiModelProperty(value = "操作图片")
   private String url;
