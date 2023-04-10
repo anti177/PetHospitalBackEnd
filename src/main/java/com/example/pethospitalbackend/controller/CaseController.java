@@ -59,7 +59,7 @@ public class CaseController {
 
   @PostMapping("/cases")
   @ApiOperation("管理员上传病例")
-  Response<IllCase> postCase(@RequestBody IllCaseFormDTO form) {
+  Response<IllCase> postCase(@RequestBody CaseBackFormDTO form) {
     Response<IllCase> response = new Response<>();
     response.setSuc(caseService.addCase(form));
     return response;
@@ -68,7 +68,7 @@ public class CaseController {
   @PutMapping("/cases/{id}")
   @ApiOperation("管理员修改病例")
   Response<ModifiedRecordCountDTO> putCase(
-      @PathVariable Long id, @RequestBody IllCaseFormDTO form) {
+      @PathVariable Long id, @RequestBody CaseBackFormDTO form) {
     form.setCase_id(id);
     Integer res = caseService.updateCase(form);
     Response<ModifiedRecordCountDTO> response = new Response<>();

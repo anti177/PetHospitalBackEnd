@@ -166,7 +166,7 @@ public class CaseServiceTest extends BaseTest {
   @Test
   public void testAddCase() {
     // Setup
-    final IllCaseFormDTO form = new IllCaseFormDTO();
+    final CaseBackFormDTO form = new CaseBackFormDTO();
     form.setCase_id(0L);
     form.setFront_graph("frontGraph");
     form.setCase_title("caseName");
@@ -226,7 +226,7 @@ public class CaseServiceTest extends BaseTest {
   @Test
   public void testUpdateCase() {
     // Setup
-    final IllCaseFormDTO formDTO = new IllCaseFormDTO();
+    final CaseBackFormDTO formDTO = new CaseBackFormDTO();
     formDTO.setCase_id(0L);
     formDTO.setFront_graph("front_graph");
     formDTO.setCase_title("case_title");
