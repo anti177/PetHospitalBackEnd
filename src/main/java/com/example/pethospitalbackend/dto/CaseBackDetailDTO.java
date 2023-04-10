@@ -1,12 +1,14 @@
 package com.example.pethospitalbackend.dto;
 
 import com.example.pethospitalbackend.entity.Disease;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@ApiModel("后台病例详情模型")
 public class CaseBackDetailDTO {
 
   @ApiModelProperty(value = "病例ID")

@@ -40,7 +40,7 @@ public class CaseControllerTest extends BaseTest {
 
   private JacksonTester<Response> responseJacksonTester;
   private JacksonTester<Disease> diseaseJacksonTester;
-  private JacksonTester<IllCaseFormDTO> illCaseFormDTOJacksonTest;
+  private JacksonTester<CaseBackFormDTO> illCaseFormDTOJacksonTest;
 
   @Before
   public void before() {
@@ -365,14 +365,14 @@ public class CaseControllerTest extends BaseTest {
     illCase.setTreatmentInfo("treatmentInfo");
     illCase.setFrontGraph("frontGraph");
     when(caseService.addCase(any())).thenReturn(illCase);
-    IllCaseFormDTO illCaseFormDTO = new IllCaseFormDTO();
-    illCaseFormDTO.setCase_id(0L);
-    illCaseFormDTO.setCase_title("caseName");
-    illCaseFormDTO.setDisease_id(0L);
-    illCaseFormDTO.setAdmission_text("admissionText");
-    illCaseFormDTO.setDiagnostic_result("diagnosticInfo");
-    illCaseFormDTO.setTreatment_info("treatmentInfo");
-    illCaseFormDTO.setFront_graph("frontGraph");
+    CaseBackFormDTO caseBackFormDTO = new CaseBackFormDTO();
+    caseBackFormDTO.setCase_id(0L);
+    caseBackFormDTO.setCase_title("caseName");
+    caseBackFormDTO.setDisease_id(0L);
+    caseBackFormDTO.setAdmission_text("admissionText");
+    caseBackFormDTO.setDiagnostic_result("diagnosticInfo");
+    caseBackFormDTO.setTreatment_info("treatmentInfo");
+    caseBackFormDTO.setFront_graph("frontGraph");
 
     Response<IllCase> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(illCase);
@@ -382,7 +382,7 @@ public class CaseControllerTest extends BaseTest {
         mockMvc
             .perform(
                 post("/cases")
-                    .content(illCaseFormDTOJacksonTest.write(illCaseFormDTO).getJson())
+                    .content(illCaseFormDTOJacksonTest.write(caseBackFormDTO).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()
@@ -398,14 +398,14 @@ public class CaseControllerTest extends BaseTest {
   @Test
   public void testPutCase() throws Exception {
     // Setup
-    IllCaseFormDTO illCaseFormDTO = new IllCaseFormDTO();
-    illCaseFormDTO.setCase_id(0L);
-    illCaseFormDTO.setCase_title("caseName");
-    illCaseFormDTO.setDisease_id(0L);
-    illCaseFormDTO.setAdmission_text("admissionText");
-    illCaseFormDTO.setDiagnostic_result("diagnosticInfo");
-    illCaseFormDTO.setTreatment_info("treatmentInfo");
-    illCaseFormDTO.setFront_graph("frontGraph");
+    CaseBackFormDTO caseBackFormDTO = new CaseBackFormDTO();
+    caseBackFormDTO.setCase_id(0L);
+    caseBackFormDTO.setCase_title("caseName");
+    caseBackFormDTO.setDisease_id(0L);
+    caseBackFormDTO.setAdmission_text("admissionText");
+    caseBackFormDTO.setDiagnostic_result("diagnosticInfo");
+    caseBackFormDTO.setTreatment_info("treatmentInfo");
+    caseBackFormDTO.setFront_graph("frontGraph");
     when(caseService.updateCase(any())).thenReturn(1);
     Response<ModifiedRecordCountDTO> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(new ModifiedRecordCountDTO(1));
@@ -415,7 +415,7 @@ public class CaseControllerTest extends BaseTest {
         mockMvc
             .perform(
                 put("/cases/{id}", 0)
-                    .content(illCaseFormDTOJacksonTest.write(illCaseFormDTO).getJson())
+                    .content(illCaseFormDTOJacksonTest.write(caseBackFormDTO).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()

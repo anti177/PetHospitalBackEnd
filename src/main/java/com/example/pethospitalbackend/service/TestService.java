@@ -289,7 +289,7 @@ public class TestService {
       BeanUtils.copyProperties(question, questionFormDTO);
       questionFormDTO.setAns(Arrays.asList(question.getAns().split(";")));
       questionFormDTO.setChoice(Arrays.asList(question.getChoice().split(";")));
-      questionFormDTO.setDisease(diseaseDao.selectByPrimaryKey(question.getDiseaseId()));
+      questionFormDTO.setDiseaseName(diseaseDao.selectNameByPrimaryKey(question.getDiseaseId()));
       return questionFormDTO;
     } catch (Exception e) {
       logger.error(

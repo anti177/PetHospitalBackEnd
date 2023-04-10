@@ -140,7 +140,7 @@ public class CaseService {
   // ---------------------------------后台方法------------------------------
 
   @Transactional(rollbackFor = Exception.class)
-  public IllCase addCase(IllCaseFormDTO form) {
+  public IllCase addCase(CaseBackFormDTO form) {
     try {
       // 插入病例基本类
       IllCase illCase = transformIllCaseFormToIllCase(form);
@@ -231,7 +231,7 @@ public class CaseService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public int updateCase(IllCaseFormDTO formDTO) {
+  public int updateCase(CaseBackFormDTO formDTO) {
     Long id = formDTO.getCase_id();
     try {
       deleteCase(id);
@@ -248,7 +248,7 @@ public class CaseService {
   }
 
   // 工具方法，用于转换前端表单类到实体类
-  private IllCase transformIllCaseFormToIllCase(IllCaseFormDTO form) {
+  private IllCase transformIllCaseFormToIllCase(CaseBackFormDTO form) {
     IllCase illCase = new IllCase();
     illCase.setCaseId(form.getCase_id());
     illCase.setFrontGraph(form.getFront_graph());
