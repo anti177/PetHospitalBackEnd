@@ -3,7 +3,6 @@ package com.example.pethospitalbackend.service;
 import com.example.pethospitalbackend.BaseTest;
 import com.example.pethospitalbackend.dao.*;
 import com.example.pethospitalbackend.dto.*;
-import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.Paper;
 import com.example.pethospitalbackend.entity.Question;
 import org.junit.Before;
@@ -97,11 +96,7 @@ public class TestServiceTest extends BaseTest {
     expectedResult.setChoice(Arrays.asList("choice1", "choice2"));
     expectedResult.setAns(Arrays.asList("ans1", "ans2"));
     expectedResult.setKeyword("keyword");
-    final Disease disease = new Disease();
-    disease.setDiseaseId(0L);
-    disease.setDiseaseName("diseaseName");
-    disease.setTypeName("typeName");
-    expectedResult.setDisease(disease);
+    expectedResult.setDiseaseName("disease");
 
     // Configure QuestionDao.selectByPrimaryKey(...).
     final Question question = new Question();
@@ -114,12 +109,8 @@ public class TestServiceTest extends BaseTest {
     question.setDiseaseId(0L);
     when(questionDao.selectByPrimaryKey(0L)).thenReturn(question);
 
-    // Configure DiseaseDao.selectByPrimaryKey(...).
-    final Disease disease1 = new Disease();
-    disease1.setDiseaseId(0L);
-    disease1.setDiseaseName("diseaseName");
-    disease1.setTypeName("typeName");
-    when(diseaseDao.selectByPrimaryKey(0L)).thenReturn(disease1);
+    // Configure DiseaseDao.selectNameByPrimaryKey(...).
+    when(diseaseDao.selectNameByPrimaryKey(0L)).thenReturn("disease");
 
     // Run the test
     final QuestionBackDetailDTO result = testService.getQuestion(0L);
