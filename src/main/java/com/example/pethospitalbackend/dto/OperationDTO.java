@@ -11,6 +11,9 @@ public class OperationDTO {
   @ApiModelProperty(value = "操作名称")
   private String operationName;
 
+  @ApiModelProperty(value = "操作介绍")
+  private String intro;
+
   @ApiModelProperty(value = "操作图片")
   private String url;
 

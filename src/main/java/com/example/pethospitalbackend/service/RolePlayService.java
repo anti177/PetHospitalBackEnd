@@ -81,6 +81,7 @@ public class RolePlayService {
         operationDTO.setSortNum(x.getSortNum());
         operationDTO.setUrl(x.getUrl());
         operationDTO.setOperationName(x.getOperationName());
+        operationDTO.setIntro(x.getOperationIntro());
         dto.getOperationDTOList().add(operationDTO);
       }
       roleProcessDTOList.addAll(roleProcessDTOMap.values());
