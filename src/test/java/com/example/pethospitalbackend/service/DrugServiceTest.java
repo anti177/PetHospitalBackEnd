@@ -10,7 +10,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class DrugServiceTest {
 
@@ -93,7 +94,7 @@ class DrugServiceTest {
     expectedResult.setPrice(0.0);
     expectedResult.setUrl("url");
 
-    when(drugServiceUnderTest.drugDao.insert(any())).thenReturn(1);
+    when(drugServiceUnderTest.drugDao.insert(drug)).thenReturn(1);
 
     // Run the test
     final Drug result = drugServiceUnderTest.addDrug(drug);
@@ -125,7 +126,7 @@ class DrugServiceTest {
     drug.setPrice(0.0);
     drug.setUrl("url");
 
-    when(drugServiceUnderTest.drugDao.updateByPrimaryKeySelective(any())).thenReturn(1);
+    when(drugServiceUnderTest.drugDao.updateByPrimaryKey(drug)).thenReturn(1);
 
     // Run the test
     final int result = drugServiceUnderTest.updateDrug(drug);

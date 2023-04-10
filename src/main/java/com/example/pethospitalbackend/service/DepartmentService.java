@@ -34,6 +34,14 @@ public class DepartmentService {
   }
 
   public int updateDepartment(Department department) {
-    return departmentDao.updateByPrimaryKeySelective(department);
+    try {
+      return departmentDao.updateByPrimaryKey(department);
+    } catch (Exception e) {
+      logger.error(
+          "[update Department Fail], departmentId: {}, error message: {}",
+          SerialUtil.toJsonStr(department.getDepartmentId()),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 }

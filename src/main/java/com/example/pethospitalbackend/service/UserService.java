@@ -190,7 +190,7 @@ public class UserService {
 
   public int updateUser(User user) {
     try {
-      return userDao.updateByPrimaryKeySelective(user);
+      return userDao.updateByPrimaryKey(user);
     } catch (Exception e) {
       logger.error(
           "[update user fail], userId: {}, error msg: {}",

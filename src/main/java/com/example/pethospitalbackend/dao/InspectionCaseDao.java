@@ -78,8 +78,21 @@ public interface InspectionCaseDao
       })
   List<InspectionCaseBackDTO> getInspectionCaseBackDTOByIllCaseId(@Param("id") long IllCaseId);
 
-  @Delete("Delete FROM inspection_graph WHERE inspection_case_id = #{id}")
-  int deleteInspectionGraphsByInspectionCaseId(@Param("id") long caseId);
+  @Delete(
+      "<script>"
+          + "delete from inspection_graph where inspection_case_id in "
+          + "<foreach collection='id' open='(' item='id_' separator=',' close=')'> #{id_}"
+          + "</foreach>"
+          + "</script>")
+  int deleteInspectionGraphsByInspectionCaseId(@Param("id") List<Long> id);
+
+  @Delete(
+      "<script>"
+          + "delete from inspection_case where inspection_case_id in "
+          + "<foreach collection='id' open='(' item='id_' separator=',' close=')'> #{id_}"
+          + "</foreach>"
+          + "</script>")
+  int deleteInspectionCasesByInspectionCaseId(@Param("id") List<Long> id);
 
   @Select("SELECT inspection_case_id from inspection_case where case_id = #{id}")
   List<Long> selectAllInspectionCaseIdByIllCaseId(@Param("id") long illCaseId);

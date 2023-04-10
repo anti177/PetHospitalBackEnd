@@ -7,7 +7,6 @@ import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
 import com.example.pethospitalbackend.entity.InspectionCase;
-import com.example.pethospitalbackend.entity.InspectionGraph;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.response.Response;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -142,7 +140,7 @@ public class CaseService {
   // ---------------------------------后台方法------------------------------
 
   @Transactional(rollbackFor = Exception.class)
-  public void addCase(IllCaseFormDTO form) {
+  public IllCase addCase(IllCaseFormDTO form) {
     // todo: 测试
     try {
       // 插入病例基本类
@@ -160,33 +158,39 @@ public class CaseService {
       }
       if (therapyGraphUrls != null) {
         List<FileDTO> therapyGraphList = getFileDTOList(therapyGraphUrls, caseId);
-        caseDao.insertFiles(therapyGraphList, "therapy_graph");
+        caseDao.insertFiles(therapyGraphList, "treatment_graph");
       }
       if (therapyVideoUrls != null) {
         List<FileDTO> therapyVideoList = getFileDTOList(therapyVideoUrls, caseId);
-        caseDao.insertFiles(therapyVideoList, "therapy_video");
+        caseDao.insertFiles(therapyVideoList, "treatment_video");
       }
 
-      for (int i = 0; i < form.getInspection_cases().size(); i++) {
-        // 添加相关检查项目信息
-        InspectionCaseFrontDTO inspectionCaseFrontDTO = form.getInspection_cases().get(i);
-        InspectionCase inspectionCase = new InspectionCase();
-        inspectionCase.setCaseId(caseId);
-        inspectionCase.setItemId(inspectionCaseFrontDTO.getInspection_item_id());
-        inspectionCase.setResult(inspectionCaseFrontDTO.getInspection_result_text());
-        inspectionCase.setSortNum((long) i);
-        inspectionCaseDao.insert(inspectionCase);
+      List<InspectionCaseFrontDTO> inspectionCaseList = form.getInspection_cases();
+      if (inspectionCaseList != null) {
+        for (int i = 0; i < form.getInspection_cases().size(); i++) {
+          // 添加相关检查项目信息
+          InspectionCaseFrontDTO inspectionCaseFrontDTO = form.getInspection_cases().get(i);
+          InspectionCase inspectionCase = new InspectionCase();
+          inspectionCase.setCaseId(caseId);
+          inspectionCase.setItemId(inspectionCaseFrontDTO.getInspection_item_id());
+          inspectionCase.setResult(inspectionCaseFrontDTO.getInspection_result_text());
+          inspectionCase.setSortNum((long) i + 1);
+          inspectionCaseDao.insert(inspectionCase);
 
-        // 添加相关检查图片信息
-        Long inspectionCaseId = inspectionCase.getInspectionCaseId();
-        List<String> inspectionGraphUrls = inspectionCaseFrontDTO.getInspection_graphs();
-        if (inspectionGraphUrls != null) {
-          List<FileDTO> inspectionGraphList = getFileDTOList(inspectionGraphUrls, inspectionCaseId);
-          caseDao.insertInspectionGraphs(inspectionGraphList);
+          // 添加相关检查图片信息
+          Long inspectionCaseId = inspectionCase.getInspectionCaseId();
+          List<String> inspectionGraphUrls = inspectionCaseFrontDTO.getInspection_graphs();
+          if (inspectionGraphUrls.size() > 0) {
+            List<FileDTO> inspectionGraphList =
+                getFileDTOList(inspectionGraphUrls, inspectionCaseId);
+            caseDao.insertInspectionGraphs(inspectionGraphList);
+          }
         }
       }
+      return illCase;
     } catch (Exception e) {
-      // todo: 异常处理
+      logger.error("[add case Fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
   }
 
@@ -196,7 +200,7 @@ public class CaseService {
     for (int i = 0; i < urlList.size(); i++) {
       FileDTO fileDTO = new FileDTO();
       fileDTO.setCaseId(caseId);
-      fileDTO.setSortNum((long) i);
+      fileDTO.setSortNum((long) i + 1);
       fileDTO.setUrl(urlList.get(i));
       fileDTOList.add(fileDTO);
     }
@@ -209,11 +213,12 @@ public class CaseService {
     try {
       List<Long> inspectionCaseIdList =
           inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
-      Example example = new Example(InspectionGraph.class);
-      Example.Criteria criteria =
-          example.createCriteria().andIn("inspectionId", inspectionCaseIdList);
-      inspectionCaseDao.deleteByExample(criteria); // 删除检查情况
-      inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(caseId); // 删除检查情况中的照片
+      if (inspectionCaseIdList.size() > 0) {
+        inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(
+            inspectionCaseIdList); // 删除检查情况中的照片
+        inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(inspectionCaseIdList); // 删除检查情况
+      }
+
       caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
       caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
       caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
@@ -227,36 +232,9 @@ public class CaseService {
     }
   }
 
-  //  // todo: 更新图片，更新检查
-  //  @Transactional(rollbackFor = Exception.class)
-  //  public int updateCase(IllCaseFormDTO form) {
-  //    IllCase illCase = transformIllCaseFormToIllCase(form);
-  //    Long caseId = illCase.getCaseId();
-  //    // todo: 重构
-  //    List<String> newAdmissionGraphs = form.getAdmission_graphs();
-  //    List<String> newTreatmentGraphs = form.getTherapy_graphs();
-  //    List<String> newTreatmentVideos = form.getTherapy_videos();
-  //
-  //    // 更新admissionGraph
-  //    caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
-  //    caseDao.insertFiles(getFileDTOList(newAdmissionGraphs, caseId), "admission_graph");
-  //
-  //    // 更新treatmentGraph
-  //    caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
-  //    caseDao.insertFiles(getFileDTOList(newTreatmentGraphs, caseId), "treatment_graph");
-  //
-  //    // 更新treatmentVideo
-  //    caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
-  //    caseDao.insertFiles(getFileDTOList(newTreatmentVideos, caseId), "treatment_video");
-  //
-  //    // 更新inspectionCase
-  //
-  //    caseDao.updateByPrimaryKey(illCase);
-  //    return 0;
-  //  }
-
   @Transactional(rollbackFor = Exception.class)
-  public int updateCase(Long id, IllCaseFormDTO formDTO) {
+  public int updateCase(IllCaseFormDTO formDTO) {
+    Long id = formDTO.getCase_id();
     try {
       deleteCase(id);
       formDTO.setCase_id(id);
@@ -272,13 +250,14 @@ public class CaseService {
   }
 
   // 工具方法，用于转换前端表单类到实体类
-  public IllCase transformIllCaseFormToIllCase(IllCaseFormDTO form) {
+  private IllCase transformIllCaseFormToIllCase(IllCaseFormDTO form) {
     IllCase illCase = new IllCase();
     illCase.setCaseId(form.getCase_id());
+    illCase.setFrontGraph(form.getFront_graph());
     illCase.setCaseName(form.getCase_title());
     illCase.setDiseaseId(form.getDisease_id());
     illCase.setDiagnosticInfo(form.getDiagnostic_result());
-    illCase.setTreatmentInfo(form.getAdmission_text());
+    illCase.setTreatmentInfo(form.getTreatment_info());
     illCase.setAdmissionText(form.getAdmission_text());
     return illCase;
   }
@@ -384,7 +363,7 @@ public class CaseService {
     return inspectionCaseDao.selectAllInspectionItems();
   }
 
-  // 目前不需要这个方法
+  // 目前不需要这个方法，考虑删除
   public PageInfo<Disease> getDiseasePageInfo(Integer pageNum, Integer pageSize) {
     try {
       PageHelper.startPage(pageNum, pageSize);

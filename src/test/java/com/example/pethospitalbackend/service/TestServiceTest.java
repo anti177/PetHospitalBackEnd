@@ -140,7 +140,7 @@ public class TestServiceTest extends BaseTest {
     questionForm.setKeyword("keyword");
     questionForm.setDiseaseId(0L);
 
-    when(questionDao.updateByPrimaryKeySelective(any())).thenReturn(1);
+    when(questionDao.updateByPrimaryKey(any())).thenReturn(1);
 
     // Run the test
     final int result = testService.updateQuestion(questionForm);
@@ -293,6 +293,7 @@ public class TestServiceTest extends BaseTest {
   @Test
   public void testAddTest() {
     // Setup
+    final TestFormBackDTO testFormBackDTO = new TestFormBackDTO();
     final com.example.pethospitalbackend.entity.Test test =
         new com.example.pethospitalbackend.entity.Test();
     test.setTestId(0L);
@@ -302,6 +303,8 @@ public class TestServiceTest extends BaseTest {
     test.setPaperID(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
+    testFormBackDTO.setTest(test);
+    testFormBackDTO.setUserList(Collections.singletonList(0L));
 
     final com.example.pethospitalbackend.entity.Test expectedResult =
         new com.example.pethospitalbackend.entity.Test();
@@ -313,13 +316,14 @@ public class TestServiceTest extends BaseTest {
     expectedResult.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     expectedResult.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
 
-    when(testDao.insert(any())).thenReturn(1);
+    when(testDao.insert(any())).thenReturn(0);
 
     // Run the test
-    final com.example.pethospitalbackend.entity.Test result = testService.addTest(test);
+    final com.example.pethospitalbackend.entity.Test result = testService.addTest(testFormBackDTO);
 
     // Verify the results
     assertEquals(expectedResult, result);
+    verify(testDao).insert(test);
   }
 
   @Test
@@ -351,24 +355,31 @@ public class TestServiceTest extends BaseTest {
   public void testGetTest() {
     // Setup
     final TestDetailBackDTO expectedResult = new TestDetailBackDTO();
-    expectedResult.setTestId(0L);
-    expectedResult.setTestName("testName");
-    expectedResult.setPaperName(0L);
-    expectedResult.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    expectedResult.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    expectedResult.setIntro("intro");
-    expectedResult.setTag("tag");
+    final com.example.pethospitalbackend.entity.Test test =
+        new com.example.pethospitalbackend.entity.Test();
+    test.setTestId(0L);
+    test.setTestName("testName");
+    test.setIntro("intro");
+    test.setTag("tag");
+    test.setPaperID(0L);
+    test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
+    test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
+    expectedResult.setTest(test);
+    expectedResult.setUserList(Arrays.asList("value"));
 
-    // Configure TestDao.selectDetailBackDTOById(...).
-    final TestDetailBackDTO testDetailBackDTO = new TestDetailBackDTO();
-    testDetailBackDTO.setTestId(0L);
-    testDetailBackDTO.setTestName("testName");
-    testDetailBackDTO.setPaperName(0L);
-    testDetailBackDTO.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    testDetailBackDTO.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    testDetailBackDTO.setIntro("intro");
-    testDetailBackDTO.setTag("tag");
-    when(testDao.selectDetailBackDTOById(0L)).thenReturn(testDetailBackDTO);
+    // Configure TestDao.selectByPrimaryKey(...).
+    final com.example.pethospitalbackend.entity.Test test1 =
+        new com.example.pethospitalbackend.entity.Test();
+    test1.setTestId(0L);
+    test1.setTestName("testName");
+    test1.setIntro("intro");
+    test1.setTag("tag");
+    test1.setPaperID(0L);
+    test1.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
+    test1.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
+    when(testDao.selectByPrimaryKey(0L)).thenReturn(test1);
+
+    when(testDao.selectRelatedUserNameByTestId(0L)).thenReturn(Collections.singletonList("value"));
 
     // Run the test
     final TestDetailBackDTO result = testService.getTest(0L);
@@ -415,6 +426,7 @@ public class TestServiceTest extends BaseTest {
   @Test
   public void testUpdateTest() {
     // Setup
+    final TestFormBackDTO testFormBackDTO = new TestFormBackDTO();
     final com.example.pethospitalbackend.entity.Test test =
         new com.example.pethospitalbackend.entity.Test();
     test.setTestId(0L);
@@ -424,11 +436,13 @@ public class TestServiceTest extends BaseTest {
     test.setPaperID(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
+    testFormBackDTO.setTest(test);
+    testFormBackDTO.setUserList(Collections.singletonList(0L));
 
-    when(testDao.updateByPrimaryKeySelective(any())).thenReturn(1);
+    when(testDao.updateByPrimaryKey(any())).thenReturn(1);
 
     // Run the test
-    final int result = testService.updateTest(test);
+    final int result = testService.updateTest(testFormBackDTO);
 
     // Verify the results
     assertEquals(1, result);

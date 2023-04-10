@@ -34,7 +34,7 @@ import java.util.List;
  * @author zjy19
  */
 @RestController
-@Api(tags = {"用户登陆"})
+@Api(tags = {"用户登录与管理"})
 public class UserController {
   private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 

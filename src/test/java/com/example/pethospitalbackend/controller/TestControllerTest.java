@@ -41,6 +41,7 @@ public class TestControllerTest extends BaseTest {
   private JacksonTester<Response> responseJacksonTester;
   private JacksonTester<QuestionBackFormDTO> questionFormDTOJacksonTester;
   private JacksonTester<PaperBackDTO> paperBackDTOJacksonTester;
+  private JacksonTester<TestFormBackDTO> testFormBackDTOJacksonTester;
   private JacksonTester<com.example.pethospitalbackend.entity.Test> testJacksonTester;
 
   @Before
@@ -93,7 +94,8 @@ public class TestControllerTest extends BaseTest {
     questionBackBriefDTO.setQuestionType("questionType");
     questionBackBriefDTO.setKeyword("keyword");
     questionBackBriefDTO.setDiseaseName("diseaseName");
-    final List<QuestionBackBriefDTO> questionBackBriefDTOS = Arrays.asList(questionBackBriefDTO);
+    final List<QuestionBackBriefDTO> questionBackBriefDTOS =
+        Collections.singletonList(questionBackBriefDTO);
     when(testService.getAllQuestions()).thenReturn(questionBackBriefDTOS);
     Response<List<QuestionBackBriefDTO>> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(questionBackBriefDTOS);
@@ -348,7 +350,7 @@ public class TestControllerTest extends BaseTest {
     test.setPaperID(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    final List<com.example.pethospitalbackend.entity.Test> tests = Arrays.asList(test);
+    final List<com.example.pethospitalbackend.entity.Test> tests = Collections.singletonList(test);
     when(testService.getAllTests()).thenReturn(tests);
     Response<List<com.example.pethospitalbackend.entity.Test>> expectedResponseContent =
         new Response<>();
@@ -370,13 +372,17 @@ public class TestControllerTest extends BaseTest {
     // Setup
     // Configure TestService.getTest(...).
     final TestDetailBackDTO testDetailBackDTO = new TestDetailBackDTO();
-    testDetailBackDTO.setTestId(0L);
-    testDetailBackDTO.setTestName("testName");
-    testDetailBackDTO.setPaperName(0L);
-    testDetailBackDTO.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    testDetailBackDTO.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    testDetailBackDTO.setIntro("intro");
-    testDetailBackDTO.setTag("tag");
+    final com.example.pethospitalbackend.entity.Test test =
+        new com.example.pethospitalbackend.entity.Test();
+    test.setTestId(0L);
+    test.setTestName("testName");
+    test.setIntro("intro");
+    test.setTag("tag");
+    test.setPaperID(0L);
+    test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
+    test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
+    testDetailBackDTO.setTest(test);
+    testDetailBackDTO.setUserList(Collections.singletonList("value"));
     when(testService.getTest(0L)).thenReturn(testDetailBackDTO);
     Response<TestDetailBackDTO> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(testDetailBackDTO);
@@ -407,8 +413,12 @@ public class TestControllerTest extends BaseTest {
     test.setPaperID(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    when(testService.updateTest(test)).thenReturn(1);
 
+    TestFormBackDTO testFormBackDTO = new TestFormBackDTO();
+    testFormBackDTO.setTest(test);
+    testFormBackDTO.setUserList(Arrays.asList(0L, 1L));
+
+    when(testService.updateTest(any())).thenReturn(1);
     Response<ModifiedRecordCountDTO> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(new ModifiedRecordCountDTO(1));
 
@@ -417,7 +427,7 @@ public class TestControllerTest extends BaseTest {
         mockMvc
             .perform(
                 put("/tests/{id}", 0)
-                    .content(testJacksonTester.write(test).getJson())
+                    .content(testFormBackDTOJacksonTester.write(testFormBackDTO).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()
@@ -464,15 +474,21 @@ public class TestControllerTest extends BaseTest {
     test.setPaperID(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    when(testService.addTest(test)).thenReturn(test);
+
+    TestFormBackDTO testFormBackDTO = new TestFormBackDTO();
+    testFormBackDTO.setTest(test);
+    testFormBackDTO.setUserList(Arrays.asList(0L, 1L));
+
+    when(testService.addTest(any())).thenReturn(test);
     Response<com.example.pethospitalbackend.entity.Test> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(test);
+
     // Run the test
     final MockHttpServletResponse response =
         mockMvc
             .perform(
                 post("/tests")
-                    .content(testJacksonTester.write(test).getJson())
+                    .content(testFormBackDTOJacksonTester.write(testFormBackDTO).getJson())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()
