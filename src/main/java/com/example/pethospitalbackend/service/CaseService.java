@@ -141,7 +141,6 @@ public class CaseService {
 
   @Transactional(rollbackFor = Exception.class)
   public IllCase addCase(IllCaseFormDTO form) {
-    // todo: 测试
     try {
       // 插入病例基本类
       IllCase illCase = transformIllCaseFormToIllCase(form);
@@ -207,7 +206,6 @@ public class CaseService {
     return fileDTOList;
   }
 
-  // todo: 测试
   @Transactional(rollbackFor = Exception.class)
   public int deleteCase(long caseId) {
     try {
@@ -315,7 +313,8 @@ public class CaseService {
   @Transactional(rollbackFor = Exception.class)
   public int deleteDisease(Long id) {
     try {
-      return diseaseDao.deleteByPrimaryKey(id); // todo: 关联删除？
+      // todo: 如果存在相关病例则不能删除
+      return diseaseDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
       logger.error(
           "[delete disease fail], diseaseId: {}, error message: {}",

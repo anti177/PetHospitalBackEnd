@@ -200,9 +200,10 @@ public class UserService {
     }
   }
 
+  @Transactional(rollbackFor = Exception.class)
   public int deleteUser(Long id) {
     try {
-      // todo: 删除和考试场次的关联信息
+      userDao.deleteTestUserWithUserId(id);
       return userDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
       logger.error(

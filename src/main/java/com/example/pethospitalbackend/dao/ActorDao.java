@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface ActorDao extends tk.mybatis.mapper.common.Mapper<Actor> {
   @ResultType(RoleDTO.class)
@@ -17,9 +18,15 @@ public interface ActorDao extends tk.mybatis.mapper.common.Mapper<Actor> {
 
   @ResultType(RolePlayOperationDTO.class)
   @Select(
-      "SELECT process.process_id as id,process.intro as intro,process_name as name, operation.sort_num as sortNum, operation.operation_intro as operationIntro, operation.operation_name as operationName, operation.url as url "
+      "SELECT process.process_id as id,intro,process_name as name, operation.sort_num as sortNum, operation.operation_name as operationName, operation.url as url "
           + "FROM process join operation on process.process_id = operation.process_id "
           + "where process.process_id "
           + "IN  (SELECT process_id FROM rel_actor_process WHERE #{actorId}) ORDER BY id, operation_id")
   ArrayList<RolePlayOperationDTO> getActorProcessById(@Param("actorId") long actorId);
+
+  @ResultType(List.class)
+  @Select(
+      "SELECT process.process_name from rel_actor_process JOIN process on rel_actor_process.process_id = process.process_id "
+          + "WHERE rel_actor_process.actor_id = #{actorId}")
+  List<String> selectRelatedProcessNameByRoleId(@Param("actorId") long id);
 }

@@ -46,4 +46,7 @@ public interface UserDao extends Mapper<User>, DeleteByIdListMapper<User, Long> 
   @ResultType(UserDTO.class)
   @Select("SELECT user_id as userId, role, email, user_class as userClass FROM user")
   List<UserDTO> selectAllUserDTOs();
+
+  @Delete("DELETE from test_user where user_id = #{userId}")
+  int deleteTestUserWithUserId(@Param("userId") Long id);
 }
