@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class FileService {
@@ -93,5 +94,19 @@ public class FileService {
 
   public Boolean deleteVideo(String url) {
     return ossUtil.deleteFile(videoBucketName, url);
+  }
+
+  public Boolean deleteVideos(List<String> urls) {
+    for (String url : urls) {
+      ossUtil.deleteFile(videoBucketName, url);
+    }
+    return true;
+  }
+
+  public Boolean deleteGraphs(List<String> urls) {
+    for (String url : urls) {
+      ossUtil.deleteFile(graphBucketName, url);
+    }
+    return true;
   }
 }
