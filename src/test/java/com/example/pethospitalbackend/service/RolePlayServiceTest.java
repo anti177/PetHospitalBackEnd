@@ -177,7 +177,7 @@ public class RolePlayServiceTest extends BaseTest {
     operation.setOperationId(0L);
     operation.setProcessId(0L);
     operation.setOperationName("operationName");
-    operation.setOperationIntro("operationIntro");
+    operation.setIntro("operationIntro");
     operation.setUrl("url");
     operation.setSortNum(0L);
     expectedResult.setOperationList(Collections.singletonList(operation));
@@ -194,7 +194,7 @@ public class RolePlayServiceTest extends BaseTest {
     operation1.setOperationId(0L);
     operation1.setProcessId(0L);
     operation1.setOperationName("operationName");
-    operation1.setOperationIntro("operationIntro");
+    operation1.setIntro("operationIntro");
     operation1.setUrl("url");
     operation1.setSortNum(0L);
     final List<Operation> operationList = Collections.singletonList(operation1);
@@ -218,7 +218,7 @@ public class RolePlayServiceTest extends BaseTest {
     operation.setOperationId(0L);
     operation.setProcessId(0L);
     operation.setOperationName("operationName");
-    operation.setOperationIntro("operationIntro");
+    operation.setIntro("operationIntro");
     operation.setUrl("url");
     operation.setSortNum(0L);
     processFormBackDTO.setOperationList(Collections.singletonList(operation));
@@ -265,7 +265,7 @@ public class RolePlayServiceTest extends BaseTest {
     operation.setOperationId(0L);
     operation.setProcessId(0L);
     operation.setOperationName("operationName");
-    operation.setOperationIntro("operationIntro");
+    operation.setIntro("operationIntro");
     operation.setUrl("url");
     operation.setSortNum(0L);
     processFormBackDTO.setOperationList(Collections.singletonList(operation));

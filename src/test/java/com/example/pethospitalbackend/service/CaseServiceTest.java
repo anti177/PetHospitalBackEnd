@@ -163,8 +163,6 @@ public class CaseServiceTest extends BaseTest {
     assertEquals(1, result);
   }
 
-  // todo: 补充测试
-
   @Test
   public void testAddCase() {
     // Setup

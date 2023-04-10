@@ -209,7 +209,7 @@ public class RolePlayControllerTest extends BaseTest {
     operation.setOperationId(0L);
     operation.setProcessId(0L);
     operation.setOperationName("operationName");
-    operation.setOperationIntro("operationIntro");
+    operation.setIntro("operationIntro");
     operation.setUrl("url");
     operation.setSortNum(0L);
     processFormBackDTO.setOperationList(Collections.singletonList(operation));

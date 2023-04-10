@@ -18,7 +18,7 @@ public interface OperationDao extends Mapper<Operation>, InsertListMapper<Operat
       value = {
         @Result(id = true, column = "operation_id", property = "operationId"),
         @Result(column = "operation_name", property = "operationName"),
-        @Result(column = "operation_intro", property = "operationIntro"),
+        @Result(column = "intro", property = "intro"),
         @Result(column = "process_id", property = "processId"),
         @Result(column = "sort_num", property = "sortNum"),
         @Result(column = "url", property = "url"),
