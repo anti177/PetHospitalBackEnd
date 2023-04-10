@@ -23,6 +23,9 @@ public class RolePlayOperationDTO {
   @ApiModelProperty(value = "操作名称")
   private String operationName;
 
+  @ApiModelProperty(value = "操作介绍")
+  private String operationIntro;
+
   @ApiModelProperty(value = "操作图片")
   private String url;
 
