@@ -1,11 +1,13 @@
 package com.example.pethospitalbackend.dto;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@ApiModel("后台添加检查情况模型")
 public class InspectionCaseBackDTO {
 
   @ApiModelProperty("检查情况id")

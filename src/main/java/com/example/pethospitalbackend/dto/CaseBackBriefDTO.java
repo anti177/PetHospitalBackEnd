@@ -7,7 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
-@ApiModel("病例模型")
+@ApiModel("后台基本病例模型")
 @Data
 public class CaseBackBriefDTO {
 
