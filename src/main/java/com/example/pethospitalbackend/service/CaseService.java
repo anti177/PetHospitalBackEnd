@@ -33,6 +33,8 @@ public class CaseService {
 
   @Resource InspectionCaseDao inspectionCaseDao;
 
+  @Resource FileService fileService;
+
   // ----------------------------------前台方法----------------------------
 
   public Response<List<CategoryDTO>> getTotalCategory() {
@@ -216,6 +218,9 @@ public class CaseService {
             inspectionCaseIdList); // 删除检查情况中的照片
         inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(inspectionCaseIdList); // 删除检查情况
       }
+      List<FileDTO> fileDTOS = caseDao.getFilesByIllCaseId("admission_graph", caseId);
+      fileDTOS.addAll(caseDao.getFilesByIllCaseId("treatment_graph", caseId));
+      fileDTOS.addAll(caseDao.getFilesByIllCaseId("treatment_video", caseId));
 
       caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
       caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);

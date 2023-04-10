@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@Api(tags = {"病例学习"})
+@Api(tags = {"病例学习与管理"})
 public class CaseController {
 
   @Resource CaseService caseService;
