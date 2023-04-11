@@ -289,7 +289,7 @@ public class TestService {
       BeanUtils.copyProperties(question, questionFormDTO);
       questionFormDTO.setAns(Arrays.asList(question.getAns().split(";")));
       questionFormDTO.setChoice(Arrays.asList(question.getChoice().split(";")));
-      questionFormDTO.setDisease(diseaseDao.selectByPrimaryKey(question.getDiseaseId()));
+      questionFormDTO.setDiseaseName(diseaseDao.selectNameByPrimaryKey(question.getDiseaseId()));
       return questionFormDTO;
     } catch (Exception e) {
       logger.error(
@@ -391,7 +391,7 @@ public class TestService {
     try {
       TestDetailBackDTO testDetailBackDTO = new TestDetailBackDTO();
       Test test = testDao.selectByPrimaryKey(id);
-      testDetailBackDTO.setTest(test);
+      BeanUtils.copyProperties(test, testDetailBackDTO);
       testDetailBackDTO.setUserList(testDao.selectRelatedUserNameByTestId(id));
       return testDetailBackDTO;
     } catch (Exception e) {
@@ -420,7 +420,8 @@ public class TestService {
   @Transactional(rollbackFor = Exception.class)
   public Test addTest(TestFormBackDTO testFormBackDTO) {
     try {
-      Test test = testFormBackDTO.getTest();
+      Test test = new Test();
+      BeanUtils.copyProperties(testFormBackDTO, test);
       testDao.insert(test);
       List<TestUser> testUserList =
           getTestUserList(testFormBackDTO.getUserList(), test.getTestId());
@@ -434,7 +435,8 @@ public class TestService {
 
   @Transactional(rollbackFor = Exception.class)
   public int updateTest(TestFormBackDTO testFormBackDTO) {
-    Test test = testFormBackDTO.getTest();
+    Test test = new Test();
+    BeanUtils.copyProperties(testFormBackDTO, test);
     try {
       testUserDao.deleteTestUsers(test.getTestId());
       List<TestUser> testUserList =

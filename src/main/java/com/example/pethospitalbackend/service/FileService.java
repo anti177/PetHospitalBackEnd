@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.UUID;
+import java.util.List;
 
 @Service
 public class FileService {
@@ -54,10 +54,10 @@ public class FileService {
 
   public String addGraphs(MultipartFile graph) {
     String filename =
-        "graph_publisher"
-            + JwtUtils.getUserId()
+        JwtUtils.getUserId()
             + "/"
-            + UUID.randomUUID()
+            + RandomStringUtils.randomNumeric(5)
+            + "-"
             + graph.getOriginalFilename();
     String url = ossUtil.uploadFile(graphBucketName, graph, filename);
 
@@ -71,10 +71,10 @@ public class FileService {
 
   public String addVideos(MultipartFile video) {
     String filename =
-        "video_publisher_"
-            + JwtUtils.getUserId()
+        JwtUtils.getUserId()
             + "/"
-            + UUID.randomUUID()
+            + RandomStringUtils.randomNumeric(5)
+            + "-"
             + video.getOriginalFilename();
     String url = ossUtil.uploadFile(videoBucketName, video, filename);
     if (StringUtils.isBlank(url)) {
@@ -94,5 +94,19 @@ public class FileService {
 
   public Boolean deleteVideo(String url) {
     return ossUtil.deleteFile(videoBucketName, url);
+  }
+
+  public Boolean deleteVideos(List<String> urls) {
+    for (String url : urls) {
+      ossUtil.deleteFile(videoBucketName, url);
+    }
+    return true;
+  }
+
+  public Boolean deleteGraphs(List<String> urls) {
+    for (String url : urls) {
+      ossUtil.deleteFile(graphBucketName, url);
+    }
+    return true;
   }
 }

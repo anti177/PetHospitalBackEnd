@@ -31,7 +31,7 @@ public interface TestDao extends Mapper<Test> {
   @Select("select exists(select 1 from test where paper_id=#{paperId})")
   boolean existsWithPaperId(@Param("paperId") Long id);
 
-  @ResultType(TestCategoryDTO.class)
+  @ResultType(List.class)
   @Select(
       "SELECT user.email from test_user JOIN user on user.user_id = test_user.user_id "
           + "WHERE test_user.test_id = #{testId}")

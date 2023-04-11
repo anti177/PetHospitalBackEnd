@@ -33,6 +33,8 @@ public class CaseService {
 
   @Resource InspectionCaseDao inspectionCaseDao;
 
+  @Resource FileService fileService;
+
   // ----------------------------------前台方法----------------------------
 
   public Response<List<CategoryDTO>> getTotalCategory() {
@@ -140,8 +142,7 @@ public class CaseService {
   // ---------------------------------后台方法------------------------------
 
   @Transactional(rollbackFor = Exception.class)
-  public IllCase addCase(IllCaseFormDTO form) {
-    // todo: 测试
+  public IllCase addCase(CaseBackFormDTO form) {
     try {
       // 插入病例基本类
       IllCase illCase = transformIllCaseFormToIllCase(form);
@@ -207,7 +208,6 @@ public class CaseService {
     return fileDTOList;
   }
 
-  // todo: 测试
   @Transactional(rollbackFor = Exception.class)
   public int deleteCase(long caseId) {
     try {
@@ -218,6 +218,9 @@ public class CaseService {
             inspectionCaseIdList); // 删除检查情况中的照片
         inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(inspectionCaseIdList); // 删除检查情况
       }
+      List<FileDTO> fileDTOS = caseDao.getFilesByIllCaseId("admission_graph", caseId);
+      fileDTOS.addAll(caseDao.getFilesByIllCaseId("treatment_graph", caseId));
+      fileDTOS.addAll(caseDao.getFilesByIllCaseId("treatment_video", caseId));
 
       caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
       caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
@@ -233,7 +236,7 @@ public class CaseService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public int updateCase(IllCaseFormDTO formDTO) {
+  public int updateCase(CaseBackFormDTO formDTO) {
     Long id = formDTO.getCase_id();
     try {
       deleteCase(id);
@@ -250,7 +253,7 @@ public class CaseService {
   }
 
   // 工具方法，用于转换前端表单类到实体类
-  private IllCase transformIllCaseFormToIllCase(IllCaseFormDTO form) {
+  private IllCase transformIllCaseFormToIllCase(CaseBackFormDTO form) {
     IllCase illCase = new IllCase();
     illCase.setCaseId(form.getCase_id());
     illCase.setFrontGraph(form.getFront_graph());
@@ -315,7 +318,8 @@ public class CaseService {
   @Transactional(rollbackFor = Exception.class)
   public int deleteDisease(Long id) {
     try {
-      return diseaseDao.deleteByPrimaryKey(id); // todo: 关联删除？
+      // todo: 如果存在相关病例则不能删除
+      return diseaseDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
       logger.error(
           "[delete disease fail], diseaseId: {}, error message: {}",
