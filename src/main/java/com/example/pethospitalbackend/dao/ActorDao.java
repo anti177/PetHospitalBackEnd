@@ -18,7 +18,7 @@ public interface ActorDao extends tk.mybatis.mapper.common.Mapper<Actor> {
 
   @ResultType(RolePlayOperationDTO.class)
   @Select(
-      "SELECT process.process_id as id,intro,process_name as name, operation.sort_num as sortNum, operation.operation_name as operationName, operation.url as url "
+      "SELECT process.process_id as id,process.intro as intro,process_name as name, operation.sort_num as sortNum, operation.intro as operationIntro, operation.operation_name as operationName, operation.url as url "
           + "FROM process join operation on process.process_id = operation.process_id "
           + "where process.process_id "
           + "IN  (SELECT process_id FROM rel_actor_process WHERE #{actorId}) ORDER BY id, operation_id")
