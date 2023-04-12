@@ -24,6 +24,9 @@ public class TestDetailBackDTO {
   @ApiModelProperty(value = "试卷ID")
   private Long paperId;
 
+  @ApiModelProperty(value = "试卷名")
+  private String paperName;
+
   @ApiModelProperty(value = "考试开始时间")
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

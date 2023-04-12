@@ -20,16 +20,6 @@ public class FileController {
 
   @Resource FileService fileService;
 
-  //  @PostMapping("/video")
-  //  @ApiOperation("添加视频测试")
-  //  public ResponseEntity<Response<Boolean>> addVideo(
-  //      @RequestParam("video_mp4") MultipartFile video_mp4) {
-  //    Response<Boolean> response = new Response<>();
-  //    fileService.addVideo(video_mp4);
-  //    response.setSuc(null);
-  //    return new ResponseEntity<>(response, HttpStatus.OK);
-  //  }
-
   @PostMapping("/videos")
   @ApiOperation("添加视频")
   public Response<String> addVideo(@RequestParam("videos") MultipartFile video) {

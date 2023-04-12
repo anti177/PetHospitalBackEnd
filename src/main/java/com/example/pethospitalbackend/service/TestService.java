@@ -289,7 +289,8 @@ public class TestService {
       BeanUtils.copyProperties(question, questionFormDTO);
       questionFormDTO.setAns(Arrays.asList(question.getAns().split(";")));
       questionFormDTO.setChoice(Arrays.asList(question.getChoice().split(";")));
-      questionFormDTO.setDisease(diseaseDao.selectByPrimaryKey(question.getDiseaseId()));
+      Disease disease = diseaseDao.selectByPrimaryKey(question.getDiseaseId());
+      questionFormDTO.setDisease(disease);
       return questionFormDTO;
     } catch (Exception e) {
       logger.error(
@@ -398,6 +399,8 @@ public class TestService {
       TestDetailBackDTO testDetailBackDTO = new TestDetailBackDTO();
       Test test = testDao.selectByPrimaryKey(id);
       BeanUtils.copyProperties(test, testDetailBackDTO);
+      Long paperId = test.getPaperId();
+      testDetailBackDTO.setPaperName(paperDao.selectNameByPrimaryKey(paperId));
       testDetailBackDTO.setUserList(testDao.selectRelatedUserNameByTestId(id));
       return testDetailBackDTO;
     } catch (Exception e) {
