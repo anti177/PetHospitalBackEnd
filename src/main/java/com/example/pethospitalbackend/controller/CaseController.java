@@ -37,20 +37,22 @@ public class CaseController {
 
   @GetMapping("/cases/{caseId}")
   @ApiOperation(value = "获得具体病例")
-  public ResponseEntity<Response<CaseFrontDetailDTO>> getCaseByCaseId(
-      @PathVariable Long caseId, @RequestParam("front") Boolean front) {
-    Response response = new Response<>();
-    if (front) {
-      response = caseService.getFrontCaseByCaseId(caseId);
-    } else {
-      response.setSuc(caseService.getBackCaseDetailDTOByCaseId(caseId));
-    }
+  public ResponseEntity<Response<CaseFrontDetailDTO>> getCaseByCaseId(@PathVariable Long caseId) {
+    Response<CaseFrontDetailDTO> response = caseService.getFrontCaseByCaseId(caseId);
     return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
+  @GetMapping("/cases/{caseId}/detail")
+  @ApiOperation(value = "管理员获得具体病例")
+  public Response<CaseBackDetailDTO> getCase(@PathVariable Long caseId) {
+    Response<CaseBackDetailDTO> response = new Response<>();
+    response.setSuc(caseService.getBackCaseDetailDTOByCaseId(caseId));
+    return response;
   }
 
   @GetMapping("/cases")
   @ApiOperation("管理员获取全部病例")
-  Response getAllCases() {
+  Response<List<CaseBackBriefDTO>> getAllCases() {
     List<CaseBackBriefDTO> caseBackBriefDTOS = caseService.getAllCaseBackBriefDTOs();
     Response<List<CaseBackBriefDTO>> response = new Response<>();
     response.setSuc(caseBackBriefDTOS);
