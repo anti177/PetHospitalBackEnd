@@ -23,7 +23,7 @@ public class TestFormBackDTO {
   private String tag;
 
   @ApiModelProperty(value = "试卷ID")
-  private Long paperID;
+  private Long paperId;
 
   @ApiModelProperty(value = "考试开始时间")
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -122,8 +122,8 @@ public class TestController {
 
   @GetMapping("/papers/{id}")
   @ApiOperation(value = "管理员获取试卷信息")
-  public Response<Paper> getPaper(@PathVariable Long id) {
-    Response<Paper> response = new Response<>();
+  public Response<PaperDetailBackDTO> getPaper(@PathVariable Long id) {
+    Response<PaperDetailBackDTO> response = new Response<>();
     response.setSuc(testService.getPaperById(id));
     return response;
   }
@@ -141,7 +141,7 @@ public class TestController {
   public Response<ModifiedRecordCountDTO> updatePaper(
       @PathVariable Long id, @RequestBody PaperBackDTO paperBackDTO) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
-    paperBackDTO.getPaper().setPaperId(id);
+    paperBackDTO.setPaperId(id);
     response.setSuc(new ModifiedRecordCountDTO(testService.updatePaper(paperBackDTO)));
     return response;
   }
@@ -161,8 +161,6 @@ public class TestController {
     }
     return response;
   }
-
-  // todo: 添加一个接口用于在新建考试时获取全部试卷的id和名字
 
   @GetMapping("/tests")
   @ApiOperation(value = "管理员获取全部考试场次列表")

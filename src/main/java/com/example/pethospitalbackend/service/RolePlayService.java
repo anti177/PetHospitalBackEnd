@@ -168,7 +168,7 @@ public class RolePlayService {
     try {
       Actor actor = actorDao.selectByPrimaryKey(id);
       BeanUtils.copyProperties(actor, actorDetailBackDTO);
-      List<String> list = actorDao.selectRelatedProcessNameByRoleId(id);
+      List<ProcessBriefBackDTO> list = actorDao.selectRelatedProcessNameByRoleId(id);
       actorDetailBackDTO.setProcessList(list);
       return actorDetailBackDTO;
     } catch (Exception e) {
@@ -181,6 +181,7 @@ public class RolePlayService {
   @Transactional(rollbackFor = Exception.class)
   public int deleteProcess(Long id) {
     try {
+      relActorProcessDao.deleteByProcessId(id);
       operationDao.deleteByProcessId(id);
       return processDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
@@ -196,15 +197,19 @@ public class RolePlayService {
   public int updateProcess(ProcessFormBackDTO processFormBackDTO) {
     Process process = new Process();
     BeanUtils.copyProperties(processFormBackDTO, process);
-    Long id = process.getProcessId();
+    Long processId = process.getProcessId();
+    List<Operation> operationList = processFormBackDTO.getOperationList();
+    for (Operation operation : operationList) {
+      operation.setProcessId(processId);
+    }
     try {
-      operationDao.deleteByProcessId(id);
-      operationDao.insertList(processFormBackDTO.getOperationList());
+      operationDao.deleteByProcessId(processId);
+      operationDao.insertList(operationList);
       return processDao.updateByPrimaryKey(process);
     } catch (Exception e) {
       logger.error(
           "[update process Fail], processId:{}, error msg:{}",
-          SerialUtil.toJsonStr(id),
+          SerialUtil.toJsonStr(processId),
           e.getMessage());
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }

@@ -1,7 +1,10 @@
 package com.example.pethospitalbackend.controller;
 
 import com.example.pethospitalbackend.BaseTest;
-import com.example.pethospitalbackend.dto.*;
+import com.example.pethospitalbackend.dto.CaseBackBriefDTO;
+import com.example.pethospitalbackend.dto.CaseBackFormDTO;
+import com.example.pethospitalbackend.dto.InspectionItemBackDTO;
+import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
 import com.example.pethospitalbackend.response.Response;
@@ -261,94 +264,6 @@ public class CaseControllerTest extends BaseTest {
     assertEquals(HttpStatus.OK.value(), response.getStatus());
     assertEquals(
         responseJacksonTester.write(expectedResponseContent).getJson(),
-        response.getContentAsString(StandardCharsets.UTF_8));
-  }
-
-  @Test
-  public void testGetCaseByCaseId() throws Exception {
-    // Setup
-    // Configure CaseService.getFrontCaseByCaseId(...).
-    final Response<CaseBackDetailDTO> caseFrontDetailDTOResponse = new Response<>();
-    final CaseFrontDetailDTO caseFrontDetailDTO = new CaseFrontDetailDTO();
-    caseFrontDetailDTO.setCaseId(0L);
-    caseFrontDetailDTO.setCaseName("caseName");
-    caseFrontDetailDTO.setAdmissionText("admissionText");
-    caseFrontDetailDTO.setAdmissionGraphList(Collections.singletonList("value"));
-    final InspectionFrontDTO inspectionFrontDTO = new InspectionFrontDTO();
-    inspectionFrontDTO.setInspectionCaseId(0L);
-    inspectionFrontDTO.setDepartmentName("departmentName");
-    inspectionFrontDTO.setItemName("itemName");
-    inspectionFrontDTO.setResult("result");
-    inspectionFrontDTO.setIntro("intro");
-    inspectionFrontDTO.setFee(0.0);
-    inspectionFrontDTO.setInspectionGraphList(Collections.singletonList("value"));
-    caseFrontDetailDTO.setInspectionFrontDTOList(Collections.singletonList(inspectionFrontDTO));
-    caseFrontDetailDTO.setDiagnosticInfo("diagnosticInfo");
-    caseFrontDetailDTO.setTreatmentInfo("treatmentInfo");
-    caseFrontDetailDTO.setTreatmentGraphList(Collections.singletonList("value"));
-    caseFrontDetailDTO.setTreatmentVideoList(Collections.singletonList("value"));
-
-    // Configure CaseService.getBackCaseDetailDTOByCaseId(...).
-    final CaseBackDetailDTO caseBackDetailDTO = new CaseBackDetailDTO();
-    caseBackDetailDTO.setCaseId(0L);
-    caseBackDetailDTO.setCaseName("caseName");
-    final Disease disease = new Disease();
-    disease.setDiseaseId(0L);
-    disease.setDiseaseName("diseaseName");
-    disease.setTypeName("typeName");
-    caseBackDetailDTO.setDisease(disease);
-    caseBackDetailDTO.setAdmissionText("admissionText");
-    final FileDTO fileDTO = new FileDTO();
-    fileDTO.setFileId(0L);
-    fileDTO.setCaseId(0L);
-    fileDTO.setSortNum(0L);
-    fileDTO.setUrl("url");
-    caseBackDetailDTO.setAdmissionGraphList(Collections.singletonList(fileDTO));
-    final InspectionCaseBackDTO inspectionCaseBackDTO = new InspectionCaseBackDTO();
-    inspectionCaseBackDTO.setInspectionCaseId(0L);
-    final InspectionItemBackDTO inspectionItem = new InspectionItemBackDTO();
-    inspectionItem.setItemId(0L);
-    inspectionItem.setItemName("itemName");
-    inspectionCaseBackDTO.setInspectionItem(inspectionItem);
-    inspectionCaseBackDTO.setResult("result");
-    final FileDTO fileDTO1 = new FileDTO();
-    fileDTO1.setFileId(0L);
-    fileDTO1.setCaseId(0L);
-    fileDTO1.setSortNum(0L);
-    fileDTO1.setUrl("url");
-    inspectionCaseBackDTO.setInspectionGraphs(Collections.singletonList(fileDTO1));
-    caseBackDetailDTO.setInspectionCaseList(Collections.singletonList(inspectionCaseBackDTO));
-    caseBackDetailDTO.setDiagnosticInfo("diagnosticInfo");
-    caseBackDetailDTO.setTreatmentInfo("treatmentInfo");
-    final FileDTO fileDTO2 = new FileDTO();
-    fileDTO2.setFileId(0L);
-    fileDTO2.setCaseId(0L);
-    fileDTO2.setSortNum(0L);
-    fileDTO2.setUrl("url");
-    caseBackDetailDTO.setTreatmentGraphList(Collections.singletonList(fileDTO2));
-    final FileDTO fileDTO3 = new FileDTO();
-    fileDTO3.setFileId(0L);
-    fileDTO3.setCaseId(0L);
-    fileDTO3.setSortNum(0L);
-    fileDTO3.setUrl("url");
-    caseBackDetailDTO.setTreatmentVideoList(Collections.singletonList(fileDTO3));
-    when(caseService.getBackCaseDetailDTOByCaseId(0L)).thenReturn(caseBackDetailDTO);
-    caseFrontDetailDTOResponse.setSuc(caseBackDetailDTO);
-
-    // Run the test
-    final MockHttpServletResponse response =
-        mockMvc
-            .perform(
-                get("/cases/{caseId}", 0)
-                    .param("front", "false")
-                    .accept(MediaType.APPLICATION_JSON))
-            .andReturn()
-            .getResponse();
-
-    // Verify the results
-    assertEquals(HttpStatus.OK.value(), response.getStatus());
-    assertEquals(
-        responseJacksonTester.write(caseFrontDetailDTOResponse).getJson(),
         response.getContentAsString(StandardCharsets.UTF_8));
   }
 

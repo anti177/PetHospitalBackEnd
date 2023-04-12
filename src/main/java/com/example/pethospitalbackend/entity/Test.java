@@ -36,7 +36,7 @@ public class Test {
 
   @Column(name = "paper_id")
   @ApiModelProperty(value = "试卷ID")
-  private Long paperID;
+  private Long paperId;
 
   @Column(name = "begin_date")
   @ApiModelProperty(value = "考试开始时间")

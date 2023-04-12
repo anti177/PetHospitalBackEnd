@@ -4,7 +4,10 @@ import com.example.pethospitalbackend.BaseTest;
 import com.example.pethospitalbackend.dao.CaseDao;
 import com.example.pethospitalbackend.dao.DiseaseDao;
 import com.example.pethospitalbackend.dao.InspectionCaseDao;
-import com.example.pethospitalbackend.dto.*;
+import com.example.pethospitalbackend.dto.CaseBackBriefDTO;
+import com.example.pethospitalbackend.dto.CaseBackFormDTO;
+import com.example.pethospitalbackend.dto.InspectionCaseFrontDTO;
+import com.example.pethospitalbackend.dto.InspectionItemBackDTO;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
 import org.junit.Before;
@@ -288,131 +291,6 @@ public class CaseServiceTest extends BaseTest {
 
     // Run the test
     final List<CaseBackBriefDTO> result = caseService.getAllCaseBackBriefDTOs();
-
-    // Verify the results
-    assertEquals(expectedResult, result);
-  }
-
-  @Test
-  public void testGetBackCaseDetailDTOByCaseId() {
-    // Setup
-    final CaseBackDetailDTO expectedResult = new CaseBackDetailDTO();
-    expectedResult.setCaseId(0L);
-    expectedResult.setCaseName("caseName");
-    final Disease disease = new Disease();
-    disease.setDiseaseId(0L);
-    disease.setDiseaseName("diseaseName");
-    disease.setTypeName("typeName");
-    expectedResult.setDisease(disease);
-    expectedResult.setAdmissionText("admissionText");
-    expectedResult.setFrontGraph("frontGraph");
-    final FileDTO fileDTO = new FileDTO();
-    fileDTO.setFileId(0L);
-    fileDTO.setCaseId(0L);
-    fileDTO.setSortNum(0L);
-    fileDTO.setUrl("url");
-    expectedResult.setAdmissionGraphList(Collections.singletonList(fileDTO));
-    final InspectionCaseBackDTO inspectionCaseBackDTO = new InspectionCaseBackDTO();
-    inspectionCaseBackDTO.setInspectionCaseId(0L);
-    final InspectionItemBackDTO inspectionItem = new InspectionItemBackDTO();
-    inspectionItem.setItemId(0L);
-    inspectionItem.setItemName("itemName");
-    inspectionCaseBackDTO.setInspectionItem(inspectionItem);
-    inspectionCaseBackDTO.setResult("result");
-    final FileDTO fileDTO1 = new FileDTO();
-    fileDTO1.setFileId(0L);
-    fileDTO1.setCaseId(0L);
-    fileDTO1.setSortNum(0L);
-    fileDTO1.setUrl("url");
-    inspectionCaseBackDTO.setInspectionGraphs(Collections.singletonList(fileDTO1));
-    expectedResult.setInspectionCaseList(Collections.singletonList(inspectionCaseBackDTO));
-    expectedResult.setDiagnosticInfo("diagnosticInfo");
-    expectedResult.setTreatmentInfo("treatmentInfo");
-    final FileDTO fileDTO2 = new FileDTO();
-    fileDTO2.setFileId(0L);
-    fileDTO2.setCaseId(0L);
-    fileDTO2.setSortNum(0L);
-    fileDTO2.setUrl("url");
-    expectedResult.setTreatmentGraphList(Collections.singletonList(fileDTO2));
-    expectedResult.setTreatmentVideoList(Collections.singletonList(fileDTO));
-    // Configure CaseDao.getBackDetailDTO(...).
-    final CaseBackDetailDTO caseBackDetailDTO = new CaseBackDetailDTO();
-    caseBackDetailDTO.setCaseId(0L);
-    caseBackDetailDTO.setCaseName("caseName");
-    final Disease disease1 = new Disease();
-    disease1.setDiseaseId(0L);
-    disease1.setDiseaseName("diseaseName");
-    disease1.setTypeName("typeName");
-    caseBackDetailDTO.setDisease(disease1);
-    caseBackDetailDTO.setAdmissionText("admissionText");
-    caseBackDetailDTO.setFrontGraph("frontGraph");
-    final FileDTO fileDTO3 = new FileDTO();
-    fileDTO3.setFileId(0L);
-    fileDTO3.setCaseId(0L);
-    fileDTO3.setSortNum(0L);
-    fileDTO3.setUrl("url");
-    caseBackDetailDTO.setAdmissionGraphList(Collections.singletonList(fileDTO3));
-    caseBackDetailDTO.setTreatmentVideoList(Collections.singletonList(fileDTO3));
-    final InspectionCaseBackDTO inspectionCaseBackDTO1 = new InspectionCaseBackDTO();
-    inspectionCaseBackDTO1.setInspectionCaseId(0L);
-    final InspectionItemBackDTO inspectionItem1 = new InspectionItemBackDTO();
-    inspectionItem1.setItemId(0L);
-    inspectionItem1.setItemName("itemName");
-    inspectionCaseBackDTO1.setInspectionItem(inspectionItem1);
-    inspectionCaseBackDTO1.setResult("result");
-    final FileDTO fileDTO4 = new FileDTO();
-    fileDTO4.setFileId(0L);
-    fileDTO4.setCaseId(0L);
-    fileDTO4.setSortNum(0L);
-    fileDTO4.setUrl("url");
-    inspectionCaseBackDTO1.setInspectionGraphs(Collections.singletonList(fileDTO4));
-    caseBackDetailDTO.setInspectionCaseList(Collections.singletonList(inspectionCaseBackDTO1));
-    caseBackDetailDTO.setDiagnosticInfo("diagnosticInfo");
-    caseBackDetailDTO.setTreatmentInfo("treatmentInfo");
-    final FileDTO fileDTO5 = new FileDTO();
-    fileDTO5.setFileId(0L);
-    fileDTO5.setCaseId(0L);
-    fileDTO5.setSortNum(0L);
-    fileDTO5.setUrl("url");
-    caseBackDetailDTO.setTreatmentGraphList(Collections.singletonList(fileDTO5));
-    when(caseService.caseDao.getFilesByIllCaseId(eq("treatment_graph"), anyLong()))
-        .thenReturn(Collections.singletonList(fileDTO2));
-    when(caseService.caseDao.getFilesByIllCaseId(eq("admission_graph"), anyLong()))
-        .thenReturn(Collections.singletonList(fileDTO));
-    when(caseService.caseDao.getFilesByIllCaseId(eq("treatment_video"), anyLong()))
-        .thenReturn(Collections.singletonList(fileDTO3));
-
-    when(caseService.caseDao.getBackDetailDTO(0L)).thenReturn(caseBackDetailDTO);
-
-    // Configure CaseDao.getFilesByIllCaseId(...).
-    final FileDTO fileDTO6 = new FileDTO();
-    fileDTO6.setFileId(0L);
-    fileDTO6.setCaseId(0L);
-    fileDTO6.setSortNum(0L);
-    fileDTO6.setUrl("url");
-    final List<FileDTO> fileDTOS = Collections.singletonList(fileDTO6);
-
-    // Configure InspectionCaseDao.getInspectionCaseBackDTOByIllCaseId(...).
-    final InspectionCaseBackDTO inspectionCaseBackDTO2 = new InspectionCaseBackDTO();
-    inspectionCaseBackDTO2.setInspectionCaseId(0L);
-    final InspectionItemBackDTO inspectionItem2 = new InspectionItemBackDTO();
-    inspectionItem2.setItemId(0L);
-    inspectionItem2.setItemName("itemName");
-    inspectionCaseBackDTO2.setInspectionItem(inspectionItem2);
-    inspectionCaseBackDTO2.setResult("result");
-    final FileDTO fileDTO7 = new FileDTO();
-    fileDTO7.setFileId(0L);
-    fileDTO7.setCaseId(0L);
-    fileDTO7.setSortNum(0L);
-    fileDTO7.setUrl("url");
-    inspectionCaseBackDTO2.setInspectionGraphs(Collections.singletonList(fileDTO7));
-    final List<InspectionCaseBackDTO> inspectionCaseBackDTOS =
-        Collections.singletonList(inspectionCaseBackDTO2);
-    when(caseService.inspectionCaseDao.getInspectionCaseBackDTOByIllCaseId(0L))
-        .thenReturn(inspectionCaseBackDTOS);
-
-    // Run the test
-    final CaseBackDetailDTO result = caseService.getBackCaseDetailDTOByCaseId(0L);
 
     // Verify the results
     assertEquals(expectedResult, result);

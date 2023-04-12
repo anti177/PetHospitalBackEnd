@@ -1,9 +1,7 @@
 package com.example.pethospitalbackend.service;
 
 import com.example.pethospitalbackend.dao.TreatmentVideoDao;
-import com.example.pethospitalbackend.entity.TreatmentVideo;
 import com.example.pethospitalbackend.enums.ResponseEnum;
-import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.util.JwtUtils;
 import com.example.pethospitalbackend.util.OSSUtil;
 import com.example.pethospitalbackend.util.SerialUtil;
@@ -27,32 +25,33 @@ public class FileService {
   @Resource TreatmentVideoDao treatmentVideoDao;
 
   // 上传视频的例子
-  public void addVideo(MultipartFile video_mp4) {
+  //  public void addVideo(MultipartFile video_mp4) {
+  //
+  //    String code = RandomStringUtils.randomNumeric(5);
+  //    String filename =
+  //        code + "video_publisher" + JwtUtils.getUserId() + "/" + video_mp4.getOriginalFilename();
+  //    String url = ossUtil.uploadFile(videoBucketName, video_mp4, filename);
+  //    if (StringUtils.isBlank(url)) {
+  //      logger.error(
+  //          "[addVideo Fail], video_mp4: {}",
+  // SerialUtil.toJsonStr(video_mp4.getOriginalFilename()));
+  //      throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
+  //    }
+  //    // 修改数据库
+  //    TreatmentVideo video = new TreatmentVideo();
+  //    video.setCaseId(1L);
+  //    video.setUrl(url);
+  //    video.setSortNum(4L);
+  //
+  //    boolean result = treatmentVideoDao.insertVideo(video) > 0;
+  //
+  //    if (!result) {
+  //      logger.error("[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video_mp4));
+  //      throw new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
+  //    }
+  //  }
 
-    String code = RandomStringUtils.randomNumeric(5);
-    String filename =
-        code + "video_publisher" + JwtUtils.getUserId() + "/" + video_mp4.getOriginalFilename();
-    String url = ossUtil.uploadFile(videoBucketName, video_mp4, filename);
-    if (StringUtils.isBlank(url)) {
-      logger.error(
-          "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video_mp4.getOriginalFilename()));
-      throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
-    }
-    // 修改数据库
-    TreatmentVideo video = new TreatmentVideo();
-    video.setCaseId(1L);
-    video.setUrl(url);
-    video.setSortNum(4L);
-
-    boolean result = treatmentVideoDao.insertVideo(video) > 0;
-
-    if (!result) {
-      logger.error("[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video_mp4));
-      throw new DatabaseException(ResponseEnum.DATABASE_FAIL.getMsg());
-    }
-  }
-
-  public String addGraphs(MultipartFile graph) {
+  public String addGraph(MultipartFile graph) {
     String filename =
         JwtUtils.getUserId()
             + "/"
@@ -65,11 +64,11 @@ public class FileService {
       logger.error("[addGraph Fail], graph: {}", SerialUtil.toJsonStr(graph.getOriginalFilename()));
       throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
     } else {
-      return url;
+      return url.substring(0, url.indexOf("?"));
     }
   }
 
-  public String addVideos(MultipartFile video) {
+  public String addVideo(MultipartFile video) {
     String filename =
         JwtUtils.getUserId()
             + "/"
@@ -81,10 +80,8 @@ public class FileService {
       logger.error(
           "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
       throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
-    }
-    // 在数据添加url
-    else {
-      return url;
+    } else {
+      return url.substring(0, url.indexOf("?"));
     }
   }
 

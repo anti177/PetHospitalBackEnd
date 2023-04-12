@@ -44,16 +44,8 @@ public interface CaseDao extends Mapper<IllCase> {
   @Select("SELECT url FROM treatment_video WHERE case_id = #{id} ORDER BY sort_num ")
   List<String> getTreatmentVideoByCaseId(@Param("id") long caseId);
 
-  @Select("SELECT * FROM ${table} WHERE case_id = #{id} ORDER BY sort_num ")
-  @Results(
-      id = "file_list",
-      value = {
-        @Result(id = true, column = "id", property = "fileId"),
-        @Result(column = "case_id", property = "caseId"),
-        @Result(column = "url", property = "url"),
-        @Result(column = "sort_num", property = "sortNum")
-      })
-  List<FileDTO> getFilesByIllCaseId(@Param("table") String table, @Param("id") long caseId);
+  @Select("SELECT url FROM ${table} WHERE case_id = #{id} ORDER BY sort_num ")
+  List<String> getFilesByIllCaseId(@Param("table") String table, @Param("id") long caseId);
 
   @Delete("DELETE FROM ${table} WHERE case_id = #{id}")
   Integer deleteFilesByIllCaseId(@Param("table") String table, @Param("id") long caseId);
@@ -133,4 +125,7 @@ public interface CaseDao extends Mapper<IllCase> {
 
   @Select("SELECT max(sort_num) FROM ${table} WHERE case_id = #{id} ORDER BY sort_num ")
   Long getMaxFileSortNum(@Param("table") String table, @Param("id") Long caseId);
+
+  @Select("select exists(select 1 from ill_case where disease_id=#{id})")
+  boolean existByDiseaseId(@Param("id") long diseaseId);
 }

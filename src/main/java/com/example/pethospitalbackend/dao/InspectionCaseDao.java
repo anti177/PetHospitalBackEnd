@@ -105,4 +105,13 @@ public interface InspectionCaseDao
         @Result(column = "item_name", property = "itemName")
       })
   List<InspectionItemBackDTO> selectAllInspectionItems();
+
+  @Select(
+      "<script>"
+          + "select url from inspection_graph where inspection_case_id in "
+          + "<foreach collection='id' open='(' item='id_' separator=',' close=')'> #{id_}"
+          + "</foreach>"
+          + "</script>")
+  List<String> getInspectionGraphUrlByInspectionCaseId(
+      @Param("id") List<Long> inspectionCaseIdList);
 }

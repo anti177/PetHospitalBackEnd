@@ -2,6 +2,7 @@ package com.example.pethospitalbackend.dao;
 
 import com.example.pethospitalbackend.dto.EndTestCategoryDTO;
 import com.example.pethospitalbackend.dto.TestCategoryDTO;
+import com.example.pethospitalbackend.dto.UserBackBriefDTO;
 import com.example.pethospitalbackend.entity.Test;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultType;
@@ -33,7 +34,7 @@ public interface TestDao extends Mapper<Test> {
 
   @ResultType(List.class)
   @Select(
-      "SELECT user.email from test_user JOIN user on user.user_id = test_user.user_id "
+      "SELECT user.user_id as userId, user.email as email from test_user JOIN user on user.user_id = test_user.user_id "
           + "WHERE test_user.test_id = #{testId}")
-  List<String> selectRelatedUserNameByTestId(@Param("testId") long testId);
+  List<UserBackBriefDTO> selectRelatedUserNameByTestId(@Param("testId") long testId);
 }

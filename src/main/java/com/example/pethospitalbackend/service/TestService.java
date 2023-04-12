@@ -289,7 +289,7 @@ public class TestService {
       BeanUtils.copyProperties(question, questionFormDTO);
       questionFormDTO.setAns(Arrays.asList(question.getAns().split(";")));
       questionFormDTO.setChoice(Arrays.asList(question.getChoice().split(";")));
-      questionFormDTO.setDiseaseName(diseaseDao.selectNameByPrimaryKey(question.getDiseaseId()));
+      questionFormDTO.setDisease(diseaseDao.selectByPrimaryKey(question.getDiseaseId()));
       return questionFormDTO;
     } catch (Exception e) {
       logger.error(
@@ -309,9 +309,13 @@ public class TestService {
     }
   }
 
-  public Paper getPaperById(Long id) {
+  public PaperDetailBackDTO getPaperById(Long id) {
     try {
-      return paperDao.selectByPrimaryKey(id);
+      Paper paper = paperDao.selectByPrimaryKey(id);
+      PaperDetailBackDTO paperDetailBackDTO = new PaperDetailBackDTO();
+      BeanUtils.copyProperties(paper, paperDetailBackDTO);
+      paperDetailBackDTO.setQuestionList(questionDao.getQuestionByPaperId(id));
+      return paperDetailBackDTO;
     } catch (Exception e) {
       logger.error(
           "[get paper fail], questionId: {}, error msg: {}",
@@ -324,7 +328,8 @@ public class TestService {
   @Transactional(rollbackFor = Exception.class)
   public Paper addPaper(PaperBackDTO paperBackDTO) {
     try {
-      Paper paper = paperBackDTO.getPaper();
+      Paper paper = new Paper();
+      BeanUtils.copyProperties(paperBackDTO, paper);
       paperDao.insert(paper);
       List<RelQuestionPaper> relQuestionPaperList =
           getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
@@ -338,7 +343,8 @@ public class TestService {
 
   @Transactional(rollbackFor = Exception.class)
   public int updatePaper(PaperBackDTO paperBackDTO) {
-    Paper paper = paperBackDTO.getPaper();
+    Paper paper = new Paper();
+    BeanUtils.copyProperties(paperBackDTO, paper);
     try {
       paperDao.updateByPrimaryKey(paper);
 

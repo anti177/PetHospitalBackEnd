@@ -27,7 +27,7 @@ public class CaseBackDetailDTO {
   private String frontGraph;
 
   @ApiModelProperty(value = "接诊图片列表")
-  private List<FileDTO> admissionGraphList;
+  private List<String> admissionGraphList;
 
   @ApiModelProperty(value = "检查情况列表")
   private List<InspectionCaseBackDTO> inspectionCaseList;
@@ -39,8 +39,8 @@ public class CaseBackDetailDTO {
   private String treatmentInfo;
 
   @ApiModelProperty(value = "治疗图片列表")
-  private List<FileDTO> treatmentGraphList;
+  private List<String> treatmentGraphList;
 
   @ApiModelProperty(value = "治疗视频列表")
-  private List<FileDTO> treatmentVideoList;
+  private List<String> treatmentVideoList;
 }

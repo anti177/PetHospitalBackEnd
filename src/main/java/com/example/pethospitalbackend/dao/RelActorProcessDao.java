@@ -11,4 +11,7 @@ public interface RelActorProcessDao
 
   @Delete("DELETE from rel_actor_process where actor_id = #{actorId}")
   int deleteByActorId(@Param("actorId") Long actorId);
+
+  @Delete("DELETE from rel_actor_process where process_id = #{processId}")
+  int deleteByProcessId(@Param("processId") Long id);
 }
