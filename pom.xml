@@ -188,6 +188,11 @@
             <artifactId>aliyun-sdk-oss</artifactId>
             <version>3.10.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.plexpt</groupId>
+            <artifactId>chatgpt</artifactId>
+            <version>4.0.5</version>
+        </dependency>
 
     </dependencies>
 
@@ -226,6 +231,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.1.0</version>
             </plugin>
+
         </plugins>
 <!--        服务器配置的名称-->
         <finalName>myproject</finalName>

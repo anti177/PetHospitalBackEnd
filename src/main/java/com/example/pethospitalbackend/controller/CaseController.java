@@ -36,6 +36,14 @@ public class CaseController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+  @GetMapping("/categories/cases/{word}")
+  @ApiOperation(value = "获得疾病病例目录通过关键词")
+  public ResponseEntity<Response<List<CaseCategoryDTO>>> getCaseCategoryByWord(
+          @PathVariable String word) {
+    Response<List<CaseCategoryDTO>> response = caseService.getFrontCaseByWord(word);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
   @GetMapping("/cases/{caseId}")
   @ApiOperation(value = "获得具体病例")
   public ResponseEntity<Response<CaseFrontDetailDTO>> getCaseByCaseId(@PathVariable Long caseId) {

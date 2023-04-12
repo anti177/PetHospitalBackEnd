@@ -21,6 +21,13 @@ public interface CaseDao extends Mapper<IllCase> {
           + "FROM ill_case WHERE disease_id = #{id}")
   List<CaseCategoryDTO> getCaseByDiseaseId(@Param("id") long diseaseId);
 
+
+  @ResultType(CaseCategoryDTO.class)
+  @Select(
+          "SELECT ill_case_id as caseId, case_name as caseName, admission_text as admissionText,front_graph as frontGraph "
+                  + "FROM ill_case WHERE case_name like CONCAT('%',#{word},'%') ")
+  List<CaseCategoryDTO> getCaseByWord(@Param("word") String word);
+
   @ResultType(IllCase.class)
   @Select(
       "SELECT ill_case_id as caseId, case_name as caseName, admission_text as admissionText, "
