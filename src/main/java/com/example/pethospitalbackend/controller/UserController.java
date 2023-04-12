@@ -4,7 +4,7 @@ import com.example.pethospitalbackend.constant.SecurityConstants;
 import com.example.pethospitalbackend.dto.JwtUserDTO;
 import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
-import com.example.pethospitalbackend.entity.User;
+import com.example.pethospitalbackend.dto.UserFrontDTO;import com.example.pethospitalbackend.entity.User;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.ParameterException;
 import com.example.pethospitalbackend.request.ChangePasswordRequest;
@@ -43,31 +43,27 @@ public class UserController {
 
   @PostMapping("/user/register")
   @ApiOperation(value = "用户注册")
-  public ResponseEntity<Response<UserDTO>> register(@RequestBody UserRegisterRequest userRegister) {
+  public Response<UserFrontDTO> register(@RequestBody UserRegisterRequest userRegister) {
     JwtUserDTO jwtUser = userService.register(userRegister);
 
-    // 将 token 存入响应头中返回
-    HttpHeaders httpHeaders = new HttpHeaders();
-    // 添加 token 前缀 "Bearer "
-    httpHeaders.set(
-        SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
-    Response<UserDTO> response = new Response<>();
-    response.setSuc(jwtUser.getUser());
-    return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+    Response<UserFrontDTO> response = new Response<>();
+    UserFrontDTO userFrontDTO = transferUserDTOToUserFrontDTO(jwtUser.getUser());
+    userFrontDTO.setToken(SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
+    response.setSuc(userFrontDTO);
+
+    return  response;
   }
 
   @PatchMapping("/user/login")
   @ApiOperation(value = "用户登陆")
-  public ResponseEntity<Response<UserDTO>> login(@RequestBody UserLoginRequest userLogin) {
+  public Response<UserFrontDTO> login(@RequestBody UserLoginRequest userLogin) {
     JwtUserDTO jwtUser = authService.authLogin(userLogin);
-    // 将 token 存入响应头中返回
-    HttpHeaders httpHeaders = new HttpHeaders();
-    // 添加 token 前缀 "Bearer "
-    httpHeaders.set(
-        SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
-    Response<UserDTO> response = new Response<>();
-    response.setSuc(jwtUser.getUser());
-    return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+
+    Response<UserFrontDTO> response = new Response<>();
+    UserFrontDTO userFrontDTO = transferUserDTOToUserFrontDTO(jwtUser.getUser());
+    userFrontDTO.setToken(SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
+    response.setSuc(userFrontDTO);
+    return  response;
   }
 
   @PatchMapping("/user/logout")
@@ -166,5 +162,13 @@ public class UserController {
     Response<UserDTO> response = new Response<>();
     response.setSuc(jwtUserDTO.getUser());
     return response;
+  }
+  private UserFrontDTO transferUserDTOToUserFrontDTO(UserDTO userDTO){
+    UserFrontDTO userFrontDTO = new UserFrontDTO();
+    userFrontDTO.setUserId(userDTO.getUserId());
+    userFrontDTO.setEmail(userDTO.getEmail());
+    userFrontDTO.setRole(userDTO.getRole());
+    userFrontDTO.setUserClass(userDTO.getUserClass());
+    return  userFrontDTO;
   }
 }
