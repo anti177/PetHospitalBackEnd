@@ -43,6 +43,9 @@ public class RolePlayServiceTest extends BaseTest {
   @MockBean(name = "operationDao")
   OperationDao operationDao;
 
+  @MockBean(name = "fileService")
+  FileService fileService;
+
   @Before
   public void init() {
     MockitoAnnotations.openMocks(this);
@@ -250,20 +253,6 @@ public class RolePlayServiceTest extends BaseTest {
   }
 
   @Test
-  public void testDeleteProcess() {
-    // Setup
-    when(operationDao.deleteByProcessId(0L)).thenReturn(1);
-    when(processDao.deleteByPrimaryKey(0L)).thenReturn(1);
-
-    // Run the test
-    final int result = rolePlayService.deleteProcess(0L);
-
-    // Verify the results
-    assertEquals(1, result);
-    verify(operationDao).deleteByProcessId(0L);
-  }
-
-  @Test
   public void testUpdateProcess() {
     // Setup
     final ProcessFormBackDTO processFormBackDTO = new ProcessFormBackDTO();
@@ -314,5 +303,24 @@ public class RolePlayServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(expectedResult, result);
+  }
+
+  @Test
+  public void testDeleteProcess() {
+    // Setup
+    when(relActorProcessDao.deleteByProcessId(0L)).thenReturn(1);
+    when(operationDao.selectFileUrlByProcessId(0L)).thenReturn(Collections.singletonList("value"));
+    when(operationDao.deleteByProcessId(0L)).thenReturn(1);
+    when(processDao.deleteByPrimaryKey(0L)).thenReturn(1);
+    when(fileService.deleteGraphs(Collections.singletonList("value"))).thenReturn(true);
+
+    // Run the test
+    final int result = rolePlayService.deleteProcess(0L);
+
+    // Verify the results
+    assertEquals(1, result);
+    verify(relActorProcessDao).deleteByProcessId(0L);
+    verify(operationDao).deleteByProcessId(0L);
+    verify(fileService).deleteGraphs(Collections.singletonList("value"));
   }
 }

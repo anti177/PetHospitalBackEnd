@@ -10,8 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class DrugServiceTest {
 
@@ -106,13 +105,25 @@ class DrugServiceTest {
   @Test
   void testDeleteDrug() {
     // Setup
+    // Configure DrugDao.selectByPrimaryKey(...).
+    final Drug drug = new Drug();
+    drug.setId(0L);
+    drug.setName("name");
+    drug.setType("type");
+    drug.setIntro("intro");
+    drug.setPrice(0.0);
+    drug.setUrl("url");
+    when(drugServiceUnderTest.drugDao.selectByPrimaryKey(0L)).thenReturn(drug);
+
     when(drugServiceUnderTest.drugDao.deleteByPrimaryKey(0L)).thenReturn(1);
+    when(drugServiceUnderTest.fileService.deleteGraph("url")).thenReturn(true);
 
     // Run the test
     final int result = drugServiceUnderTest.deleteDrug(0L);
 
     // Verify the results
     assertThat(result).isEqualTo(1);
+    verify(drugServiceUnderTest.fileService).deleteGraph("url");
   }
 
   @Test

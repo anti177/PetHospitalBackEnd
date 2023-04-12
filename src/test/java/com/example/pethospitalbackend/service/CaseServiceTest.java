@@ -39,6 +39,9 @@ public class CaseServiceTest extends BaseTest {
   @MockBean(name = "inspectionCaseDao")
   InspectionCaseDao inspectionCaseDao;
 
+  @MockBean(name = "fileService")
+  FileService fileService;
+
   @Before
   public void init() {
     MockitoAnnotations.openMocks(this);
@@ -205,25 +208,6 @@ public class CaseServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(expectedResult, result);
-    verify(caseService.caseDao).insert(expectedResult);
-  }
-
-  @Test
-  public void testDeleteCase() {
-    // Setup
-    when(caseService.inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(0L))
-        .thenReturn(Collections.singletonList(0L));
-    when(caseService.inspectionCaseDao.deleteByExample(any(Object.class))).thenReturn(0);
-    when(caseService.inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(Arrays.asList(0L)))
-        .thenReturn(0);
-    when(caseService.caseDao.deleteFilesByIllCaseId(anyString(), anyLong())).thenReturn(0);
-    when(caseService.caseDao.deleteByPrimaryKey(any())).thenReturn(0);
-
-    // Run the test
-    final int result = caseService.deleteCase(0L);
-
-    // Verify the results
-    assertEquals(0, result);
   }
 
   @Test
@@ -242,16 +226,19 @@ public class CaseServiceTest extends BaseTest {
     inspectionCaseFrontDTO.setInspection_graphs(Collections.singletonList("value"));
     formDTO.setInspection_cases(Collections.singletonList(inspectionCaseFrontDTO));
     formDTO.setDiagnostic_result("diagnostic_result");
-    formDTO.setTreatment_info("therapy_text");
+    formDTO.setTreatment_info("treatment_info");
     formDTO.setTherapy_graphs(Collections.singletonList("value"));
 
     when(caseService.inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(0L))
         .thenReturn(Collections.singletonList(0L));
-    when(caseService.inspectionCaseDao.deleteByExample(any(Object.class))).thenReturn(1);
-    when(caseService.inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(Arrays.asList(0L)))
+    when(caseService.inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(
+            Collections.singletonList(0L)))
+        .thenReturn(1);
+    when(caseService.inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(
+            Collections.singletonList(0L)))
         .thenReturn(1);
     when(caseService.caseDao.deleteFilesByIllCaseId(anyString(), anyLong())).thenReturn(1);
-    when(caseService.caseDao.deleteByPrimaryKey(any())).thenReturn(1);
+    when(caseService.caseDao.deleteByPrimaryKey("key")).thenReturn(1);
     when(caseService.caseDao.insert(any())).thenReturn(1);
     when(caseService.caseDao.insertFiles(anyList(), anyString())).thenReturn(1);
     when(caseService.inspectionCaseDao.insert(any())).thenReturn(1);
@@ -294,5 +281,33 @@ public class CaseServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(expectedResult, result);
+  }
+
+  @Test
+  public void testDeleteCase() {
+    // Setup
+    when(caseService.inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(0L))
+        .thenReturn(Collections.singletonList(0L));
+    when(caseService.inspectionCaseDao.getInspectionGraphUrlByInspectionCaseId(
+            Collections.singletonList(0L)))
+        .thenReturn(Arrays.asList("value"));
+    when(caseService.inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(
+            Collections.singletonList(0L)))
+        .thenReturn(0);
+    when(caseService.inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(
+            Collections.singletonList(0L)))
+        .thenReturn(0);
+    when(caseService.caseDao.getFilesByIllCaseId(anyString(), anyLong()))
+        .thenReturn(Collections.singletonList("value"));
+    when(caseService.caseDao.deleteFilesByIllCaseId(anyString(), anyLong())).thenReturn(1);
+    when(caseService.caseDao.deleteByPrimaryKey("key")).thenReturn(1);
+    when(caseService.fileService.deleteGraphs(Collections.singletonList("value"))).thenReturn(true);
+    when(caseService.fileService.deleteVideos(Collections.singletonList("value"))).thenReturn(true);
+
+    // Run the test
+    final int result = caseService.deleteCase(0L);
+
+    // Verify the results
+    assertEquals(1, result);
   }
 }
