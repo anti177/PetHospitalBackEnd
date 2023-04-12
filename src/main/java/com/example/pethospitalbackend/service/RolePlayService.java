@@ -34,6 +34,7 @@ public class RolePlayService {
   @Resource private RelActorProcessDao relActorProcessDao;
   @Resource private ProcessDao processDao;
   @Resource private OperationDao operationDao;
+  @Resource private FileService fileService;
 
   public Response<RoleDTO> getRoleContentAndResponsibility(String roleId) {
     long id = Long.parseLong(roleId);
@@ -182,8 +183,11 @@ public class RolePlayService {
   public int deleteProcess(Long id) {
     try {
       relActorProcessDao.deleteByProcessId(id);
+      List<String> fileUrls = operationDao.selectFileUrlByProcessId(id);
       operationDao.deleteByProcessId(id);
-      return processDao.deleteByPrimaryKey(id);
+      int res = processDao.deleteByPrimaryKey(id);
+      fileService.deleteGraphs(fileUrls);
+      return res;
     } catch (Exception e) {
       logger.error(
           "[delete process Fail], processId:{}, error msg:{}",

@@ -9,6 +9,7 @@ import com.example.pethospitalbackend.util.SerialUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -18,6 +19,7 @@ public class DrugService {
   private static final Logger logger = LoggerFactory.getLogger(DrugService.class);
 
   @Resource DrugDao drugDao;
+  @Resource FileService fileService;
 
   public Response<List<Drug>> getAllDrugs() {
     Response<List<Drug>> response = new Response<>();
@@ -42,9 +44,13 @@ public class DrugService {
     }
   }
 
+  @Transactional(rollbackFor = Exception.class)
   public int deleteDrug(Long id) {
     try {
-      return drugDao.deleteByPrimaryKey(id);
+      String fileUrl = drugDao.selectByPrimaryKey(id).getUrl();
+      int res = drugDao.deleteByPrimaryKey(id);
+      fileService.deleteGraph(fileUrl);
+      return res;
     } catch (Exception e) {
       logger.error(
           "[delete drug Fail], drugId: {}, error message: {}",
