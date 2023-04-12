@@ -27,5 +27,5 @@ public class ActorDetailBackDTO {
   private String responsibility;
 
   @ApiModelProperty(value = "角色关联的流程名称列表")
-  List<String> processList;
+  List<ProcessBriefBackDTO> processList;
 }

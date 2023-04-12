@@ -80,9 +80,7 @@ public class FileService {
       logger.error(
           "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
       throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
-    }
-    // 在数据添加url
-    else {
+    } else {
       return url.substring(0, url.indexOf("?"));
     }
   }

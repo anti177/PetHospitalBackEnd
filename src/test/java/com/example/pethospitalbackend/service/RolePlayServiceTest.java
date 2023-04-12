@@ -7,6 +7,7 @@ import com.example.pethospitalbackend.dao.ProcessDao;
 import com.example.pethospitalbackend.dao.RelActorProcessDao;
 import com.example.pethospitalbackend.dto.ActorDetailBackDTO;
 import com.example.pethospitalbackend.dto.ActorFormBackDTO;
+import com.example.pethospitalbackend.dto.ProcessBriefBackDTO;
 import com.example.pethospitalbackend.dto.ProcessFormBackDTO;
 import com.example.pethospitalbackend.entity.Actor;
 import com.example.pethospitalbackend.entity.Operation;
@@ -97,7 +98,10 @@ public class RolePlayServiceTest extends BaseTest {
     expectedResult.setName("name");
     expectedResult.setContent("content");
     expectedResult.setResponsibility("responsibility");
-    expectedResult.setProcessList(Collections.singletonList("value"));
+    final ProcessBriefBackDTO processBriefBackDTO = new ProcessBriefBackDTO();
+    processBriefBackDTO.setProcessId(0L);
+    processBriefBackDTO.setProcessName("processName");
+    expectedResult.setProcessList(Collections.singletonList(processBriefBackDTO));
 
     // Configure ActorDao.selectByPrimaryKey(...).
     final Actor actor = new Actor();
@@ -107,8 +111,13 @@ public class RolePlayServiceTest extends BaseTest {
     actor.setResponsibility("responsibility");
     when(actorDao.selectByPrimaryKey(0L)).thenReturn(actor);
 
-    when(actorDao.selectRelatedProcessNameByRoleId(0L))
-        .thenReturn(Collections.singletonList("value"));
+    // Configure ActorDao.selectRelatedProcessNameByRoleId(...).
+    final ProcessBriefBackDTO processBriefBackDTO1 = new ProcessBriefBackDTO();
+    processBriefBackDTO1.setProcessId(0L);
+    processBriefBackDTO1.setProcessName("processName");
+    final List<ProcessBriefBackDTO> processBriefBackDTOS =
+        Collections.singletonList(processBriefBackDTO1);
+    when(actorDao.selectRelatedProcessNameByRoleId(0L)).thenReturn(processBriefBackDTOS);
 
     // Run the test
     final ActorDetailBackDTO result = rolePlayService.getActor(0L);

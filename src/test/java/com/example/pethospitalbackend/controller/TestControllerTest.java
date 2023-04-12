@@ -68,7 +68,7 @@ public class TestControllerTest extends BaseTest {
     disease.setDiseaseId(0L);
     disease.setDiseaseName("diseaseName");
     disease.setTypeName("typeName");
-    questionBackDetailDTO.setDiseaseName("disease");
+    questionBackDetailDTO.setDisease(new Disease());
     when(testService.getQuestion(0L)).thenReturn(questionBackDetailDTO);
     Response<QuestionBackDetailDTO> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(questionBackDetailDTO);
@@ -241,7 +241,7 @@ public class TestControllerTest extends BaseTest {
     paper.setPaperName("paperName");
     paper.setScore(0L);
     PaperBackDTO paperBackDTO = new PaperBackDTO();
-    paperBackDTO.setPaper(paper);
+    BeanUtils.copyProperties(paper, paperBackDTO);
 
     // Run the test
     final MockHttpServletResponse response =
@@ -273,7 +273,7 @@ public class TestControllerTest extends BaseTest {
     Response<Paper> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(paper);
     PaperBackDTO paperBackDTO = new PaperBackDTO();
-    paperBackDTO.setPaper(paper);
+    //    paperBackDTO.setPaper(paper);
 
     // Run the test
     final MockHttpServletResponse response =
@@ -322,9 +322,11 @@ public class TestControllerTest extends BaseTest {
     paper.setPaperId(0L);
     paper.setPaperName("paperName");
     paper.setScore(0L);
-    when(testService.getPaperById(0L)).thenReturn(paper);
-    Response<Paper> expectedResponseContent = new Response<>();
-    expectedResponseContent.setSuc(paper);
+    PaperDetailBackDTO paperDetailBackDTO = new PaperDetailBackDTO();
+    BeanUtils.copyProperties(paper, paperDetailBackDTO);
+    when(testService.getPaperById(0L)).thenReturn(paperDetailBackDTO);
+    Response<PaperDetailBackDTO> expectedResponseContent = new Response<>();
+    expectedResponseContent.setSuc(paperDetailBackDTO);
 
     // Run the test
     final MockHttpServletResponse response =
@@ -350,7 +352,7 @@ public class TestControllerTest extends BaseTest {
     test.setTestName("testName");
     test.setIntro("intro");
     test.setTag("tag");
-    test.setPaperID(0L);
+    test.setPaperId(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     final List<com.example.pethospitalbackend.entity.Test> tests = Collections.singletonList(test);
@@ -379,10 +381,9 @@ public class TestControllerTest extends BaseTest {
     testDetailBackDTO.setTestName("testName");
     testDetailBackDTO.setIntro("intro");
     testDetailBackDTO.setTag("tag");
-    testDetailBackDTO.setPaperID(0L);
+    testDetailBackDTO.setPaperId(0L);
     testDetailBackDTO.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     testDetailBackDTO.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
-    testDetailBackDTO.setUserList(Collections.singletonList("value"));
     when(testService.getTest(0L)).thenReturn(testDetailBackDTO);
     Response<TestDetailBackDTO> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(testDetailBackDTO);
@@ -410,7 +411,7 @@ public class TestControllerTest extends BaseTest {
     test.setTestName("testName");
     test.setIntro("intro");
     test.setTag("tag");
-    test.setPaperID(0L);
+    test.setPaperId(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     TestFormBackDTO testFormBackDTO = new TestFormBackDTO();
@@ -469,7 +470,7 @@ public class TestControllerTest extends BaseTest {
     test.setTestName("testName");
     test.setIntro("intro");
     test.setTag("tag");
-    test.setPaperID(0L);
+    test.setPaperId(0L);
     test.setBeginDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     test.setEndDate(new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime());
     TestFormBackDTO testFormBackDTO = new TestFormBackDTO();
