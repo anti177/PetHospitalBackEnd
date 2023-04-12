@@ -340,10 +340,11 @@ public class CaseService {
     }
   }
 
-  @Transactional(rollbackFor = Exception.class)
   public int deleteDisease(Long id) {
+    if (caseDao.existByDiseaseId(id)) {
+      return -1;
+    }
     try {
-      // todo: 如果存在相关病例则不能删除
       return diseaseDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
       logger.error(

@@ -3,6 +3,7 @@ package com.example.pethospitalbackend.controller;
 import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
+import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.CaseService;
 import io.swagger.annotations.Api;
@@ -51,7 +52,7 @@ public class CaseController {
   }
 
   @GetMapping("/cases")
-  @ApiOperation("管理员获取全部病例")
+  @ApiOperation(value = "管理员获取全部病例")
   Response<List<CaseBackBriefDTO>> getAllCases() {
     List<CaseBackBriefDTO> caseBackBriefDTOS = caseService.getAllCaseBackBriefDTOs();
     Response<List<CaseBackBriefDTO>> response = new Response<>();
@@ -60,7 +61,7 @@ public class CaseController {
   }
 
   @PostMapping("/cases")
-  @ApiOperation("管理员上传病例")
+  @ApiOperation(value = "管理员上传病例")
   Response<IllCase> postCase(@RequestBody CaseBackFormDTO form) {
     Response<IllCase> response = new Response<>();
     response.setSuc(caseService.addCase(form));
@@ -68,27 +69,27 @@ public class CaseController {
   }
 
   @PutMapping("/cases/{id}")
-  @ApiOperation("管理员修改病例")
+  @ApiOperation(value = "管理员修改病例")
   Response<ModifiedRecordCountDTO> putCase(
       @PathVariable Long id, @RequestBody CaseBackFormDTO form) {
     form.setCase_id(id);
-    Integer res = caseService.updateCase(form);
+    int res = caseService.updateCase(form);
     Response<ModifiedRecordCountDTO> response = new Response<>();
     response.setSuc(new ModifiedRecordCountDTO(res));
     return response;
   }
 
   @DeleteMapping("/cases/{id}")
-  @ApiOperation("管理员删除病例")
+  @ApiOperation(value = "管理员删除病例")
   Response<ModifiedRecordCountDTO> deleteCase(@PathVariable Long id) {
-    Integer res = caseService.deleteCase(id);
+    int res = caseService.deleteCase(id);
     Response<ModifiedRecordCountDTO> response = new Response<>();
     response.setSuc(new ModifiedRecordCountDTO(res));
     return response;
   }
 
   @PostMapping("/diseases")
-  @ApiOperation("管理员添加疾病")
+  @ApiOperation(value = "管理员添加疾病")
   Response<Disease> postDisease(@RequestBody Disease disease) {
     Disease diseaseRecord = caseService.addDisease(disease);
     Response<Disease> response = new Response<>();
@@ -97,25 +98,32 @@ public class CaseController {
   }
 
   @DeleteMapping("/diseases/{id}")
-  @ApiOperation("管理员删除疾病")
+  @ApiOperation(value = "管理员删除疾病")
   Response<ModifiedRecordCountDTO> deleteDisease(@PathVariable Long id) {
-    Integer res = caseService.deleteDisease(id);
+    int result = caseService.deleteDisease(id);
     Response<ModifiedRecordCountDTO> response = new Response<>();
-    response.setSuc(new ModifiedRecordCountDTO(res));
+    ModifiedRecordCountDTO modifiedRecordCountDTO = new ModifiedRecordCountDTO(result);
+    if (result == -1) {
+      response.setMessage("当前存在与该疾病相关的病例，删除失败。请修改或删除相关病例后重试。");
+      response.setStatus(ResponseEnum.CONFLICT.getCode());
+      response.setResult(modifiedRecordCountDTO);
+    } else {
+      response.setSuc(modifiedRecordCountDTO);
+    }
     return response;
   }
 
   @PutMapping("/diseases/{id}")
-  @ApiOperation("管理员修改疾病")
+  @ApiOperation(value = "管理员修改疾病")
   Response<ModifiedRecordCountDTO> putDisease(@PathVariable Long id, @RequestBody Disease disease) {
-    Integer res = caseService.updateDisease(disease);
+    int res = caseService.updateDisease(disease);
     Response<ModifiedRecordCountDTO> response = new Response<>();
     response.setSuc(new ModifiedRecordCountDTO(res));
     return response;
   }
 
   @GetMapping("/diseases")
-  @ApiOperation("管理员获取全部疾病")
+  @ApiOperation(value = "管理员获取全部疾病")
   Response<List<Disease>> getAllDiseases() {
     Response<List<Disease>> response = new Response<>();
     response.setSuc(caseService.getAllDiseases());
@@ -123,7 +131,7 @@ public class CaseController {
   }
 
   @GetMapping("/diseases/{id}")
-  @ApiOperation("管理员获取疾病详细信息")
+  @ApiOperation(value = "管理员获取疾病详细信息")
   Response<Disease> getDisease(@PathVariable Long id) {
     Disease diseaseRecord = caseService.getDisease(id);
     Response<Disease> response = new Response<>();
@@ -131,7 +139,7 @@ public class CaseController {
     return response;
   }
 
-  @GetMapping("/inspections/items")
+  @GetMapping(value = "/inspections/items")
   @ApiOperation("管理员获取所有检查项目（新建病例用）")
   Response<List<InspectionItemBackDTO>> getAllInspectionItems() {
     Response<List<InspectionItemBackDTO>> response = new Response<>();
