@@ -139,6 +139,22 @@ public class CaseService {
     return response;
   }
 
+  public Response<List<CaseCategoryDTO>> getFrontCaseByWord(String word) {
+    Response<List<CaseCategoryDTO>> response = new Response<>();
+    List<CaseCategoryDTO> caseFrontDetailDTOs = new ArrayList<>();
+    try {
+      caseFrontDetailDTOs = caseDao.getCaseByWord(word);
+    } catch (Exception e) {
+      logger.error(
+              "[getCaseByCaseId Fail],word:{}, error message{}",
+              SerialUtil.toJsonStr(word),
+              SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+    response.setSuc(caseFrontDetailDTOs);
+    return response;
+  }
+
   // ---------------------------------后台方法------------------------------
 
   @Transactional(rollbackFor = Exception.class)
