@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class QuestionWithScoreDTO {
-  Long question_id;
-
+  Long questionId;
   Long score;
 }
