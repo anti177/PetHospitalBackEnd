@@ -4,8 +4,6 @@ import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.FileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,21 +20,21 @@ public class FileController {
 
   @Resource FileService fileService;
 
-  @PostMapping("/video")
-  @ApiOperation("添加视频测试")
-  public ResponseEntity<Response<Boolean>> addVideo(
-      @RequestParam("video_mp4") MultipartFile video_mp4) {
-    Response<Boolean> response = new Response<>();
-    fileService.addVideo(video_mp4);
-    response.setSuc(null);
-    return new ResponseEntity<>(response, HttpStatus.OK);
-  }
+  //  @PostMapping("/video")
+  //  @ApiOperation("添加视频测试")
+  //  public ResponseEntity<Response<Boolean>> addVideo(
+  //      @RequestParam("video_mp4") MultipartFile video_mp4) {
+  //    Response<Boolean> response = new Response<>();
+  //    fileService.addVideo(video_mp4);
+  //    response.setSuc(null);
+  //    return new ResponseEntity<>(response, HttpStatus.OK);
+  //  }
 
   @PostMapping("/videos")
   @ApiOperation("添加视频")
-  public Response<String> addVideos(@RequestParam("videos") MultipartFile video) {
+  public Response<String> addVideo(@RequestParam("videos") MultipartFile video) {
     Response<String> response = new Response<>();
-    String url = fileService.addVideos(video);
+    String url = fileService.addVideo(video);
     response.setSuc(url);
     return response;
   }
@@ -45,14 +43,14 @@ public class FileController {
   @ApiOperation("添加图片")
   public Response<String> addGraphs(@RequestParam("graphs") MultipartFile graph) {
     Response<String> response = new Response<>();
-    String url = fileService.addGraphs(graph);
+    String url = fileService.addGraph(graph);
     response.setSuc(url);
     return response;
   }
 
   @DeleteMapping("/graphs")
   @ApiOperation("删除图片")
-  public Response<Boolean> deleteGraphs(@RequestBody String url) {
+  public Response<Boolean> deleteGraph(@RequestBody String url) {
     Response<Boolean> response = new Response<>();
     response.setSuc(fileService.deleteGraph(url));
     return response;
@@ -60,7 +58,7 @@ public class FileController {
 
   @DeleteMapping("/videos")
   @ApiOperation("删除视频")
-  public Response<Boolean> deleteVideos(@RequestBody String url) {
+  public Response<Boolean> deleteVideo(@RequestBody String url) {
     Response<Boolean> response = new Response<>();
     response.setSuc(fileService.deleteVideo(url));
     return response;

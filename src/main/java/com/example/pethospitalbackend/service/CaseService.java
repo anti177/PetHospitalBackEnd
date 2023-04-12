@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -208,24 +209,49 @@ public class CaseService {
     return fileDTOList;
   }
 
-  @Transactional(rollbackFor = Exception.class)
+  // 只删表，不删实际文件
+  public int deleteCasesData(long caseId) {
+    List<Long> inspectionCaseIdList =
+        inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
+    if (inspectionCaseIdList.size() > 0) {
+      inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(
+          inspectionCaseIdList); // 删除检查情况中的照片
+      inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(inspectionCaseIdList); // 删除检查情况
+    }
+
+    caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
+    caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
+    caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
+
+    return caseDao.deleteByPrimaryKey(caseId);
+  }
+
+  @Transactional(rollbackFor = Exception.class) // 包含实际文件删除
   public int deleteCase(long caseId) {
     try {
+      List<String> graphUrlS = new LinkedList<>();
       List<Long> inspectionCaseIdList =
           inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
       if (inspectionCaseIdList.size() > 0) {
+        graphUrlS.addAll(
+            inspectionCaseDao.getInspectionGraphUrlByInspectionCaseId(inspectionCaseIdList));
         inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(
             inspectionCaseIdList); // 删除检查情况中的照片
         inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(inspectionCaseIdList); // 删除检查情况
       }
-      List<FileDTO> fileDTOS = caseDao.getFilesByIllCaseId("admission_graph", caseId);
-      fileDTOS.addAll(caseDao.getFilesByIllCaseId("treatment_graph", caseId));
-      fileDTOS.addAll(caseDao.getFilesByIllCaseId("treatment_video", caseId));
+      graphUrlS.addAll(caseDao.getFilesByIllCaseId("admission_graph", caseId));
+      graphUrlS.addAll(caseDao.getFilesByIllCaseId("treatment_graph", caseId));
+      List<String> videoUrls = caseDao.getFilesByIllCaseId("treatment_video", caseId);
 
       caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
       caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
       caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
-      return caseDao.deleteByPrimaryKey(caseId);
+
+      caseDao.deleteByPrimaryKey(caseId); // 先删表数据
+
+      fileService.deleteGraphs(graphUrlS); // 再删实际文件
+      fileService.deleteVideos(videoUrls);
+      return 1;
     } catch (Exception e) {
       logger.error(
           "[delete ill case fail], caseId: {}, error message: {}",
@@ -239,7 +265,7 @@ public class CaseService {
   public int updateCase(CaseBackFormDTO formDTO) {
     Long id = formDTO.getCase_id();
     try {
-      deleteCase(id);
+      deleteCasesData(id);
       formDTO.setCase_id(id);
       addCase(formDTO);
       return 1;
@@ -276,7 +302,6 @@ public class CaseService {
     }
   }
 
-  // todo: 需要测一下性能，后续优化
   public CaseBackDetailDTO getBackCaseDetailDTOByCaseId(Long caseId) {
     try {
       CaseBackDetailDTO caseBackDetailDTO = caseDao.getBackDetailDTO(caseId); // 先读基本类型属性和疾病属性
