@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class PaperBackDTO {
+public class PaperDetailBackDTO {
   @ApiModelProperty("试卷id")
   private Long paperId;
 
@@ -16,5 +16,6 @@ public class PaperBackDTO {
   @ApiModelProperty(value = "试卷总分")
   private Long score;
 
-  List<QuestionWithScoreDTO> list;
+  @ApiModelProperty(value = "问题列表")
+  List<QuestionDTO> questionList;
 }

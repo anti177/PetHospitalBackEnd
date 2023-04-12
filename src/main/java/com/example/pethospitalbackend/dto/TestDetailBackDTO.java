@@ -22,7 +22,7 @@ public class TestDetailBackDTO {
   private String tag;
 
   @ApiModelProperty(value = "试卷ID")
-  private Long paperID;
+  private Long paperId;
 
   @ApiModelProperty(value = "考试开始时间")
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -35,5 +35,5 @@ public class TestDetailBackDTO {
   private Date endDate;
 
   @ApiModelProperty(value = "参考人员名单")
-  private List<String> userList;
+  private List<UserBackBriefDTO> userList; // 添加参考人员id
 }
