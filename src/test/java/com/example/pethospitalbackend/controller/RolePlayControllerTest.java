@@ -62,7 +62,6 @@ public class RolePlayControllerTest extends BaseTest {
     actorDetailBackDTO.setName("name");
     actorDetailBackDTO.setContent("content");
     actorDetailBackDTO.setResponsibility("responsibility");
-    actorDetailBackDTO.setProcessList(Collections.singletonList("value"));
     when(rolePlayService.getActor(0L)).thenReturn(actorDetailBackDTO);
     Response<ActorDetailBackDTO> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(actorDetailBackDTO);
