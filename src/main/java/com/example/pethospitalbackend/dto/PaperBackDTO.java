@@ -16,5 +16,6 @@ public class PaperBackDTO {
   @ApiModelProperty(value = "试卷总分")
   private Long score;
 
-  List<QuestionWithScoreDTO> list;
+  @ApiModelProperty(value = "问题列表")
+  List<QuestionWithScoreDTO> questionList;
 }

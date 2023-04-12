@@ -180,9 +180,9 @@ public class TestServiceTest extends BaseTest {
     paperBackDTO.setPaperName("paperName");
     paperBackDTO.setScore(0L);
     final QuestionWithScoreDTO questionWithScoreDTO = new QuestionWithScoreDTO();
-    questionWithScoreDTO.setQuestion_id(0L);
+    questionWithScoreDTO.setQuestionId(0L);
     questionWithScoreDTO.setScore(0L);
-    paperBackDTO.setList(Collections.singletonList(questionWithScoreDTO));
+    paperBackDTO.setQuestionList(Collections.singletonList(questionWithScoreDTO));
 
     final Paper expectedResult = new Paper();
     expectedResult.setPaperId(0L);
@@ -210,9 +210,9 @@ public class TestServiceTest extends BaseTest {
     paperBackDTO.setPaperName("paperName");
     paperBackDTO.setScore(0L);
     final QuestionWithScoreDTO questionWithScoreDTO = new QuestionWithScoreDTO();
-    questionWithScoreDTO.setQuestion_id(0L);
+    questionWithScoreDTO.setQuestionId(0L);
     questionWithScoreDTO.setScore(0L);
-    paperBackDTO.setList(Collections.singletonList(questionWithScoreDTO));
+    paperBackDTO.setQuestionList(Collections.singletonList(questionWithScoreDTO));
 
     when(paperDao.updateByPrimaryKey(any())).thenReturn(1);
     when(relQuestionPaperDao.deleteByPaperId(0L)).thenReturn(1);

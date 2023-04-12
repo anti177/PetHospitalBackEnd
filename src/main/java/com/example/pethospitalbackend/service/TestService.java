@@ -332,7 +332,7 @@ public class TestService {
       BeanUtils.copyProperties(paperBackDTO, paper);
       paperDao.insert(paper);
       List<RelQuestionPaper> relQuestionPaperList =
-          getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
+          getRelQuestionPaperList(paperBackDTO.getQuestionList(), paper.getPaperId());
       relQuestionPaperDao.insertList(relQuestionPaperList);
       return paper;
     } catch (Exception e) {
@@ -353,7 +353,7 @@ public class TestService {
 
       // 重新添加
       List<RelQuestionPaper> relQuestionPaperList =
-          getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
+          getRelQuestionPaperList(paperBackDTO.getQuestionList(), paper.getPaperId());
       relQuestionPaperDao.insertList(relQuestionPaperList);
       return 1;
     } catch (Exception e) {
@@ -476,7 +476,7 @@ public class TestService {
       RelQuestionPaper relQuestionPaper = new RelQuestionPaper();
       relQuestionPaper.setIndex_num((long) i);
       relQuestionPaper.setPaperId(paperId);
-      relQuestionPaper.setQuestionId(questionWIthScoreDTO.getQuestion_id());
+      relQuestionPaper.setQuestionId(questionWIthScoreDTO.getQuestionId());
       relQuestionPaper.setScore(questionWIthScoreDTO.getScore());
       relQuestionPaperList.add(relQuestionPaper);
     }
