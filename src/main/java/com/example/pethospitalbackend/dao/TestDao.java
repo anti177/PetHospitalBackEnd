@@ -16,7 +16,7 @@ public interface TestDao extends Mapper<Test> {
   // 返回还未开始的考试列表(正在考试期间，已经提交了答案的考试不在其中)
   @ResultType(TestCategoryDTO.class)
   @Select(
-      "SELECT test.test_id as test_id, begin_date as beginDate, end_date as endDate, test_name as testName, intro, tag  "
+      "SELECT test.test_id as testId, begin_date as beginDate, end_date as endDate, test_name as testName, intro, tag  "
           + "from test JOIN test_user on test.test_id = test_user.test_id "
           + "WHERE test_user.user_id = #{id} and NOW() < begin_date and test_user.has_submit = 0 "
           + "ORDER BY begin_date")
