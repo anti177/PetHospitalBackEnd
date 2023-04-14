@@ -147,9 +147,9 @@ public class CaseService {
       caseFrontDetailDTOs = caseDao.getCaseByWord(word);
     } catch (Exception e) {
       logger.error(
-              "[getCaseByCaseId Fail],word:{}, error message{}",
-              SerialUtil.toJsonStr(word),
-              SerialUtil.toJsonStr(e.getMessage()));
+          "[getCaseByCaseId Fail],word:{}, error message{}",
+          SerialUtil.toJsonStr(word),
+          SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
     response.setSuc(caseFrontDetailDTOs);
@@ -212,36 +212,6 @@ public class CaseService {
     }
   }
 
-  // todo: 重构，修改一下方法参数顺序
-  public List<FileDTO> getFileDTOList(List<String> urlList, Long caseId) {
-    List<FileDTO> fileDTOList = new ArrayList<>();
-    for (int i = 0; i < urlList.size(); i++) {
-      FileDTO fileDTO = new FileDTO();
-      fileDTO.setCaseId(caseId);
-      fileDTO.setSortNum((long) i + 1);
-      fileDTO.setUrl(urlList.get(i));
-      fileDTOList.add(fileDTO);
-    }
-    return fileDTOList;
-  }
-
-  // 只删表，不删实际文件
-  public int deleteCasesData(long caseId) {
-    List<Long> inspectionCaseIdList =
-        inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
-    if (inspectionCaseIdList.size() > 0) {
-      inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(
-          inspectionCaseIdList); // 删除检查情况中的照片
-      inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(inspectionCaseIdList); // 删除检查情况
-    }
-
-    caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
-    caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
-    caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
-
-    return caseDao.deleteByPrimaryKey(caseId);
-  }
-
   @Transactional(rollbackFor = Exception.class) // 包含实际文件删除
   public int deleteCase(long caseId) {
     try {
@@ -265,8 +235,13 @@ public class CaseService {
 
       caseDao.deleteByPrimaryKey(caseId); // 先删表数据
 
-      fileService.deleteGraphs(graphUrlS); // 再删实际文件
-      fileService.deleteVideos(videoUrls);
+      // 再删实际文件
+      if (graphUrlS.size() > 0) {
+        fileService.deleteGraphs(graphUrlS);
+      }
+      if (videoUrls.size() > 0) {
+        fileService.deleteVideos(videoUrls);
+      }
       return 1;
     } catch (Exception e) {
       logger.error(
@@ -292,19 +267,6 @@ public class CaseService {
           SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
-  }
-
-  // 工具方法，用于转换前端表单类到实体类
-  private IllCase transformIllCaseFormToIllCase(CaseBackFormDTO form) {
-    IllCase illCase = new IllCase();
-    illCase.setCaseId(form.getCase_id());
-    illCase.setFrontGraph(form.getFront_graph());
-    illCase.setCaseName(form.getCase_title());
-    illCase.setDiseaseId(form.getDisease_id());
-    illCase.setDiagnosticInfo(form.getDiagnostic_result());
-    illCase.setTreatmentInfo(form.getTreatment_info());
-    illCase.setAdmissionText(form.getAdmission_text());
-    return illCase;
   }
 
   public List<CaseBackBriefDTO> getAllCaseBackBriefDTOs() {
@@ -337,13 +299,6 @@ public class CaseService {
           SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
-  }
-
-  // 目前不需要这个方法
-  public PageInfo<CaseBackBriefDTO> getCasePageInfo(int pageNum, int pageSize) {
-    PageHelper.startPage(pageNum, pageSize);
-    List<CaseBackBriefDTO> CaseDTOList = caseDao.getAllCaseBackBriefDTOs();
-    return new PageInfo<>(CaseDTOList);
   }
 
   public Disease addDisease(Disease disease) {
@@ -419,5 +374,47 @@ public class CaseService {
           "[get all diseases fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
+  }
+
+  private List<FileDTO> getFileDTOList(List<String> urlList, Long caseId) {
+    List<FileDTO> fileDTOList = new ArrayList<>();
+    for (int i = 0; i < urlList.size(); i++) {
+      FileDTO fileDTO = new FileDTO();
+      fileDTO.setCaseId(caseId);
+      fileDTO.setSortNum((long) i + 1);
+      fileDTO.setUrl(urlList.get(i));
+      fileDTOList.add(fileDTO);
+    }
+    return fileDTOList;
+  }
+
+  // 只删表，不删实际文件
+  private int deleteCasesData(long caseId) {
+    List<Long> inspectionCaseIdList =
+        inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
+    if (inspectionCaseIdList.size() > 0) {
+      inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(
+          inspectionCaseIdList); // 删除检查情况中的照片
+      inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(inspectionCaseIdList); // 删除检查情况
+    }
+
+    caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
+    caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
+    caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
+
+    return caseDao.deleteByPrimaryKey(caseId);
+  }
+
+  // 工具方法，用于转换前端表单类到实体类
+  private IllCase transformIllCaseFormToIllCase(CaseBackFormDTO form) {
+    IllCase illCase = new IllCase();
+    illCase.setCaseId(form.getCase_id());
+    illCase.setFrontGraph(form.getFront_graph());
+    illCase.setCaseName(form.getCase_title());
+    illCase.setDiseaseId(form.getDisease_id());
+    illCase.setDiagnosticInfo(form.getDiagnostic_result());
+    illCase.setTreatmentInfo(form.getTreatment_info());
+    illCase.setAdmissionText(form.getAdmission_text());
+    return illCase;
   }
 }

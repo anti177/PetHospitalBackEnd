@@ -49,7 +49,9 @@ public class DrugService {
     try {
       String fileUrl = drugDao.selectByPrimaryKey(id).getUrl();
       int res = drugDao.deleteByPrimaryKey(id);
-      fileService.deleteGraph(fileUrl);
+      if (fileUrl != null) {
+        fileService.deleteGraph(fileUrl);
+      }
       return res;
     } catch (Exception e) {
       logger.error(

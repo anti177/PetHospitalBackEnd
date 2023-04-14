@@ -432,9 +432,11 @@ public class TestService {
       Test test = new Test();
       BeanUtils.copyProperties(testFormBackDTO, test);
       testDao.insert(test);
-      List<TestUser> testUserList =
-          getTestUserList(testFormBackDTO.getUserList(), test.getTestId());
-      testUserDao.insertList(testUserList);
+      List<Long> userIdList = testFormBackDTO.getUserList();
+      if (userIdList != null) {
+        List<TestUser> testUserList = getTestUserList(userIdList, test.getTestId());
+        testUserDao.insertList(testUserList);
+      }
       return test;
     } catch (Exception e) {
       logger.error("[insert test fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
@@ -448,9 +450,11 @@ public class TestService {
     BeanUtils.copyProperties(testFormBackDTO, test);
     try {
       testUserDao.deleteTestUsersByTestId(test.getTestId());
-      List<TestUser> testUserList =
-          getTestUserList(testFormBackDTO.getUserList(), test.getTestId());
-      testUserDao.insertList(testUserList);
+      List<Long> userIdList = testFormBackDTO.getUserList();
+      if (userIdList != null) {
+        List<TestUser> testUserList = getTestUserList(userIdList, test.getTestId());
+        testUserDao.insertList(testUserList);
+      }
       return testDao.updateByPrimaryKey(test);
     } catch (Exception e) {
       logger.error(
