@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Update;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.common.special.InsertListMapper;
 
+import java.util.List;
+
 public interface TestUserDao extends Mapper<TestUser>, InsertListMapper<TestUser> {
   @Update(
       "UPDATE test_user SET has_Submit = #{hasSubmit} WHERE user_id = #{userId} and test_id = #{testId}")
@@ -16,5 +18,16 @@ public interface TestUserDao extends Mapper<TestUser>, InsertListMapper<TestUser
       @Param("hasSubmit") Boolean hasSubmit);
 
   @Delete("DELETE from test_user where test_id = #{testId}")
-  int deleteTestUsers(@Param("testId") Long id);
+  int deleteTestUsersByTestId(@Param("testId") long id);
+
+  @Delete("DELETE from test_user where user_id = #{userId}")
+  int deleteTestUserByUserId(@Param("userId") long id);
+
+  @Delete(
+      "<script>"
+          + "delete from test_user where user_id in "
+          + "<foreach collection='ids' open='(' item='id_' separator=',' close=')'> #{id_}"
+          + "</foreach>"
+          + "</script>")
+  int deleteTestUsersByUserIds(@Param("ids") List<Long> id);
 }
