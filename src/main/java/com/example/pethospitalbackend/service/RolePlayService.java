@@ -136,11 +136,12 @@ public class RolePlayService {
     BeanUtils.copyProperties(actorFormBackDTO, actor);
     Long actorId = actor.getActorId();
     try {
+      int res = actorDao.updateByPrimaryKey(actor);
       List<RelActorProcess> relActorProcessList =
           getRelActorProcessList(actorFormBackDTO.getProcessList(), actorId);
       relActorProcessDao.deleteByActorId(actorId);
       relActorProcessDao.insertList(relActorProcessList);
-      return actorDao.updateByPrimaryKey(actor);
+      return res;
     } catch (Exception e) {
       logger.error(
           "[update role Fail], roleId:{}, error msg:{}",
