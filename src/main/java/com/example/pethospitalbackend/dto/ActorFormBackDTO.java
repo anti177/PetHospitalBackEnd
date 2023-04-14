@@ -10,6 +10,9 @@ import java.util.List;
 @Data
 @ApiModel("后台新建角色模型")
 public class ActorFormBackDTO {
+  @ApiModelProperty(value = "角色关联的流程id列表")
+  List<Long> processList;
+
   @NotEmpty
   @ApiModelProperty(value = "角色id", required = true)
   private Long actorId;
@@ -23,7 +26,4 @@ public class ActorFormBackDTO {
 
   @ApiModelProperty(value = "角色职责")
   private String responsibility;
-
-  @ApiModelProperty(value = "角色关联的流程id列表")
-  List<Long> processList;
 }

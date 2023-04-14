@@ -171,7 +171,7 @@ public class RolePlayService {
     try {
       Actor actor = actorDao.selectByPrimaryKey(id);
       BeanUtils.copyProperties(actor, actorDetailBackDTO);
-      List<ProcessBriefBackDTO> list = actorDao.selectRelatedProcessNameByRoleId(id);
+      List<Process> list = actorDao.selectRelatedProcessDTOByRoleId(id);
       actorDetailBackDTO.setProcessList(list);
       return actorDetailBackDTO;
     } catch (Exception e) {
