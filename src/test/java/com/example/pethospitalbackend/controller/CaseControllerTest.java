@@ -254,7 +254,6 @@ public class CaseControllerTest extends BaseTest {
     caseBackBriefDTO1.setDisease(disease1);
     final PageInfo<CaseBackBriefDTO> caseBackBriefDTOPageInfo =
         new PageInfo<>(Collections.singletonList(caseBackBriefDTO1), 0);
-    when(caseService.getCasePageInfo(0, 0)).thenReturn(caseBackBriefDTOPageInfo);
 
     // Run the test
     final MockHttpServletResponse response =

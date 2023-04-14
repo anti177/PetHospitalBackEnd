@@ -1,5 +1,6 @@
 package com.example.pethospitalbackend.dto;
 
+import com.example.pethospitalbackend.entity.Process;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,6 +11,9 @@ import java.util.List;
 @ApiModel("后台角色详情模型")
 @Data
 public class ActorDetailBackDTO {
+
+  @ApiModelProperty(value = "角色关联的流程名称列表")
+  List<Process> processList;
 
   @NotBlank
   @ApiModelProperty(value = "角色id")
@@ -25,7 +29,4 @@ public class ActorDetailBackDTO {
   @NotBlank
   @ApiModelProperty(value = "角色职责")
   private String responsibility;
-
-  @ApiModelProperty(value = "角色关联的流程名称列表")
-  List<ProcessBriefBackDTO> processList;
 }

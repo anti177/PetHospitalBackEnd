@@ -1,9 +1,9 @@
 package com.example.pethospitalbackend.dao;
 
-import com.example.pethospitalbackend.dto.ProcessBriefBackDTO;
 import com.example.pethospitalbackend.dto.RoleDTO;
 import com.example.pethospitalbackend.dto.RolePlayOperationDTO;
 import com.example.pethospitalbackend.entity.Actor;
+import com.example.pethospitalbackend.entity.Process;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Select;
@@ -27,7 +27,7 @@ public interface ActorDao extends tk.mybatis.mapper.common.Mapper<Actor> {
 
   @ResultType(List.class)
   @Select(
-      "SELECT process.process_name as processName, process.process_id as processId from rel_actor_process JOIN process on rel_actor_process.process_id = process.process_id "
+      "SELECT process.process_id as processId, process_name as processName, intro as intro from rel_actor_process JOIN process on rel_actor_process.process_id = process.process_id "
           + "WHERE rel_actor_process.actor_id = #{actorId}")
-  List<ProcessBriefBackDTO> selectRelatedProcessNameByRoleId(@Param("actorId") long id);
+  List<Process> selectRelatedProcessDTOByRoleId(@Param("actorId") long id);
 }

@@ -12,4 +12,7 @@ public class ProcessBriefBackDTO {
 
   @ApiModelProperty(value = "流程名称")
   private String processName;
+
+  @ApiModelProperty(value = "流程介绍")
+  private String intro;
 }

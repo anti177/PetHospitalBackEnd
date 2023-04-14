@@ -7,6 +7,10 @@ import java.util.List;
 
 @Data
 public class PaperBackDTO {
+
+  @ApiModelProperty(value = "问题列表", required = true)
+  List<QuestionWithScoreDTO> questionList;
+
   @ApiModelProperty("试卷id")
   private Long paperId;
 
@@ -15,7 +19,4 @@ public class PaperBackDTO {
 
   @ApiModelProperty(value = "试卷总分", required = true)
   private Long score;
-
-  @ApiModelProperty(value = "问题列表", required = true)
-  List<QuestionWithScoreDTO> questionList;
 }

@@ -4,7 +4,8 @@ import com.example.pethospitalbackend.constant.SecurityConstants;
 import com.example.pethospitalbackend.dto.JwtUserDTO;
 import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
-import com.example.pethospitalbackend.dto.UserFrontDTO;import com.example.pethospitalbackend.entity.User;
+import com.example.pethospitalbackend.dto.UserFrontDTO;
+import com.example.pethospitalbackend.entity.User;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.ParameterException;
 import com.example.pethospitalbackend.request.ChangePasswordRequest;
@@ -19,7 +20,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +51,7 @@ public class UserController {
     userFrontDTO.setToken(SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
     response.setSuc(userFrontDTO);
 
-    return  response;
+    return response;
   }
 
   @PatchMapping("/user/login")
@@ -63,7 +63,7 @@ public class UserController {
     UserFrontDTO userFrontDTO = transferUserDTOToUserFrontDTO(jwtUser.getUser());
     userFrontDTO.setToken(SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
     response.setSuc(userFrontDTO);
-    return  response;
+    return response;
   }
 
   @PatchMapping("/user/logout")
@@ -163,12 +163,13 @@ public class UserController {
     response.setSuc(jwtUserDTO.getUser());
     return response;
   }
-  private UserFrontDTO transferUserDTOToUserFrontDTO(UserDTO userDTO){
+
+  private UserFrontDTO transferUserDTOToUserFrontDTO(UserDTO userDTO) {
     UserFrontDTO userFrontDTO = new UserFrontDTO();
     userFrontDTO.setUserId(userDTO.getUserId());
     userFrontDTO.setEmail(userDTO.getEmail());
     userFrontDTO.setRole(userDTO.getRole());
     userFrontDTO.setUserClass(userDTO.getUserClass());
-    return  userFrontDTO;
+    return userFrontDTO;
   }
 }
