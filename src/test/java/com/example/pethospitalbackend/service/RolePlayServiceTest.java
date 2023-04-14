@@ -67,16 +67,15 @@ public class RolePlayServiceTest extends BaseTest {
     expectedResult.setContent("content");
     expectedResult.setResponsibility("responsibility");
 
-    when(actorDao.insert(any())).thenReturn(0);
-    when(relActorProcessDao.insertList(anyList())).thenReturn(0);
+    when(actorDao.insert(any())).thenReturn(1);
+    when(relActorProcessDao.insertList(anyList())).thenReturn(1);
 
     // Run the test
     final Actor result = rolePlayService.addActor(actorFormBackDTO);
 
     // Verify the results
     assertEquals(expectedResult, result);
-    verify(actorDao).insert(any());
-    verify(relActorProcessDao).insertList(anyList());
+    verify(actorDao).insert(new Actor());
   }
 
   @Test

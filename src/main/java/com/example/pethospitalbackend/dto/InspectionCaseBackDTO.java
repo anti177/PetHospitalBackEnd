@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@ApiModel("后台添加检查情况模型")
+@ApiModel("后台查看检查情况模型")
 public class InspectionCaseBackDTO {
 
   @ApiModelProperty("检查情况id")

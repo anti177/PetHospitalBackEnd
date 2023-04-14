@@ -10,12 +10,12 @@ public class PaperBackDTO {
   @ApiModelProperty("试卷id")
   private Long paperId;
 
-  @ApiModelProperty(value = "试卷名称")
+  @ApiModelProperty(value = "试卷名称", required = true)
   private String paperName;
 
-  @ApiModelProperty(value = "试卷总分")
+  @ApiModelProperty(value = "试卷总分", required = true)
   private Long score;
 
-  @ApiModelProperty(value = "问题列表")
+  @ApiModelProperty(value = "问题列表", required = true)
   List<QuestionWithScoreDTO> questionList;
 }

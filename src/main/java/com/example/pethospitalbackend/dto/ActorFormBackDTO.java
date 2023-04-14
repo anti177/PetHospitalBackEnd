@@ -4,27 +4,26 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Data
 @ApiModel("后台新建角色模型")
 public class ActorFormBackDTO {
-  @NotBlank
-  @ApiModelProperty(value = "角色id")
+  @NotEmpty
+  @ApiModelProperty(value = "角色id", required = true)
   private Long actorId;
 
-  @NotBlank
-  @ApiModelProperty(value = "角色名称")
+  @NotEmpty
+  @ApiModelProperty(value = "角色名称", required = true)
   private String name;
 
   @ApiModelProperty(value = "角色内容")
   private String content;
 
-  @NotBlank
   @ApiModelProperty(value = "角色职责")
   private String responsibility;
 
-  @ApiModelProperty(value = "角色关联的流程名称列表")
+  @ApiModelProperty(value = "角色关联的流程id列表")
   List<Long> processList;
 }
