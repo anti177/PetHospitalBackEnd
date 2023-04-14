@@ -415,7 +415,7 @@ public class TestService {
   @Transactional(rollbackFor = Exception.class)
   public int deleteTest(Long id) {
     try {
-      testUserDao.deleteTestUsers(id);
+      testUserDao.deleteTestUsersByTestId(id);
       return testDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
       logger.error(
@@ -447,7 +447,7 @@ public class TestService {
     Test test = new Test();
     BeanUtils.copyProperties(testFormBackDTO, test);
     try {
-      testUserDao.deleteTestUsers(test.getTestId());
+      testUserDao.deleteTestUsersByTestId(test.getTestId());
       List<TestUser> testUserList =
           getTestUserList(testFormBackDTO.getUserList(), test.getTestId());
       testUserDao.insertList(testUserList);
