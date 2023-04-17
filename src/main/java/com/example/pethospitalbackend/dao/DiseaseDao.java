@@ -24,4 +24,8 @@ public interface DiseaseDao extends Mapper<Disease> {
   @Select(
       "SELECT disease_id as diseaseId, disease_name as diseaseName FROM disease where disease_id=#{id}")
   DiseaseDTO selectDTOByPrimaryKey(@Param("id") Long id);
+
+  @ResultType(String.class)
+  @Select("SELECT disease_name FROM disease where disease_id=#{id}")
+  String selectNameByPrimaryKey(@Param("id") Long id);
 }
