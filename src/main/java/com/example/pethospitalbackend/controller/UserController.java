@@ -6,8 +6,6 @@ import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.dto.UserFrontDTO;
 import com.example.pethospitalbackend.entity.User;
-import com.example.pethospitalbackend.enums.ResponseEnum;
-import com.example.pethospitalbackend.exception.ParameterException;
 import com.example.pethospitalbackend.request.ChangePasswordRequest;
 import com.example.pethospitalbackend.request.ForgetPasswordRequest;
 import com.example.pethospitalbackend.request.UserLoginRequest;
@@ -15,7 +13,6 @@ import com.example.pethospitalbackend.request.UserRegisterRequest;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.AuthService;
 import com.example.pethospitalbackend.service.UserService;
-import com.example.pethospitalbackend.util.SerialUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -132,16 +129,10 @@ public class UserController {
 
   @PostMapping("/users/batch")
   @ApiOperation("批量删除用户")
-  public Response<ModifiedRecordCountDTO> userBatchOperation(
-      @RequestParam("action") String action, @RequestBody List<Long> ids) {
+  public Response<ModifiedRecordCountDTO> userBatchOperation(@RequestBody List<Long> ids) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
-    if (action.equals("delete")) {
-      Integer res = userService.deleteUsers(ids);
-      response.setSuc(new ModifiedRecordCountDTO(res));
-    } else {
-      logger.warn("[Parameter wrong], action: {}", SerialUtil.toJsonStr(action));
-      throw new ParameterException(ResponseEnum.ILLEGAL_PARAM.getMsg());
-    }
+    Integer res = userService.deleteUsers(ids);
+    response.setSuc(new ModifiedRecordCountDTO(res));
     return response;
   }
 

@@ -30,5 +30,5 @@ public class QuestionBackDetailDTO {
   private String keyword;
 
   @ApiModelProperty("相关疾病")
-  private Disease disease;
+  private DiseaseDTO disease;
 }

@@ -188,8 +188,10 @@ public class RolePlayService {
       List<String> fileUrls = operationDao.selectFileUrlByProcessId(id);
       operationDao.deleteByProcessId(id);
       int res = processDao.deleteByPrimaryKey(id);
-      if (fileUrls.size() > 0) {
-        fileService.deleteGraphs(fileUrls);
+      for (String url : fileUrls) {
+        if (url != null && !url.equals("")) {
+          fileService.deleteGraph(url);
+        }
       }
       return res;
     } catch (Exception e) {
