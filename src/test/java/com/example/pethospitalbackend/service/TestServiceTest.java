@@ -98,7 +98,6 @@ public class TestServiceTest extends BaseTest {
     expectedResult.setChoice(Arrays.asList("choice1", "choice2"));
     expectedResult.setAns(Arrays.asList("ans1", "ans2"));
     expectedResult.setKeyword("keyword");
-    expectedResult.setDisease(new Disease());
 
     // Configure QuestionDao.selectByPrimaryKey(...).
     final Question question = new Question();
