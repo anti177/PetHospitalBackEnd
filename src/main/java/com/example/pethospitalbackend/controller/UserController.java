@@ -92,7 +92,7 @@ public class UserController {
   }
 
   @GetMapping("/user")
-  @ApiOperation("管理员获取单个用户")
+  @ApiOperation("根据token获取单个用户信息")
   public Response<UserDTO> getUser() {
     UserDTO user = userService.getUserDTOByToken();
     Response<UserDTO> response = new Response<>();
