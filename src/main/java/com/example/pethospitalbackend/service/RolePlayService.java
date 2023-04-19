@@ -21,10 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RolePlayService {
@@ -34,6 +32,7 @@ public class RolePlayService {
   @Resource private RelActorProcessDao relActorProcessDao;
   @Resource private ProcessDao processDao;
   @Resource private OperationDao operationDao;
+  @Resource private FileService fileService;
 
   public Response<RoleDTO> getRoleContentAndResponsibility(String roleId) {
     long id = Long.parseLong(roleId);
@@ -113,18 +112,17 @@ public class RolePlayService {
   public Actor addActor(ActorFormBackDTO actorFormBackDTO) {
     Actor actor = new Actor();
     BeanUtils.copyProperties(actorFormBackDTO, actor);
-    Long actorId = actor.getActorId();
     try {
       actorDao.insert(actor);
-      List<RelActorProcess> relActorProcessList =
-          getRelActorProcessList(actorFormBackDTO.getProcessList(), actorId);
-      relActorProcessDao.insertList(relActorProcessList);
+      Long actorId = actor.getActorId();
+      List<Long> processIdList = actorFormBackDTO.getProcessList();
+      if (processIdList != null) {
+        List<RelActorProcess> relActorProcessList = getRelActorProcessList(processIdList, actorId);
+        relActorProcessDao.insertList(relActorProcessList);
+      }
       return actor;
     } catch (Exception e) {
-      logger.error(
-          "[add role Fail], roleId:{}, error msg:{}",
-          SerialUtil.toJsonStr(actorId),
-          e.getMessage());
+      logger.error("[add role Fail], error msg:{}", e.getMessage());
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
   }
@@ -135,11 +133,14 @@ public class RolePlayService {
     BeanUtils.copyProperties(actorFormBackDTO, actor);
     Long actorId = actor.getActorId();
     try {
-      List<RelActorProcess> relActorProcessList =
-          getRelActorProcessList(actorFormBackDTO.getProcessList(), actorId);
+      int res = actorDao.updateByPrimaryKey(actor);
       relActorProcessDao.deleteByActorId(actorId);
-      relActorProcessDao.insertList(relActorProcessList);
-      return actorDao.updateByPrimaryKey(actor);
+      List<Long> processIdList = actorFormBackDTO.getProcessList();
+      if (processIdList != null) {
+        List<RelActorProcess> relActorProcessList = getRelActorProcessList(processIdList, actorId);
+        relActorProcessDao.insertList(relActorProcessList);
+      }
+      return res;
     } catch (Exception e) {
       logger.error(
           "[update role Fail], roleId:{}, error msg:{}",
@@ -168,7 +169,7 @@ public class RolePlayService {
     try {
       Actor actor = actorDao.selectByPrimaryKey(id);
       BeanUtils.copyProperties(actor, actorDetailBackDTO);
-      List<ProcessBriefBackDTO> list = actorDao.selectRelatedProcessNameByRoleId(id);
+      List<Process> list = actorDao.selectRelatedProcessDTOByRoleId(id);
       actorDetailBackDTO.setProcessList(list);
       return actorDetailBackDTO;
     } catch (Exception e) {
@@ -182,8 +183,11 @@ public class RolePlayService {
   public int deleteProcess(Long id) {
     try {
       relActorProcessDao.deleteByProcessId(id);
+      List<String> fileUrls = operationDao.selectFileUrlByProcessId(id);
       operationDao.deleteByProcessId(id);
-      return processDao.deleteByPrimaryKey(id);
+      int res = processDao.deleteByPrimaryKey(id);
+      fileService.updateFilesState(fileUrls, false);
+      return res;
     } catch (Exception e) {
       logger.error(
           "[delete process Fail], processId:{}, error msg:{}",
@@ -199,13 +203,24 @@ public class RolePlayService {
     BeanUtils.copyProperties(processFormBackDTO, process);
     Long processId = process.getProcessId();
     List<Operation> operationList = processFormBackDTO.getOperationList();
+    List<String> newFileUrls = new LinkedList<>();
     for (Operation operation : operationList) {
       operation.setProcessId(processId);
+      newFileUrls.add(operation.getUrl());
     }
     try {
+      List<Operation> originalOperationList = operationDao.selectByProcessId(processId);
+      List<String> originalFileUrls =
+          originalOperationList.stream()
+              .map(operation -> operation.getUrl())
+              .collect(Collectors.toList());
       operationDao.deleteByProcessId(processId);
       operationDao.insertList(operationList);
-      return processDao.updateByPrimaryKey(process);
+      int res = processDao.updateByPrimaryKey(process);
+
+      fileService.updateFilesState(originalFileUrls, false);
+      fileService.updateFilesState(newFileUrls, true);
+      return res;
     } catch (Exception e) {
       logger.error(
           "[update process Fail], processId:{}, error msg:{}",
@@ -219,14 +234,19 @@ public class RolePlayService {
   public Process addProcess(ProcessFormBackDTO processFormBackDTO) {
     Process process = new Process();
     BeanUtils.copyProperties(processFormBackDTO, process);
+    List<String> fileUrls = new LinkedList<>();
     try {
       processDao.insert(process);
       List<Operation> operationList = processFormBackDTO.getOperationList();
-      Long processId = process.getProcessId();
-      for (Operation operation : operationList) {
-        operation.setProcessId(processId);
+      if (operationList != null) {
+        Long processId = process.getProcessId();
+        for (Operation operation : operationList) {
+          operation.setProcessId(processId);
+          fileUrls.add(operation.getUrl());
+        }
+        operationDao.insertList(processFormBackDTO.getOperationList());
       }
-      operationDao.insertList(processFormBackDTO.getOperationList());
+      fileService.updateFilesState(fileUrls, true);
       return process;
     } catch (Exception e) {
       logger.error("[add process Fail], error msg:{}", e.getMessage());

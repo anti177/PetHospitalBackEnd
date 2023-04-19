@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-@ApiModel("题目模型")
+@ApiModel("后台题目模型")
 @Data
 public class QuestionDTO {
   @ApiModelProperty(value = "题目id")

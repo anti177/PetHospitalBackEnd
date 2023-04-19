@@ -7,7 +7,6 @@ import com.example.pethospitalbackend.dao.ProcessDao;
 import com.example.pethospitalbackend.dao.RelActorProcessDao;
 import com.example.pethospitalbackend.dto.ActorDetailBackDTO;
 import com.example.pethospitalbackend.dto.ActorFormBackDTO;
-import com.example.pethospitalbackend.dto.ProcessBriefBackDTO;
 import com.example.pethospitalbackend.dto.ProcessFormBackDTO;
 import com.example.pethospitalbackend.entity.Actor;
 import com.example.pethospitalbackend.entity.Operation;
@@ -43,6 +42,9 @@ public class RolePlayServiceTest extends BaseTest {
   @MockBean(name = "operationDao")
   OperationDao operationDao;
 
+  @MockBean(name = "fileService")
+  FileService fileService;
+
   @Before
   public void init() {
     MockitoAnnotations.openMocks(this);
@@ -64,16 +66,15 @@ public class RolePlayServiceTest extends BaseTest {
     expectedResult.setContent("content");
     expectedResult.setResponsibility("responsibility");
 
-    when(actorDao.insert(any())).thenReturn(0);
-    when(relActorProcessDao.insertList(anyList())).thenReturn(0);
+    when(actorDao.insert(any())).thenReturn(1);
+    when(relActorProcessDao.insertList(anyList())).thenReturn(1);
 
     // Run the test
     final Actor result = rolePlayService.addActor(actorFormBackDTO);
 
     // Verify the results
     assertEquals(expectedResult, result);
-    verify(actorDao).insert(any());
-    verify(relActorProcessDao).insertList(anyList());
+    verify(actorDao).insert(new Actor());
   }
 
   @Test
@@ -98,10 +99,6 @@ public class RolePlayServiceTest extends BaseTest {
     expectedResult.setName("name");
     expectedResult.setContent("content");
     expectedResult.setResponsibility("responsibility");
-    final ProcessBriefBackDTO processBriefBackDTO = new ProcessBriefBackDTO();
-    processBriefBackDTO.setProcessId(0L);
-    processBriefBackDTO.setProcessName("processName");
-    expectedResult.setProcessList(Collections.singletonList(processBriefBackDTO));
 
     // Configure ActorDao.selectByPrimaryKey(...).
     final Actor actor = new Actor();
@@ -112,12 +109,13 @@ public class RolePlayServiceTest extends BaseTest {
     when(actorDao.selectByPrimaryKey(0L)).thenReturn(actor);
 
     // Configure ActorDao.selectRelatedProcessNameByRoleId(...).
-    final ProcessBriefBackDTO processBriefBackDTO1 = new ProcessBriefBackDTO();
-    processBriefBackDTO1.setProcessId(0L);
-    processBriefBackDTO1.setProcessName("processName");
-    final List<ProcessBriefBackDTO> processBriefBackDTOS =
-        Collections.singletonList(processBriefBackDTO1);
-    when(actorDao.selectRelatedProcessNameByRoleId(0L)).thenReturn(processBriefBackDTOS);
+    final Process process = new Process();
+    process.setIntro("1");
+    process.setProcessId(0L);
+    process.setProcessName("name");
+
+    when(actorDao.selectRelatedProcessDTOByRoleId(0L))
+        .thenReturn(Collections.singletonList(process));
 
     // Run the test
     final ActorDetailBackDTO result = rolePlayService.getActor(0L);
@@ -250,20 +248,6 @@ public class RolePlayServiceTest extends BaseTest {
   }
 
   @Test
-  public void testDeleteProcess() {
-    // Setup
-    when(operationDao.deleteByProcessId(0L)).thenReturn(1);
-    when(processDao.deleteByPrimaryKey(0L)).thenReturn(1);
-
-    // Run the test
-    final int result = rolePlayService.deleteProcess(0L);
-
-    // Verify the results
-    assertEquals(1, result);
-    verify(operationDao).deleteByProcessId(0L);
-  }
-
-  @Test
   public void testUpdateProcess() {
     // Setup
     final ProcessFormBackDTO processFormBackDTO = new ProcessFormBackDTO();
@@ -314,5 +298,24 @@ public class RolePlayServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(expectedResult, result);
+  }
+
+  @Test
+  public void testDeleteProcess() {
+    // Setup
+    when(relActorProcessDao.deleteByProcessId(0L)).thenReturn(1);
+    when(operationDao.selectFileUrlByProcessId(0L)).thenReturn(Collections.singletonList("value"));
+    when(operationDao.deleteByProcessId(0L)).thenReturn(1);
+    when(processDao.deleteByPrimaryKey(0L)).thenReturn(1);
+    when(fileService.deleteGraphs(Collections.singletonList("value"))).thenReturn(true);
+
+    // Run the test
+    final int result = rolePlayService.deleteProcess(0L);
+
+    // Verify the results
+    assertEquals(1, result);
+    verify(relActorProcessDao).deleteByProcessId(0L);
+    verify(operationDao).deleteByProcessId(0L);
+    verify(fileService).deleteGraphs(Collections.singletonList("value"));
   }
 }

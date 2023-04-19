@@ -289,7 +289,8 @@ public class TestService {
       BeanUtils.copyProperties(question, questionFormDTO);
       questionFormDTO.setAns(Arrays.asList(question.getAns().split(";")));
       questionFormDTO.setChoice(Arrays.asList(question.getChoice().split(";")));
-      questionFormDTO.setDisease(diseaseDao.selectByPrimaryKey(question.getDiseaseId()));
+      DiseaseDTO disease = diseaseDao.selectDTOByPrimaryKey(question.getDiseaseId());
+      questionFormDTO.setDisease(disease);
       return questionFormDTO;
     } catch (Exception e) {
       logger.error(
@@ -332,7 +333,7 @@ public class TestService {
       BeanUtils.copyProperties(paperBackDTO, paper);
       paperDao.insert(paper);
       List<RelQuestionPaper> relQuestionPaperList =
-          getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
+          getRelQuestionPaperList(paperBackDTO.getQuestionList(), paper.getPaperId());
       relQuestionPaperDao.insertList(relQuestionPaperList);
       return paper;
     } catch (Exception e) {
@@ -353,7 +354,7 @@ public class TestService {
 
       // 重新添加
       List<RelQuestionPaper> relQuestionPaperList =
-          getRelQuestionPaperList(paperBackDTO.getList(), paper.getPaperId());
+          getRelQuestionPaperList(paperBackDTO.getQuestionList(), paper.getPaperId());
       relQuestionPaperDao.insertList(relQuestionPaperList);
       return 1;
     } catch (Exception e) {
@@ -398,6 +399,8 @@ public class TestService {
       TestDetailBackDTO testDetailBackDTO = new TestDetailBackDTO();
       Test test = testDao.selectByPrimaryKey(id);
       BeanUtils.copyProperties(test, testDetailBackDTO);
+      Long paperId = test.getPaperId();
+      testDetailBackDTO.setPaperName(paperDao.selectNameByPrimaryKey(paperId));
       testDetailBackDTO.setUserList(testDao.selectRelatedUserNameByTestId(id));
       return testDetailBackDTO;
     } catch (Exception e) {
@@ -412,7 +415,7 @@ public class TestService {
   @Transactional(rollbackFor = Exception.class)
   public int deleteTest(Long id) {
     try {
-      testUserDao.deleteTestUsers(id);
+      testUserDao.deleteTestUsersByTestId(id);
       return testDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
       logger.error(
@@ -429,9 +432,11 @@ public class TestService {
       Test test = new Test();
       BeanUtils.copyProperties(testFormBackDTO, test);
       testDao.insert(test);
-      List<TestUser> testUserList =
-          getTestUserList(testFormBackDTO.getUserList(), test.getTestId());
-      testUserDao.insertList(testUserList);
+      List<Long> userIdList = testFormBackDTO.getUserList();
+      if (userIdList != null) {
+        List<TestUser> testUserList = getTestUserList(userIdList, test.getTestId());
+        testUserDao.insertList(testUserList);
+      }
       return test;
     } catch (Exception e) {
       logger.error("[insert test fail], error msg: {}", SerialUtil.toJsonStr(e.getMessage()));
@@ -444,10 +449,12 @@ public class TestService {
     Test test = new Test();
     BeanUtils.copyProperties(testFormBackDTO, test);
     try {
-      testUserDao.deleteTestUsers(test.getTestId());
-      List<TestUser> testUserList =
-          getTestUserList(testFormBackDTO.getUserList(), test.getTestId());
-      testUserDao.insertList(testUserList);
+      testUserDao.deleteTestUsersByTestId(test.getTestId());
+      List<Long> userIdList = testFormBackDTO.getUserList();
+      if (userIdList != null) {
+        List<TestUser> testUserList = getTestUserList(userIdList, test.getTestId());
+        testUserDao.insertList(testUserList);
+      }
       return testDao.updateByPrimaryKey(test);
     } catch (Exception e) {
       logger.error(
@@ -476,7 +483,7 @@ public class TestService {
       RelQuestionPaper relQuestionPaper = new RelQuestionPaper();
       relQuestionPaper.setIndex_num((long) i);
       relQuestionPaper.setPaperId(paperId);
-      relQuestionPaper.setQuestionId(questionWIthScoreDTO.getQuestion_id());
+      relQuestionPaper.setQuestionId(questionWIthScoreDTO.getQuestionId());
       relQuestionPaper.setScore(questionWIthScoreDTO.getScore());
       relQuestionPaperList.add(relQuestionPaper);
     }

@@ -68,7 +68,6 @@ public class TestControllerTest extends BaseTest {
     disease.setDiseaseId(0L);
     disease.setDiseaseName("diseaseName");
     disease.setTypeName("typeName");
-    questionBackDetailDTO.setDisease(new Disease());
     when(testService.getQuestion(0L)).thenReturn(questionBackDetailDTO);
     Response<QuestionBackDetailDTO> expectedResponseContent = new Response<>();
     expectedResponseContent.setSuc(questionBackDetailDTO);

@@ -13,7 +13,7 @@ public class TestFormBackDTO {
 
   private Long testId;
 
-  @ApiModelProperty(value = "考试名称")
+  @ApiModelProperty(value = "考试名称", required = true)
   private String testName;
 
   @ApiModelProperty(value = "考试介绍")
@@ -22,7 +22,7 @@ public class TestFormBackDTO {
   @ApiModelProperty(value = "考试tag")
   private String tag;
 
-  @ApiModelProperty(value = "试卷ID")
+  @ApiModelProperty(value = "试卷ID", required = true)
   private Long paperId;
 
   @ApiModelProperty(value = "考试开始时间")

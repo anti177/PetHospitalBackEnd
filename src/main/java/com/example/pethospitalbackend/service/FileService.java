@@ -1,6 +1,8 @@
 package com.example.pethospitalbackend.service;
 
+import com.example.pethospitalbackend.dao.FileRecordDao;
 import com.example.pethospitalbackend.dao.TreatmentVideoDao;
+import com.example.pethospitalbackend.entity.FileRecord;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.util.JwtUtils;
 import com.example.pethospitalbackend.util.OSSUtil;
@@ -9,6 +11,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +25,7 @@ public class FileService {
   private final String videoBucketName = "pet-hospital-back-end-video";
   private final String graphBucketName = "pet-hospital-back-end-graph";
   @Resource OSSUtil ossUtil;
+  @Resource FileRecordDao fileRecordDao;
   @Resource TreatmentVideoDao treatmentVideoDao;
 
   // 上传视频的例子
@@ -64,6 +68,10 @@ public class FileService {
       logger.error("[addGraph Fail], graph: {}", SerialUtil.toJsonStr(graph.getOriginalFilename()));
       throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
     } else {
+      FileRecord fileRecord = new FileRecord();
+      fileRecord.setUrl(url);
+      fileRecord.setInUse(false);
+      fileRecordDao.insert(fileRecord);
       return url.substring(0, url.indexOf("?"));
     }
   }
@@ -81,9 +89,15 @@ public class FileService {
           "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
       throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
     } else {
+      FileRecord fileRecord = new FileRecord();
+      fileRecord.setUrl(url);
+      fileRecord.setInUse(false);
+      fileRecordDao.insert(fileRecord);
       return url.substring(0, url.indexOf("?"));
     }
   }
+
+  // todo: 修改文件处理逻辑
 
   public boolean deleteGraph(String url) {
     return ossUtil.deleteFile(graphBucketName, url);
@@ -105,5 +119,26 @@ public class FileService {
       ossUtil.deleteFile(graphBucketName, url);
     }
     return true;
+  }
+
+  public int updateFilesState(List<String> urls, Boolean status) {
+    for (String url : urls) {
+      fileRecordDao.updateStatusByUrl(url, status);
+    }
+    return 1;
+  }
+
+  @Scheduled(cron = "0 0 0 1W 1/1 ? *")
+  public void dailyDeleteUnusedFiles() {
+    logger.info("释放无效文件");
+    List<String> graphs = fileRecordDao.selectUnusedGraphs();
+    deleteGraphs(graphs);
+    List<String> videos = fileRecordDao.selectUnusedVideos();
+    deleteVideos(videos);
+    fileRecordDao.deleteUnusedRecords();
+  }
+
+  public int updateFileState(String url, Boolean status) {
+    return fileRecordDao.updateStatusByUrl(url, status);
   }
 }

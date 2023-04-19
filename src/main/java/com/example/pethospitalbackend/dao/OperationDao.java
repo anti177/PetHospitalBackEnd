@@ -24,4 +24,7 @@ public interface OperationDao extends Mapper<Operation>, InsertListMapper<Operat
         @Result(column = "url", property = "url"),
       })
   List<Operation> selectByProcessId(@Param("processId") Long id);
+
+  @Select("SELECT url from operation where process_id = #{processId}")
+  List<String> selectFileUrlByProcessId(@Param("processId") Long id);
 }

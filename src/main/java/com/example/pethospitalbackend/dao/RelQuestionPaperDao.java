@@ -11,8 +11,8 @@ public interface RelQuestionPaperDao
     extends Mapper<RelQuestionPaper>, InsertListMapper<RelQuestionPaper> {
 
   @Select("select exists(select 1 from rel_question_paper where question_id=#{questionId})")
-  boolean existsWithQuestionId(@Param("questionId") Long questionId);
+  boolean existsWithQuestionId(@Param("questionId") long questionId);
 
   @Delete("delete from rel_question_paper where paper_id=#{paperId}")
-  int deleteByPaperId(@Param("paperId") Long id);
+  int deleteByPaperId(@Param("paperId") long id);
 }

@@ -1,6 +1,7 @@
 package com.example.pethospitalbackend.service;
 
 import com.example.pethospitalbackend.BaseTest;
+import com.example.pethospitalbackend.dao.TestUserDao;
 import com.example.pethospitalbackend.dao.UserDao;
 import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.entity.User;
@@ -11,12 +12,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest extends BaseTest {
@@ -25,21 +26,12 @@ public class UserServiceTest extends BaseTest {
   @MockBean(name = "userDao")
   UserDao userDao;
 
+  @MockBean(name = "testUserDao")
+  TestUserDao testUserDao;
+
   @Before
   public void init() {
     MockitoAnnotations.openMocks(this);
-  }
-
-  @Test
-  public void testDeleteUser() {
-    // Setup
-    when(userDao.deleteByPrimaryKey(0L)).thenReturn(1);
-
-    // Run the test
-    final int result = userService.deleteUser(0L);
-
-    // Verify the results
-    assertEquals(1, result);
   }
 
   @Test
@@ -58,18 +50,6 @@ public class UserServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(1, result);
-  }
-
-  @Test
-  public void testDeleteUsers() {
-    // Setup
-    when(userService.userDao.deleteByIdList(Arrays.asList(0L, 1L))).thenReturn(2);
-
-    // Run the test
-    final int result = userService.deleteUsers(Arrays.asList(0L, 1L));
-
-    // Verify the results
-    assertEquals(2, result);
   }
 
   @Test
@@ -106,5 +86,34 @@ public class UserServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(userDTOS, result);
+  }
+
+  @Test
+  public void testDeleteUser() {
+    // Setup
+    when(userService.testUserDao.deleteTestUserByUserId(0L)).thenReturn(1);
+    when(userService.userDao.deleteByPrimaryKey(0L)).thenReturn(1);
+
+    // Run the test
+    final int result = userService.deleteUser(0L);
+
+    // Verify the results
+    assertEquals(1, result);
+    verify(userService.testUserDao).deleteTestUserByUserId(0L);
+  }
+
+  @Test
+  public void testDeleteUsers() {
+    // Setup
+    when(userService.testUserDao.deleteTestUsersByUserIds(Collections.singletonList(0L)))
+        .thenReturn(1);
+    when(userService.userDao.deleteByIdList(Collections.singletonList(0L))).thenReturn(1);
+
+    // Run the test
+    final int result = userService.deleteUsers(Collections.singletonList(0L));
+
+    // Verify the results
+    assertEquals(1, result);
+    verify(userService.testUserDao).deleteTestUsersByUserIds(Collections.singletonList(0L));
   }
 }

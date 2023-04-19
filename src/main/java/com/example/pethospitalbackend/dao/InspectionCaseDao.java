@@ -114,4 +114,7 @@ public interface InspectionCaseDao
           + "</script>")
   List<String> getInspectionGraphUrlByInspectionCaseId(
       @Param("id") List<Long> inspectionCaseIdList);
+
+  @Select("select exists(select 1 from inspection_case where item_id=#{itemId})")
+  boolean existsWithItemId(@Param("itemId") Long id);
 }

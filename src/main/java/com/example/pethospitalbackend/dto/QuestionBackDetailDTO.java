@@ -1,6 +1,5 @@
 package com.example.pethospitalbackend.dto;
 
-import com.example.pethospitalbackend.entity.Disease;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,5 +29,5 @@ public class QuestionBackDetailDTO {
   private String keyword;
 
   @ApiModelProperty("相关疾病")
-  private Disease disease;
+  private DiseaseDTO disease;
 }

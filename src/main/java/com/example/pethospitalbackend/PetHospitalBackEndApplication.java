@@ -8,6 +8,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @SpringBootApplication
 @EnableCaching
 @MapperScan(basePackages = "com.example.pethospitalbackend.dao")
+// @EnableScheduling
 public class PetHospitalBackEndApplication {
 
   public static void main(String[] args) {

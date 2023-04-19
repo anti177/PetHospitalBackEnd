@@ -3,10 +3,12 @@ package com.example.pethospitalbackend.service;
 import com.example.pethospitalbackend.dao.CaseDao;
 import com.example.pethospitalbackend.dao.DiseaseDao;
 import com.example.pethospitalbackend.dao.InspectionCaseDao;
+import com.example.pethospitalbackend.dao.InspectionItemDao;
 import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
 import com.example.pethospitalbackend.entity.InspectionCase;
+import com.example.pethospitalbackend.entity.InspectionItem;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.response.Response;
@@ -33,6 +35,8 @@ public class CaseService {
   @Resource CaseDao caseDao;
 
   @Resource InspectionCaseDao inspectionCaseDao;
+
+  @Resource InspectionItemDao inspectionItemDao;
 
   @Resource FileService fileService;
 
@@ -147,9 +151,9 @@ public class CaseService {
       caseFrontDetailDTOs = caseDao.getCaseByWord(word);
     } catch (Exception e) {
       logger.error(
-              "[getCaseByCaseId Fail],word:{}, error message{}",
-              SerialUtil.toJsonStr(word),
-              SerialUtil.toJsonStr(e.getMessage()));
+          "[getCaseByCaseId Fail],word:{}, error message{}",
+          SerialUtil.toJsonStr(word),
+          SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
     response.setSuc(caseFrontDetailDTOs);
@@ -166,9 +170,16 @@ public class CaseService {
       caseDao.insert(illCase);
       Long caseId = illCase.getCaseId();
 
+      List<String> fileUrls = new LinkedList<>();
+
       List<String> admissionGraphUrls = form.getAdmission_graphs();
       List<String> therapyGraphUrls = form.getTherapy_graphs();
       List<String> therapyVideoUrls = form.getTherapy_videos();
+
+      fileUrls.addAll(admissionGraphUrls);
+      fileUrls.addAll(therapyGraphUrls);
+      fileUrls.addAll(therapyVideoUrls);
+
       // 如果存在，添加相关图片和视频信息
       if (admissionGraphUrls != null) {
         List<FileDTO> admissionGraphList = getFileDTOList(admissionGraphUrls, caseId);
@@ -198,6 +209,7 @@ public class CaseService {
           // 添加相关检查图片信息
           Long inspectionCaseId = inspectionCase.getInspectionCaseId();
           List<String> inspectionGraphUrls = inspectionCaseFrontDTO.getInspection_graphs();
+          fileUrls.addAll(inspectionGraphUrls);
           if (inspectionGraphUrls.size() > 0) {
             List<FileDTO> inspectionGraphList =
                 getFileDTOList(inspectionGraphUrls, inspectionCaseId);
@@ -205,41 +217,12 @@ public class CaseService {
           }
         }
       }
+      fileService.updateFilesState(fileUrls, true);
       return illCase;
     } catch (Exception e) {
       logger.error("[add case Fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
-  }
-
-  // todo: 重构，修改一下方法参数顺序
-  public List<FileDTO> getFileDTOList(List<String> urlList, Long caseId) {
-    List<FileDTO> fileDTOList = new ArrayList<>();
-    for (int i = 0; i < urlList.size(); i++) {
-      FileDTO fileDTO = new FileDTO();
-      fileDTO.setCaseId(caseId);
-      fileDTO.setSortNum((long) i + 1);
-      fileDTO.setUrl(urlList.get(i));
-      fileDTOList.add(fileDTO);
-    }
-    return fileDTOList;
-  }
-
-  // 只删表，不删实际文件
-  public int deleteCasesData(long caseId) {
-    List<Long> inspectionCaseIdList =
-        inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
-    if (inspectionCaseIdList.size() > 0) {
-      inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(
-          inspectionCaseIdList); // 删除检查情况中的照片
-      inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(inspectionCaseIdList); // 删除检查情况
-    }
-
-    caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
-    caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
-    caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
-
-    return caseDao.deleteByPrimaryKey(caseId);
   }
 
   @Transactional(rollbackFor = Exception.class) // 包含实际文件删除
@@ -265,8 +248,9 @@ public class CaseService {
 
       caseDao.deleteByPrimaryKey(caseId); // 先删表数据
 
-      fileService.deleteGraphs(graphUrlS); // 再删实际文件
-      fileService.deleteVideos(videoUrls);
+      // 更新文件状态
+      fileService.updateFilesState(graphUrlS, false);
+      fileService.updateFilesState(videoUrls, false);
       return 1;
     } catch (Exception e) {
       logger.error(
@@ -278,7 +262,7 @@ public class CaseService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public int updateCase(CaseBackFormDTO formDTO) {
+  public int updateCase(CaseBackFormDTO formDTO) { // todo: 删除实际文件
     Long id = formDTO.getCase_id();
     try {
       deleteCasesData(id);
@@ -292,19 +276,6 @@ public class CaseService {
           SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
-  }
-
-  // 工具方法，用于转换前端表单类到实体类
-  private IllCase transformIllCaseFormToIllCase(CaseBackFormDTO form) {
-    IllCase illCase = new IllCase();
-    illCase.setCaseId(form.getCase_id());
-    illCase.setFrontGraph(form.getFront_graph());
-    illCase.setCaseName(form.getCase_title());
-    illCase.setDiseaseId(form.getDisease_id());
-    illCase.setDiagnosticInfo(form.getDiagnostic_result());
-    illCase.setTreatmentInfo(form.getTreatment_info());
-    illCase.setAdmissionText(form.getAdmission_text());
-    return illCase;
   }
 
   public List<CaseBackBriefDTO> getAllCaseBackBriefDTOs() {
@@ -337,13 +308,6 @@ public class CaseService {
           SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
-  }
-
-  // 目前不需要这个方法
-  public PageInfo<CaseBackBriefDTO> getCasePageInfo(int pageNum, int pageSize) {
-    PageHelper.startPage(pageNum, pageSize);
-    List<CaseBackBriefDTO> CaseDTOList = caseDao.getAllCaseBackBriefDTOs();
-    return new PageInfo<>(CaseDTOList);
   }
 
   public Disease addDisease(Disease disease) {
@@ -406,7 +370,14 @@ public class CaseService {
   }
 
   public List<InspectionItemBackDTO> getAllInspectionItems() {
-    return inspectionCaseDao.selectAllInspectionItems();
+    try {
+      return inspectionCaseDao.selectAllInspectionItems();
+    } catch (Exception e) {
+      logger.error(
+          "[get all inspection item fail], error message: {}",
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
   // 目前不需要这个方法，考虑删除
@@ -419,5 +390,98 @@ public class CaseService {
           "[get all diseases fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
     }
+  }
+
+  public List<InspectionItemDetailDTO> getAllInspectionItemDetails() {
+    try {
+      return inspectionItemDao.selectAllDetails();
+    } catch (Exception e) {
+      logger.error(
+          "[get all inspection item details fail], error message: {}",
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public InspectionItem addInspectionItem(InspectionItem inspectionItem) {
+    try {
+      inspectionItemDao.insert(inspectionItem);
+    } catch (Exception e) {
+      logger.error(
+          "[add inspection item fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+    return inspectionItem;
+  }
+
+  public int updateInspectionItem(InspectionItem inspectionItem) {
+    try {
+      return inspectionItemDao.updateByPrimaryKey(inspectionItem);
+    } catch (Exception e) {
+      logger.error(
+          "[update inspection item fail], itemId: {}, error message: {}",
+          SerialUtil.toJsonStr(inspectionItem.getInspectionItemId()),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public int deleteInspectionItem(Long id) {
+    // 如果没有相关病例才能删
+    if (inspectionCaseDao.existsWithItemId(id)) {
+      return -1;
+    } else {
+      try {
+        return inspectionItemDao.deleteByPrimaryKey(id);
+      } catch (Exception e) {
+        logger.error(
+            "[delete inspection item fail], itemId: {}, error message: {}",
+            SerialUtil.toJsonStr(id),
+            SerialUtil.toJsonStr(e.getMessage()));
+        throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+      }
+    }
+  }
+
+  private List<FileDTO> getFileDTOList(List<String> urlList, Long caseId) {
+    List<FileDTO> fileDTOList = new ArrayList<>();
+    for (int i = 0; i < urlList.size(); i++) {
+      FileDTO fileDTO = new FileDTO();
+      fileDTO.setCaseId(caseId);
+      fileDTO.setSortNum((long) i + 1);
+      fileDTO.setUrl(urlList.get(i));
+      fileDTOList.add(fileDTO);
+    }
+    return fileDTOList;
+  }
+
+  // 只删表，不删实际文件
+  private int deleteCasesData(long caseId) {
+    List<Long> inspectionCaseIdList =
+        inspectionCaseDao.selectAllInspectionCaseIdByIllCaseId(caseId);
+    if (inspectionCaseIdList.size() > 0) {
+      inspectionCaseDao.deleteInspectionGraphsByInspectionCaseId(
+          inspectionCaseIdList); // 删除检查情况中的照片
+      inspectionCaseDao.deleteInspectionCasesByInspectionCaseId(inspectionCaseIdList); // 删除检查情况
+    }
+
+    caseDao.deleteFilesByIllCaseId("admission_graph", caseId);
+    caseDao.deleteFilesByIllCaseId("treatment_graph", caseId);
+    caseDao.deleteFilesByIllCaseId("treatment_video", caseId);
+
+    return caseDao.deleteByPrimaryKey(caseId);
+  }
+
+  // 工具方法，用于转换前端表单类到实体类
+  private IllCase transformIllCaseFormToIllCase(CaseBackFormDTO form) {
+    IllCase illCase = new IllCase();
+    illCase.setCaseId(form.getCase_id());
+    illCase.setFrontGraph(form.getFront_graph());
+    illCase.setCaseName(form.getCase_title());
+    illCase.setDiseaseId(form.getDisease_id());
+    illCase.setDiagnosticInfo(form.getDiagnostic_result());
+    illCase.setTreatmentInfo(form.getTreatment_info());
+    illCase.setAdmissionText(form.getAdmission_text());
+    return illCase;
   }
 }

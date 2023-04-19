@@ -1,6 +1,8 @@
 package com.example.pethospitalbackend.service;
 
-import cn.hutool.extra.mail.MailException;import com.example.pethospitalbackend.constant.UserRoleConstants;
+import cn.hutool.extra.mail.MailException;
+import com.example.pethospitalbackend.constant.UserRoleConstants;
+import com.example.pethospitalbackend.dao.TestUserDao;
 import com.example.pethospitalbackend.dao.UserDao;
 import com.example.pethospitalbackend.dto.JwtUserDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
@@ -49,6 +51,7 @@ public class UserService {
           .maximumSize(25)
           .build();
   @Resource UserDao userDao;
+  @Resource TestUserDao testUserDao;
   @Resource EmailUtil emailUtil;
   @Resource BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -208,7 +211,7 @@ public class UserService {
   @Transactional(rollbackFor = Exception.class)
   public int deleteUser(Long id) {
     try {
-      userDao.deleteTestUserWithUserId(id);
+      testUserDao.deleteTestUserByUserId(id);
       return userDao.deleteByPrimaryKey(id);
     } catch (Exception e) {
       logger.error(
@@ -221,6 +224,7 @@ public class UserService {
 
   public int deleteUsers(List<Long> ids) {
     try {
+      testUserDao.deleteTestUsersByUserIds(ids);
       return userDao.deleteByIdList(ids);
     } catch (Exception e) {
       logger.error(
