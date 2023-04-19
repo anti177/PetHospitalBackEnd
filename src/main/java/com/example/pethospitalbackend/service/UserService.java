@@ -1,6 +1,6 @@
 package com.example.pethospitalbackend.service;
 
-import com.example.pethospitalbackend.constant.UserRoleConstants;
+import cn.hutool.extra.mail.MailException;import com.example.pethospitalbackend.constant.UserRoleConstants;
 import com.example.pethospitalbackend.dao.UserDao;
 import com.example.pethospitalbackend.dto.JwtUserDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
@@ -22,14 +22,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.Authentication;
+import org.springframework.mail.MailSendException;import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.security.GeneralSecurityException;import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -115,7 +115,12 @@ public class UserService {
     String code;
     Response response = new Response<>();
 
-    code = emailUtil.sendMail(email);
+    try{
+      code = emailUtil.sendMail(email);
+    }catch (Exception e){
+      logger.error("[SendCode Fail], email : {}", SerialUtil.toJsonStr(email));
+      throw new MailSendException(ResponseEnum.SEND_MAIL_FAIL.getMsg());
+    }
 
     // 存缓存
     mailVerifyCodeCache.put(email, code);
