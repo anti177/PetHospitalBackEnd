@@ -186,7 +186,15 @@ public class CaseController {
   @ApiOperation("管理员删除检查项目")
   Response<ModifiedRecordCountDTO> deleteInspectionItem(@PathVariable("id") Long id) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
-    response.setSuc(new ModifiedRecordCountDTO(caseService.deleteInspectionItem(id)));
+    int result = caseService.deleteInspectionItem(id);
+    ModifiedRecordCountDTO modifiedRecordCountDTO = new ModifiedRecordCountDTO(result);
+    if (result == -1) {
+      response.setMessage("当前存在相关病例，删除失败。请修改或删除相关病例后重试。");
+      response.setStatus(ResponseEnum.CONFLICT.getCode());
+      response.setResult(modifiedRecordCountDTO);
+    } else {
+      response.setSuc(modifiedRecordCountDTO);
+    }
     return response;
   }
 }
