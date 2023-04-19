@@ -170,14 +170,19 @@ public class CaseService {
       caseDao.insert(illCase);
       Long caseId = illCase.getCaseId();
 
+      List<String> fileUrls = new LinkedList<>();
+
       List<String> admissionGraphUrls = form.getAdmission_graphs();
       List<String> therapyGraphUrls = form.getTherapy_graphs();
       List<String> therapyVideoUrls = form.getTherapy_videos();
 
+      fileUrls.addAll(admissionGraphUrls);
+      fileUrls.addAll(therapyGraphUrls);
+      fileUrls.addAll(therapyVideoUrls);
+
       // 如果存在，添加相关图片和视频信息
       if (admissionGraphUrls != null) {
         List<FileDTO> admissionGraphList = getFileDTOList(admissionGraphUrls, caseId);
-
         caseDao.insertFiles(admissionGraphList, "admission_graph");
       }
       if (therapyGraphUrls != null) {
@@ -204,6 +209,7 @@ public class CaseService {
           // 添加相关检查图片信息
           Long inspectionCaseId = inspectionCase.getInspectionCaseId();
           List<String> inspectionGraphUrls = inspectionCaseFrontDTO.getInspection_graphs();
+          fileUrls.addAll(inspectionGraphUrls);
           if (inspectionGraphUrls.size() > 0) {
             List<FileDTO> inspectionGraphList =
                 getFileDTOList(inspectionGraphUrls, inspectionCaseId);
@@ -211,6 +217,7 @@ public class CaseService {
           }
         }
       }
+      fileService.updateFilesState(fileUrls, true);
       return illCase;
     } catch (Exception e) {
       logger.error("[add case Fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
@@ -241,13 +248,9 @@ public class CaseService {
 
       caseDao.deleteByPrimaryKey(caseId); // 先删表数据
 
-      // 再删实际文件
-      if (graphUrlS.size() > 0) {
-        fileService.deleteGraphs(graphUrlS);
-      }
-      if (videoUrls.size() > 0) {
-        fileService.deleteVideos(videoUrls);
-      }
+      // 更新文件状态
+      fileService.updateFilesState(graphUrlS, false);
+      fileService.updateFilesState(videoUrls, false);
       return 1;
     } catch (Exception e) {
       logger.error(

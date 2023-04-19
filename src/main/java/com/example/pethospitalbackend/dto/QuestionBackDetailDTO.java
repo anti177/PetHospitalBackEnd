@@ -1,6 +1,5 @@
 package com.example.pethospitalbackend.dto;
 
-import com.example.pethospitalbackend.entity.Disease;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

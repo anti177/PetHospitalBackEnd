@@ -36,6 +36,7 @@ public class DrugService {
 
   public Drug addDrug(Drug drug) {
     try {
+      fileService.updateFileState(drug.getUrl(), true);
       drugDao.insert(drug);
       return drug;
     } catch (Exception e) {
@@ -49,9 +50,7 @@ public class DrugService {
     try {
       String fileUrl = drugDao.selectByPrimaryKey(id).getUrl();
       int res = drugDao.deleteByPrimaryKey(id);
-      if (fileUrl != null) {
-        fileService.deleteGraph(fileUrl);
-      }
+      fileService.updateFileState(fileUrl, false);
       return res;
     } catch (Exception e) {
       logger.error(
@@ -62,8 +61,12 @@ public class DrugService {
     }
   }
 
+  @Transactional(rollbackFor = Exception.class)
   public int updateDrug(Drug drug) {
     try {
+      String originalUrl = drugDao.selectByPrimaryKey(drug.getId()).getUrl();
+      fileService.updateFileState(originalUrl, false);
+      fileService.updateFileState(drug.getUrl(), true);
       return drugDao.updateByPrimaryKey(drug);
     } catch (Exception e) {
       logger.error(
