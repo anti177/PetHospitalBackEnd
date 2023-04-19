@@ -2,6 +2,7 @@ package com.example.pethospitalbackend.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.*;
 
@@ -14,6 +15,7 @@ public class InspectionItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @KeySql(useGeneratedKeys = true)
   @Column(name = "inspection_item_id")
   @ApiModelProperty(value = "检查项目id")
   private Long inspectionItemId;

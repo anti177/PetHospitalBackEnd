@@ -2,6 +2,7 @@ package com.example.pethospitalbackend.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.*;
 
@@ -13,6 +14,7 @@ import javax.persistence.*;
 public class Actor {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @KeySql(useGeneratedKeys = true)
   @Column(name = "actor_id")
   @ApiModelProperty(value = "角色id")
   private Long actorId;
