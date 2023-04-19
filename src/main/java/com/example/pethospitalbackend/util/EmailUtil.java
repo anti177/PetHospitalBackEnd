@@ -18,6 +18,7 @@ public class EmailUtil {
     Properties props = new Properties();
     props.setProperty("mail.host", "smtp.163.com");
     props.setProperty("mail.smtp.auth", "true");
+    props.setProperty("mail.transport.protocol", "SMTP");
 
     // 确定权限（账号和密码）
     Authenticator authenticator =
