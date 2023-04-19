@@ -3,10 +3,12 @@ package com.example.pethospitalbackend.service;
 import com.example.pethospitalbackend.dao.CaseDao;
 import com.example.pethospitalbackend.dao.DiseaseDao;
 import com.example.pethospitalbackend.dao.InspectionCaseDao;
+import com.example.pethospitalbackend.dao.InspectionItemDao;
 import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
 import com.example.pethospitalbackend.entity.InspectionCase;
+import com.example.pethospitalbackend.entity.InspectionItem;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.exception.DatabaseException;
 import com.example.pethospitalbackend.response.Response;
@@ -33,6 +35,8 @@ public class CaseService {
   @Resource CaseDao caseDao;
 
   @Resource InspectionCaseDao inspectionCaseDao;
+
+  @Resource InspectionItemDao inspectionItemDao;
 
   @Resource FileService fileService;
 
@@ -169,9 +173,11 @@ public class CaseService {
       List<String> admissionGraphUrls = form.getAdmission_graphs();
       List<String> therapyGraphUrls = form.getTherapy_graphs();
       List<String> therapyVideoUrls = form.getTherapy_videos();
+
       // 如果存在，添加相关图片和视频信息
       if (admissionGraphUrls != null) {
         List<FileDTO> admissionGraphList = getFileDTOList(admissionGraphUrls, caseId);
+
         caseDao.insertFiles(admissionGraphList, "admission_graph");
       }
       if (therapyGraphUrls != null) {
@@ -253,7 +259,7 @@ public class CaseService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public int updateCase(CaseBackFormDTO formDTO) {
+  public int updateCase(CaseBackFormDTO formDTO) { // todo: 删除实际文件
     Long id = formDTO.getCase_id();
     try {
       deleteCasesData(id);
@@ -361,7 +367,14 @@ public class CaseService {
   }
 
   public List<InspectionItemBackDTO> getAllInspectionItems() {
-    return inspectionCaseDao.selectAllInspectionItems();
+    try {
+      return inspectionCaseDao.selectAllInspectionItems();
+    } catch (Exception e) {
+      logger.error(
+          "[get all inspection item fail], error message: {}",
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
   }
 
   // 目前不需要这个方法，考虑删除
@@ -373,6 +386,57 @@ public class CaseService {
       logger.error(
           "[get all diseases fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
       throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public List<InspectionItemDetailDTO> getAllInspectionItemDetails() {
+    try {
+      return inspectionItemDao.selectAllDetails();
+    } catch (Exception e) {
+      logger.error(
+          "[get all inspection item details fail], error message: {}",
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public InspectionItem addInspectionItem(InspectionItem inspectionItem) {
+    try {
+      inspectionItemDao.insert(inspectionItem);
+    } catch (Exception e) {
+      logger.error(
+          "[add inspection item fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+    return inspectionItem;
+  }
+
+  public int updateInspectionItem(InspectionItem inspectionItem) {
+    try {
+      return inspectionItemDao.updateByPrimaryKey(inspectionItem);
+    } catch (Exception e) {
+      logger.error(
+          "[update inspection item fail], itemId: {}, error message: {}",
+          SerialUtil.toJsonStr(inspectionItem.getInspectionItemId()),
+          SerialUtil.toJsonStr(e.getMessage()));
+      throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+    }
+  }
+
+  public int deleteInspectionItem(Long id) {
+    // 如果没有相关病例才能删
+    if (inspectionCaseDao.existsWithItemId(id)) {
+      return -1;
+    } else {
+      try {
+        return inspectionItemDao.deleteByPrimaryKey(id);
+      } catch (Exception e) {
+        logger.error(
+            "[delete inspection item fail], itemId: {}, error message: {}",
+            SerialUtil.toJsonStr(id),
+            SerialUtil.toJsonStr(e.getMessage()));
+        throw new DatabaseException(ResponseEnum.SERVER_ERROR.getMsg());
+      }
     }
   }
 

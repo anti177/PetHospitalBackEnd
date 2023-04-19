@@ -3,6 +3,7 @@ package com.example.pethospitalbackend.controller;
 import com.example.pethospitalbackend.dto.*;
 import com.example.pethospitalbackend.entity.Disease;
 import com.example.pethospitalbackend.entity.IllCase;
+import com.example.pethospitalbackend.entity.InspectionItem;
 import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.response.Response;
 import com.example.pethospitalbackend.service.CaseService;
@@ -152,6 +153,40 @@ public class CaseController {
   Response<List<InspectionItemBackDTO>> getAllInspectionItems() {
     Response<List<InspectionItemBackDTO>> response = new Response<>();
     response.setSuc(caseService.getAllInspectionItems());
+    return response;
+  }
+
+  @GetMapping(value = "/inspections")
+  @ApiOperation("管理员获取所有检查项目")
+  Response<List<InspectionItemDetailDTO>> getAllInspectionItemDetails() {
+    Response<List<InspectionItemDetailDTO>> response = new Response<>();
+    response.setSuc(caseService.getAllInspectionItemDetails());
+    return response;
+  }
+
+  @PostMapping(value = "/inspections")
+  @ApiOperation("管理员添加检查项目")
+  Response<InspectionItem> addInspectionItem(@RequestBody InspectionItem inspectionItem) {
+    Response<InspectionItem> response = new Response<>();
+    response.setSuc(caseService.addInspectionItem(inspectionItem));
+    return response;
+  }
+
+  @PutMapping(value = "/inspections/{id}")
+  @ApiOperation("管理员修改检查项目")
+  Response<ModifiedRecordCountDTO> updateInspectionItem(
+      @PathVariable("id") Long id, @RequestBody InspectionItem inspectionItem) {
+    inspectionItem.setInspectionItemId(id);
+    Response<ModifiedRecordCountDTO> response = new Response<>();
+    response.setSuc(new ModifiedRecordCountDTO(caseService.updateInspectionItem(inspectionItem)));
+    return response;
+  }
+
+  @DeleteMapping(value = "/inspections/{id}")
+  @ApiOperation("管理员删除检查项目")
+  Response<ModifiedRecordCountDTO> deleteInspectionItem(@PathVariable("id") Long id) {
+    Response<ModifiedRecordCountDTO> response = new Response<>();
+    response.setSuc(new ModifiedRecordCountDTO(caseService.deleteInspectionItem(id)));
     return response;
   }
 }
