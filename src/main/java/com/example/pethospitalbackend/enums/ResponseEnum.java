@@ -20,6 +20,7 @@ public enum ResponseEnum {
   VERIFY_INVALID(108, "验证过期,请重新登陆"),
   UPLOAD_OSS_FAILURE(109, "上传文件失败"),
   DATABASE_FAIL(110, "数据库操作失败"),
+  SEND_MAIL_FAIL(111, "发送邮件失败"),
 
   CONFLICT(409, "资源发生冲突");
 

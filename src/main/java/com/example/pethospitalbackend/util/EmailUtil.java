@@ -1,23 +1,35 @@
 package com.example.pethospitalbackend.util;
 
 import com.example.pethospitalbackend.exception.SendMailFailedException;
+import com.sun.mail.util.MailSSLSocketFactory;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Properties;
+import java.security.GeneralSecurityException;import java.util.Properties;
 
 @Component
 public class EmailUtil {
 
-  public String sendMail(String recipient) {
+  public String sendMail(String recipient)throws GeneralSecurityException {
     String code = "";
 
+//    Properties props = new Properties();
+//    props.setProperty("mail.host", "smtp.163.com");
+//    props.setProperty("mail.smtp.auth", "true");
+//    props.setProperty("mail.transport.protocol", "SMTP");
+
+    MailSSLSocketFactory sf = new MailSSLSocketFactory();
+    sf.setTrustAllHosts(true);
     Properties props = new Properties();
+    props.setProperty("mail.transport.protocol", "SMTP");
     props.setProperty("mail.host", "smtp.163.com");
-    props.setProperty("mail.smtp.auth", "true");
+    props.setProperty("mail.smtp.auth", "true");// 指定验证为true是否需要身份验证
+    props.setProperty("mail.smtp.ssl.enable", "true");
+    props.put("mail.smtp.ssl.socketFactory", sf);
+
 
     // 确定权限（账号和密码）
     Authenticator authenticator =
