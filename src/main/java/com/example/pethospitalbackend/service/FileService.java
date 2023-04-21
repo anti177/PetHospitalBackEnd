@@ -92,15 +92,14 @@ public class FileService {
           "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
       throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
     } else {
+      String saveUrl = url.substring(0, url.indexOf("?"));
       FileRecord fileRecord = new FileRecord();
-      fileRecord.setUrl(url);
+      fileRecord.setUrl(saveUrl);
       fileRecord.setInUse(false);
       fileRecordDao.insert(fileRecord);
-      return url.substring(0, url.indexOf("?"));
+      return saveUrl;
     }
   }
-
-  // todo: 修改文件处理逻辑
 
   public boolean deleteGraph(String url) {
     return ossUtil.deleteFile(graphBucketName, url);
