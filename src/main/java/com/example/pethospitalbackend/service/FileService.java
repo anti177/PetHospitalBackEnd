@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -83,7 +84,9 @@ public class FileService {
             + RandomStringUtils.randomNumeric(5)
             + "-"
             + video.getOriginalFilename();
+    logger.info("begin upload: " + new Date(System.currentTimeMillis()));
     String url = ossUtil.uploadFile(videoBucketName, video, filename);
+    logger.info("end upload: " + new Date(System.currentTimeMillis()));
     if (StringUtils.isBlank(url)) {
       logger.error(
           "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
