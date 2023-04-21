@@ -59,7 +59,8 @@ public class OSSUtil {
         // 容器不存在，就创建
         createBucket(bucketName, CannedAccessControlList.PublicRead);
       }
-
+      boolean enabled = true;
+      ossClient.setBucketTransferAcceleration(bucketName, enabled);
       PutObjectResult result =
           ossClient.putObject(
               bucketName, filename, new ByteArrayInputStream(fileupload.getBytes()));
@@ -103,6 +104,8 @@ public class OSSUtil {
           "[uploadFile Ex], bucketName: {} doesn't exist", SerialUtil.toJsonStr(bucketName));
       return false;
     }
+    boolean enabled = true;
+    ossClient.setBucketTransferAcceleration(bucketName, enabled);
 
     ObjectMetadata objectMetadata =
         ossClient.getObject(

@@ -205,7 +205,7 @@
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.10.2</version>
+            <version>3.16.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.plexpt</groupId>
