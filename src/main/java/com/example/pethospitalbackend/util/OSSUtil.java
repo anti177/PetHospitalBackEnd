@@ -16,7 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
+import java.util.Date;import java.util.Objects;
 
 @Component
 public class OSSUtil {
@@ -89,7 +89,7 @@ public class OSSUtil {
   // 下载文件
   public Boolean downloadFile(String bucketName, String filename, String destinationPath)
       throws OSSException, ClientException {
-    // 创建OSSClient实例
+    // 创建OSSClient实例,如果bucketName和现在的不等，从旧的删除数据
     OSS ossClient =
         new OSSClientBuilder()
             .build(

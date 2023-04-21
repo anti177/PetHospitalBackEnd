@@ -23,8 +23,8 @@ import java.util.List;
 public class FileService {
 
   private static final Logger logger = LoggerFactory.getLogger(FileService.class);
-  private final String videoBucketName = "pet-hospital-back-end-video";
-  private final String graphBucketName = "pet-hospital-back-end-graph";
+  private final String videoBucketName = "pet-hospital-back-end-video2";
+  private final String graphBucketName = "pet-hospital-back-end-graph2";
   @Resource OSSUtil ossUtil;
   @Resource FileRecordDao fileRecordDao;
   @Resource TreatmentVideoDao treatmentVideoDao;
