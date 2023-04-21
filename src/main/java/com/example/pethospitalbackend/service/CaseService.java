@@ -194,8 +194,8 @@ public class CaseService {
       }
 
       List<InspectionCaseFrontDTO> inspectionCaseList = form.getInspection_cases();
-      if (inspectionCaseList != null && admissionGraphUrls.isEmpty()) {
-        for (int i = 0; i < form.getInspection_cases().size(); i++) {
+      if (inspectionCaseList != null && !inspectionCaseList.isEmpty()) {
+        for (int i = 0; i < inspectionCaseList.size(); i++) {
           // 添加相关检查项目信息
           InspectionCaseFrontDTO inspectionCaseFrontDTO = form.getInspection_cases().get(i);
           InspectionCase inspectionCase = new InspectionCase();
@@ -208,8 +208,8 @@ public class CaseService {
           // 添加相关检查图片信息
           Long inspectionCaseId = inspectionCase.getInspectionCaseId();
           List<String> inspectionGraphUrls = inspectionCaseFrontDTO.getInspection_graphs();
-          fileUrls.addAll(inspectionGraphUrls);
-          if (inspectionGraphUrls.size() > 0) {
+          if (inspectionGraphUrls != null && inspectionGraphUrls.size() > 0) {
+            fileUrls.addAll(inspectionGraphUrls);
             List<FileDTO> inspectionGraphList =
                 getFileDTOList(inspectionGraphUrls, inspectionCaseId);
             caseDao.insertInspectionGraphs(inspectionGraphList);

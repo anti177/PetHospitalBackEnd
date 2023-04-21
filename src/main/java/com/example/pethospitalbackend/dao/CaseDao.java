@@ -113,7 +113,7 @@ public interface CaseDao extends Mapper<IllCase> {
     "<script>",
     "insert into inspection_graph(id, inspection_case_id, sort_num, url) values ",
     "<foreach collection='files' item='item' index='index' separator=','>",
-    "(#{item.fileId}, #{item.caseId}, #{item.sortNum},#{item.url})",
+    "(#{item.fileId}, #{item.caseId}, #{item.sortNum}, #{item.url})",
     "</foreach>",
     "</script>"
   })
