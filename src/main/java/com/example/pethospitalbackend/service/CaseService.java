@@ -176,26 +176,25 @@ public class CaseService {
       List<String> therapyGraphUrls = form.getTherapy_graphs();
       List<String> therapyVideoUrls = form.getTherapy_videos();
 
-      fileUrls.addAll(admissionGraphUrls);
-      fileUrls.addAll(therapyGraphUrls);
-      fileUrls.addAll(therapyVideoUrls);
-
       // 如果存在，添加相关图片和视频信息
-      if (admissionGraphUrls != null) {
+      if (admissionGraphUrls != null && !admissionGraphUrls.isEmpty()) {
         List<FileDTO> admissionGraphList = getFileDTOList(admissionGraphUrls, caseId);
+        fileUrls.addAll(admissionGraphUrls);
         caseDao.insertFiles(admissionGraphList, "admission_graph");
       }
-      if (therapyGraphUrls != null) {
+      if (therapyGraphUrls != null && !therapyGraphUrls.isEmpty()) {
         List<FileDTO> therapyGraphList = getFileDTOList(therapyGraphUrls, caseId);
+        fileUrls.addAll(admissionGraphUrls);
         caseDao.insertFiles(therapyGraphList, "treatment_graph");
       }
-      if (therapyVideoUrls != null) {
+      if (therapyVideoUrls != null && !therapyVideoUrls.isEmpty()) {
         List<FileDTO> therapyVideoList = getFileDTOList(therapyVideoUrls, caseId);
+        fileUrls.addAll(therapyVideoUrls);
         caseDao.insertFiles(therapyVideoList, "treatment_video");
       }
 
       List<InspectionCaseFrontDTO> inspectionCaseList = form.getInspection_cases();
-      if (inspectionCaseList != null) {
+      if (inspectionCaseList != null && admissionGraphUrls.isEmpty()) {
         for (int i = 0; i < form.getInspection_cases().size(); i++) {
           // 添加相关检查项目信息
           InspectionCaseFrontDTO inspectionCaseFrontDTO = form.getInspection_cases().get(i);
@@ -217,7 +216,9 @@ public class CaseService {
           }
         }
       }
-      fileService.updateFilesState(fileUrls, true);
+      if (!fileUrls.isEmpty()) {
+        fileService.updateFilesState(fileUrls, true);
+      }
       return illCase;
     } catch (Exception e) {
       logger.error("[add case Fail], error message: {}", SerialUtil.toJsonStr(e.getMessage()));
