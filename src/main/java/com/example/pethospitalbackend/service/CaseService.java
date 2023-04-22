@@ -184,7 +184,7 @@ public class CaseService {
       }
       if (therapyGraphUrls != null && !therapyGraphUrls.isEmpty()) {
         List<FileDTO> therapyGraphList = getFileDTOList(therapyGraphUrls, caseId);
-        fileUrls.addAll(admissionGraphUrls);
+        fileUrls.addAll(therapyGraphUrls);
         caseDao.insertFiles(therapyGraphList, "treatment_graph");
       }
       if (therapyVideoUrls != null && !therapyVideoUrls.isEmpty()) {
