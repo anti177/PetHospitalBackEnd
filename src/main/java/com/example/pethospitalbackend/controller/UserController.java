@@ -6,6 +6,7 @@ import com.example.pethospitalbackend.dto.ModifiedRecordCountDTO;
 import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.dto.UserFrontDTO;
 import com.example.pethospitalbackend.entity.User;
+import com.example.pethospitalbackend.enums.ResponseEnum;
 import com.example.pethospitalbackend.request.ChangePasswordRequest;
 import com.example.pethospitalbackend.request.ForgetPasswordRequest;
 import com.example.pethospitalbackend.request.UserLoginRequest;
@@ -141,8 +142,16 @@ public class UserController {
   public Response<ModifiedRecordCountDTO> updateUser(
       @PathVariable Long id, @RequestBody User user) {
     Response<ModifiedRecordCountDTO> response = new Response<>();
-    Integer res = userService.updateUser(user);
-    response.setSuc(new ModifiedRecordCountDTO(res));
+    user.setUserId(id);
+    int res = userService.updateUser(user);
+    ModifiedRecordCountDTO modifiedRecordCountDTO = new ModifiedRecordCountDTO(res);
+    if (res == -1) {
+      response.setStatus(ResponseEnum.CONFLICT.getCode());
+      response.setResult(modifiedRecordCountDTO);
+      response.setMessage("数据库中已存在邮箱相同的用户，无法修改。");
+    } else {
+      response.setSuc(modifiedRecordCountDTO);
+    }
     return response;
   }
 

@@ -1,6 +1,5 @@
 package com.example.pethospitalbackend.service;
 
-import cn.hutool.extra.mail.MailException;
 import com.example.pethospitalbackend.constant.UserRoleConstants;
 import com.example.pethospitalbackend.dao.TestUserDao;
 import com.example.pethospitalbackend.dao.UserDao;
@@ -24,14 +23,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.mail.MailSendException;import org.springframework.security.core.Authentication;
+import org.springframework.mail.MailSendException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.security.GeneralSecurityException;import java.util.List;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -118,9 +118,9 @@ public class UserService {
     String code;
     Response response = new Response<>();
 
-    try{
+    try {
       code = emailUtil.sendMail(email);
-    }catch (Exception e){
+    } catch (Exception e) {
       logger.error("[SendCode Fail], email : {}", SerialUtil.toJsonStr(email));
       throw new MailSendException(ResponseEnum.SEND_MAIL_FAIL.getMsg());
     }
@@ -197,6 +197,14 @@ public class UserService {
   // ---------------------------------------后台-------------------------------------------
 
   public int updateUser(User user) {
+    UserDTO originalUser = userDao.getUserByUserId(user.getUserId());
+    String newEmail = user.getEmail();
+    String originalEmail = originalUser.getEmail();
+    if (!originalEmail.equals(newEmail)
+        && userDao.getUserByEmail(newEmail) != null) { // email被修改了，并且数据库中已经有相应email
+      logger.warn("[Mail has already been registered], email :{}", SerialUtil.toJsonStr(newEmail));
+      return -1;
+    }
     try {
       return userDao.updateByPrimaryKey(user);
     } catch (Exception e) {
