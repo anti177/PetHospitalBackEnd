@@ -9,6 +9,7 @@ import java.util.List;
 @ApiModel("题目模型")
 @Data
 public class FrontTestAnswerDTO {
+
   @ApiModelProperty(value = "题目id")
   private long questionId;
 

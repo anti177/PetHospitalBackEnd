@@ -11,9 +11,15 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * Swagger ui 配置
+ *
+ * @author zjy19
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
+
   @Bean
   public Docket api() {
     return new Docket(DocumentationType.SWAGGER_2)
@@ -34,7 +40,7 @@ public class SwaggerConfiguration {
         // 创建人
         .contact(
             new Contact(
-                "team 8", "https://github.com/anti177/PetHospitalBackEnd", "2359470826@qq.com"))
+                "team 8", "https://github.com/anti177/PetHospitalBackEnd", "2358470826@qq.com"))
         // 版本号
         .version("1.0")
         .build();

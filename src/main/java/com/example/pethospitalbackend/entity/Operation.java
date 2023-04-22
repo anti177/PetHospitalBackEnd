@@ -2,6 +2,7 @@ package com.example.pethospitalbackend.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.*;
 
@@ -14,6 +15,7 @@ public class Operation {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @KeySql(useGeneratedKeys = true)
   @Column(name = "operation_id")
   @ApiModelProperty(value = "操作id")
   private Long operationId;

@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 public class TestFormBackDTO {
 
+  @ApiModelProperty("考试id")
   private Long testId;
 
   @ApiModelProperty(value = "考试名称", required = true)

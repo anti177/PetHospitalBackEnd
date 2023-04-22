@@ -12,6 +12,7 @@ import javax.persistence.*;
     name = "vaccine",
     indexes = {@Index(columnList = "id")})
 public class Vaccine {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")

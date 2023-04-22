@@ -43,7 +43,6 @@ public class UserController {
   @ApiOperation(value = "用户注册")
   public Response<UserFrontDTO> register(@RequestBody UserRegisterRequest userRegister) {
     JwtUserDTO jwtUser = userService.register(userRegister);
-
     Response<UserFrontDTO> response = new Response<>();
     UserFrontDTO userFrontDTO = transferUserDTOToUserFrontDTO(jwtUser.getUser());
     userFrontDTO.setToken(SecurityConstants.TOKEN_PREFIX + jwtUser.getToken());
@@ -148,7 +147,7 @@ public class UserController {
     if (res == -1) {
       response.setStatus(ResponseEnum.CONFLICT.getCode());
       response.setResult(modifiedRecordCountDTO);
-      response.setMessage("数据库中已存在邮箱相同的用户，无法修改。");
+      response.setMessage("系统中已存在邮箱相同的用户，无法修改。");
     } else {
       response.setSuc(modifiedRecordCountDTO);
     }

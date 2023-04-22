@@ -9,6 +9,7 @@ import java.util.List;
 @ApiModel("考试题目模型")
 @Data
 public class PaperQuestionDTO {
+
   @ApiModelProperty(value = "题目id")
   private long questionId;
 
