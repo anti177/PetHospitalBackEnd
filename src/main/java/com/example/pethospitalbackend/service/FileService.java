@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -69,11 +68,7 @@ public class FileService {
       logger.error("[addGraph Fail], graph: {}", SerialUtil.toJsonStr(graph.getOriginalFilename()));
       throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
     } else {
-      FileRecord fileRecord = new FileRecord();
-      fileRecord.setUrl(url);
-      fileRecord.setInUse(false);
-      fileRecordDao.insert(fileRecord);
-      return url.substring(0, url.indexOf("?"));
+      return addFileRecord(url, "graph");
     }
   }
 
@@ -84,20 +79,13 @@ public class FileService {
             + RandomStringUtils.randomNumeric(5)
             + "-"
             + video.getOriginalFilename();
-    logger.info("begin upload: " + new Date(System.currentTimeMillis()));
     String url = ossUtil.uploadFile(videoBucketName, video, filename);
-    logger.info("end upload: " + new Date(System.currentTimeMillis()));
     if (StringUtils.isBlank(url)) {
       logger.error(
           "[addVideo Fail], video_mp4: {}", SerialUtil.toJsonStr(video.getOriginalFilename()));
       throw new RuntimeException(ResponseEnum.UPLOAD_OSS_FAILURE.getMsg());
     } else {
-      String saveUrl = url.substring(0, url.indexOf("?"));
-      FileRecord fileRecord = new FileRecord();
-      fileRecord.setUrl(saveUrl);
-      fileRecord.setInUse(false);
-      fileRecordDao.insert(fileRecord);
-      return saveUrl;
+      return addFileRecord(url, "video");
     }
   }
 
@@ -142,5 +130,15 @@ public class FileService {
 
   public int updateFileState(String url, Boolean status) {
     return fileRecordDao.updateStatusByUrl(url, status);
+  }
+
+  private String addFileRecord(String url, String type) {
+    String saveUrl = url.substring(0, url.indexOf("?")).replace("-internal", "");
+    FileRecord fileRecord = new FileRecord();
+    fileRecord.setUrl(saveUrl);
+    fileRecord.setType(type);
+    fileRecord.setInUse(false);
+    fileRecordDao.insert(fileRecord);
+    return saveUrl;
   }
 }
