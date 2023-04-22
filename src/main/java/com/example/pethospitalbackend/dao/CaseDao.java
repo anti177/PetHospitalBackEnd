@@ -119,12 +119,6 @@ public interface CaseDao extends Mapper<IllCase> {
   })
   int insertInspectionGraphs(@Param("files") List<FileDTO> inspectionGraphList);
 
-  @Delete("DELETE * FROM ${table} WHERE url = #{url}")
-  void deleteFilesByGraphUrl(@Param("table") String table, @Param("url") String url);
-
-  @Select("SELECT max(sort_num) FROM ${table} WHERE case_id = #{id} ORDER BY sort_num ")
-  Long getMaxFileSortNum(@Param("table") String table, @Param("id") Long caseId);
-
   @Select("select exists(select 1 from ill_case where disease_id=#{id})")
   boolean existByDiseaseId(@Param("id") long diseaseId);
 }

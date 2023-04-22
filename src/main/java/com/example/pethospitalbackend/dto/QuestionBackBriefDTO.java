@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @ApiModel("后台问题列表模型")
 public class QuestionBackBriefDTO {
+
   @ApiModelProperty(value = "题目id")
   private Long questionId;
 

@@ -10,6 +10,8 @@ import java.util.List;
 
 @Data
 public class TestDetailBackDTO {
+
+  @ApiModelProperty(value = "考试id")
   private Long testId;
 
   @ApiModelProperty(value = "考试名称")
@@ -29,7 +31,7 @@ public class TestDetailBackDTO {
 
   @ApiModelProperty(value = "考试开始时间")
   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8") // 省略秒以后的部分
   private Date beginDate;
 
   @ApiModelProperty(value = "考试结束时间")
@@ -38,5 +40,5 @@ public class TestDetailBackDTO {
   private Date endDate;
 
   @ApiModelProperty(value = "参考人员名单")
-  private List<UserBackBriefDTO> userList; // 添加参考人员id
+  private List<UserBackBriefDTO> userList;
 }
