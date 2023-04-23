@@ -137,6 +137,12 @@ public class TestService {
     }
     long score = getAnsScore(questionList, questionAnsList);
 
+    if (questionAnsList.size() - questionList.size() != 0 && score == 0) {
+      logger.error(
+              "[valid post], testId : {}",
+              SerialUtil.toJsonStr(testId));
+      throw new DatabaseException(ResponseEnum.ILLEGAL_PARAM.getMsg());
+    }
     // 2.向test_record插入记录，拿到test_record_id
     TestRecord testRecord = new TestRecord();
     testRecord.setTestId(testId);
@@ -145,17 +151,15 @@ public class TestService {
     // 3.向record_answer, testRecord插入记录
     try {
       testRecordDao.insert(testRecord);
-      if (score != 0) {
-        for (RecordRequest r : questionList) {
-          AnswerRecord a = new AnswerRecord();
-          a.setScore(r.getScore());
-          a.setQuestionId(r.getQuestionId());
-          a.setUserId(Long.parseLong(userId));
-          a.setUserAnswer(r.getAns());
-          a.setTestId(testId);
+      for (RecordRequest r : questionList) {
+        AnswerRecord a = new AnswerRecord();
+        a.setScore(r.getScore());
+        a.setQuestionId(r.getQuestionId());
+        a.setUserId(Long.parseLong(userId));
+        a.setUserAnswer(r.getAns());
+        a.setTestId(testId);
 
-          answerRecordDao.insert(a);
-        }
+        answerRecordDao.insert(a);
       }
 
     } catch (Exception e) {
