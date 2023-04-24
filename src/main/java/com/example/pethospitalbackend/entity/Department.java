@@ -2,6 +2,7 @@ package com.example.pethospitalbackend.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.*;
 
@@ -14,6 +15,7 @@ public class Department {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @KeySql(useGeneratedKeys = true)
   @Column(name = "department_id")
   @ApiModelProperty(value = "科室id")
   private Long departmentId;
@@ -26,7 +28,7 @@ public class Department {
   @ApiModelProperty(value = "科室介绍")
   private String intro;
 
-  // 一个科室的所有负责人字符串，分割符号还每确定
+  // 一个科室的所有负责人字符串，分割符号为;
   @Column(name = "people_List")
   @ApiModelProperty(value = "科室负责人")
   private String peopleList;

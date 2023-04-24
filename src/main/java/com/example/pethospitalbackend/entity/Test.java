@@ -15,6 +15,7 @@ import java.util.Date;
     name = "test",
     indexes = {@Index(columnList = "test_id")})
 public class Test {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "test_id")

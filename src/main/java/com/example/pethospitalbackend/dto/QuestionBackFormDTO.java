@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @ApiModel("后台新建问题模型")
 public class QuestionBackFormDTO {
+
   @ApiModelProperty("问题id")
   private Long questionId;
 

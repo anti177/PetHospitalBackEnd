@@ -12,9 +12,10 @@ import javax.persistence.*;
     name = "actor",
     indexes = {@Index(columnList = "actor_id")})
 public class Actor {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @KeySql(useGeneratedKeys = true)
+  @KeySql(useGeneratedKeys = true) // 插入数据库时回填id到对象中
   @Column(name = "actor_id")
   @ApiModelProperty(value = "角色id")
   private Long actorId;

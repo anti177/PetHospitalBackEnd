@@ -8,21 +8,21 @@ import com.aliyun.oss.model.*;
 import com.example.pethospitalbackend.config.OSSConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;import java.util.Objects;
+import java.util.Date;
 
 @Component
 public class OSSUtil {
   private static final Logger logger = LoggerFactory.getLogger(OSSUtil.class);
 
-  @Autowired private OSSConfig ossConfig;
+  @Resource private OSSConfig ossConfig;
 
   public void createBucket(String bucketName, CannedAccessControlList acl) {
     // 创建OSSClient实例,构造函数参数为自己的OSS帐号信息
@@ -44,7 +44,7 @@ public class OSSUtil {
   }
 
   // 上传文件
-  public String uploadFile(String bucketName, MultipartFile fileupload, String filename)
+  public String uploadFile(String bucketName, MultipartFile fileUpload, String filename)
       throws OSSException, ClientException {
 
     // 创建OSSClient实例
@@ -63,7 +63,7 @@ public class OSSUtil {
       ossClient.setBucketTransferAcceleration(bucketName, enabled);
       PutObjectResult result =
           ossClient.putObject(
-              bucketName, filename, new ByteArrayInputStream(fileupload.getBytes()));
+              bucketName, filename, new ByteArrayInputStream(fileUpload.getBytes()));
       ossClient.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
       // 设置URL过期时间为10年 3600l* 1000*24*365*10
       Date expiration = new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 365 * 10);
@@ -75,7 +75,7 @@ public class OSSUtil {
     } catch (OSSException | ClientException oe) {
       // 上传失败
       logger.error(
-          "[uploadFile Ex], fileupload: {}", SerialUtil.toJsonStr(fileupload.getName()), oe);
+          "[uploadFile Ex], fileUpload: {}", SerialUtil.toJsonStr(fileUpload.getName()), oe);
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
