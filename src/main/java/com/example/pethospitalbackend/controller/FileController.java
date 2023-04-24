@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 
 /**
- * 使用oos上传文件的例子
+ * 使用oos上传文件
  *
  * @author yyx
  */

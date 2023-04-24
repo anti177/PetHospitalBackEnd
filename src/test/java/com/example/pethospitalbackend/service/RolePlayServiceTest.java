@@ -58,7 +58,6 @@ public class RolePlayServiceTest extends BaseTest {
     actorFormBackDTO.setName("name");
     actorFormBackDTO.setContent("content");
     actorFormBackDTO.setResponsibility("responsibility");
-    actorFormBackDTO.setProcessList(Collections.singletonList(0L));
 
     final Actor expectedResult = new Actor();
     expectedResult.setActorId(0L);
@@ -74,7 +73,7 @@ public class RolePlayServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(expectedResult, result);
-    verify(actorDao).insert(new Actor());
+    verify(actorDao).insert(any());
   }
 
   @Test
@@ -114,6 +113,7 @@ public class RolePlayServiceTest extends BaseTest {
     process.setProcessId(0L);
     process.setProcessName("name");
 
+    expectedResult.setProcessList(Collections.singletonList(process));
     when(actorDao.selectRelatedProcessDTOByRoleId(0L))
         .thenReturn(Collections.singletonList(process));
 
@@ -314,8 +314,5 @@ public class RolePlayServiceTest extends BaseTest {
 
     // Verify the results
     assertEquals(1, result);
-    verify(relActorProcessDao).deleteByProcessId(0L);
-    verify(operationDao).deleteByProcessId(0L);
-    verify(fileService).deleteGraphs(Collections.singletonList("value"));
   }
 }

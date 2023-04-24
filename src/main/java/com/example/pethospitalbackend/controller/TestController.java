@@ -60,8 +60,6 @@ public class TestController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
-  // -----------------------------------------------------------------后台---------------------------------------------------------------
-
   @GetMapping("/questions")
   @ApiOperation(value = "管理员获取全部问题列表")
   public Response<List<QuestionBackBriefDTO>> getAllQuestions() {

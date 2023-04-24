@@ -9,6 +9,7 @@ import java.util.List;
 @ApiModel("考试试卷模型")
 @Data
 public class TestPaperDTO {
+
   @ApiModelProperty(value = "试卷id")
   private long paperId;
 

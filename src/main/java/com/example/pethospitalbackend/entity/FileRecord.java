@@ -12,6 +12,7 @@ import javax.persistence.*;
     name = "file",
     indexes = {@Index(columnList = "url")})
 public class FileRecord {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "file_id")

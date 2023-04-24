@@ -10,6 +10,7 @@ import java.util.List;
 @ApiModel("角色流程模型")
 @Data
 public class RoleProcessDTO {
+
   @NotBlank
   @ApiModelProperty(value = "流程id")
   private long id;

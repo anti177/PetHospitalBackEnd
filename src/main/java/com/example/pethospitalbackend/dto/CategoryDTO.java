@@ -10,6 +10,7 @@ import java.util.List;
 @ApiModel("疾病目录模型")
 @Data
 public class CategoryDTO {
+
   @ApiModelProperty(value = "病种ID")
   private int typeId;
 

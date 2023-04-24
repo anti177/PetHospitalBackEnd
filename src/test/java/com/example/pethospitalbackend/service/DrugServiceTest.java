@@ -20,6 +20,7 @@ class DrugServiceTest {
   void setUp() {
     drugServiceUnderTest = new DrugService();
     drugServiceUnderTest.drugDao = mock(DrugDao.class);
+    drugServiceUnderTest.fileService = mock(FileService.class);
   }
 
   @Test
@@ -93,6 +94,7 @@ class DrugServiceTest {
     expectedResult.setPrice(0.0);
     expectedResult.setUrl("url");
 
+    when(drugServiceUnderTest.fileService.updateFileState(anyString(), anyBoolean())).thenReturn(1);
     when(drugServiceUnderTest.drugDao.insert(drug)).thenReturn(1);
 
     // Run the test
@@ -100,6 +102,8 @@ class DrugServiceTest {
 
     // Verify the results
     assertThat(result).isEqualTo(expectedResult);
+    verify(drugServiceUnderTest.fileService).updateFileState("url", true);
+    verify(drugServiceUnderTest.drugDao).insert(any());
   }
 
   @Test
@@ -116,14 +120,14 @@ class DrugServiceTest {
     when(drugServiceUnderTest.drugDao.selectByPrimaryKey(0L)).thenReturn(drug);
 
     when(drugServiceUnderTest.drugDao.deleteByPrimaryKey(0L)).thenReturn(1);
-    when(drugServiceUnderTest.fileService.deleteGraph("url")).thenReturn(true);
+    when(drugServiceUnderTest.fileService.updateFileState(anyString(), anyBoolean())).thenReturn(1);
 
     // Run the test
     final int result = drugServiceUnderTest.deleteDrug(0L);
 
     // Verify the results
     assertThat(result).isEqualTo(1);
-    verify(drugServiceUnderTest.fileService).deleteGraph("url");
+    verify(drugServiceUnderTest.fileService).updateFileState("url", false);
   }
 
   @Test
@@ -137,12 +141,24 @@ class DrugServiceTest {
     drug.setPrice(0.0);
     drug.setUrl("url");
 
-    when(drugServiceUnderTest.drugDao.updateByPrimaryKey(drug)).thenReturn(1);
+    // Configure DrugDao.selectByPrimaryKey(...).
+    final Drug drug1 = new Drug();
+    drug1.setId(0L);
+    drug1.setName("name");
+    drug1.setType("type");
+    drug1.setIntro("intro");
+    drug1.setPrice(0.0);
+    drug1.setUrl("url");
+    when(drugServiceUnderTest.drugDao.selectByPrimaryKey(0L)).thenReturn(drug1);
+
+    when(drugServiceUnderTest.fileService.updateFileState(anyString(), anyBoolean())).thenReturn(1);
+    when(drugServiceUnderTest.drugDao.updateByPrimaryKey(any())).thenReturn(1);
 
     // Run the test
     final int result = drugServiceUnderTest.updateDrug(drug);
 
     // Verify the results
     assertThat(result).isEqualTo(1);
+    verify(drugServiceUnderTest.fileService).updateFileState("url", false);
   }
 }
