@@ -83,7 +83,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.PATCH, SecurityConstants.AUTH_LOGOUT_URL)
         .permitAll()
         // 其他请求需验证
-        //.anyRequest().authenticated()
+        .anyRequest().authenticated()
         .and()
         // 不需要 session（不创建会话）
         .sessionManagement()
