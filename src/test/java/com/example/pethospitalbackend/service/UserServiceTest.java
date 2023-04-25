@@ -3,19 +3,21 @@ package com.example.pethospitalbackend.service;
 import com.example.pethospitalbackend.BaseTest;
 import com.example.pethospitalbackend.dao.TestUserDao;
 import com.example.pethospitalbackend.dao.UserDao;
-import com.example.pethospitalbackend.dto.UserDTO;
+import com.example.pethospitalbackend.dto.JwtUserDTO;import com.example.pethospitalbackend.dto.UserDTO;
 import com.example.pethospitalbackend.entity.User;
-import org.junit.Before;
+import com.example.pethospitalbackend.request.ForgetPasswordRequest;import com.example.pethospitalbackend.request.UserLoginRequest;import com.example.pethospitalbackend.request.UserRegisterRequest;
+import com.example.pethospitalbackend.response.Response;
+import com.example.pethospitalbackend.util.EmailUtil;import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.annotation.Resource;
-import java.util.Collections;
+import java.security.GeneralSecurityException;import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,6 +30,9 @@ public class UserServiceTest extends BaseTest {
 
   @MockBean(name = "testUserDao")
   TestUserDao testUserDao;
+
+  @MockBean(name = "emailUtil")
+  EmailUtil emailUtil;
 
   @Before
   public void init() {
@@ -116,4 +121,53 @@ public class UserServiceTest extends BaseTest {
     assertEquals(1, result);
     verify(userService.testUserDao).deleteTestUsersByUserIds(Collections.singletonList(0L));
   }
+
+  @Test
+  public void testRegisterUser() {
+    // Setup
+    UserDTO userDTO = new UserDTO(1,"manger","1803@qq.com","1");
+    when(userDao.getUserPassword(any())).thenReturn("01022");
+    when(userDao.insertUser(any())).thenReturn(1);
+    when(userDao.getUserByEmail(any())).thenReturn(null).thenReturn(userDTO);
+    UserRegisterRequest dto = new UserRegisterRequest();
+    dto.setEmail(userDTO.getEmail());
+    dto.setRole("manager");
+    dto.setPassword("01022");
+    // Run the test
+    final JwtUserDTO result = userService.register(dto);
+
+    // Verify the results
+    assertEquals("1803@qq.com", result.getUser().getEmail());
+  }
+
+  @Test
+  public void testSendCodeAndChangePasswordUser()throws GeneralSecurityException {
+    // Setup
+    UserDTO userDTO = new UserDTO(1,"manger","1803@qq.com","1");
+    when(userDao.getUserPassword(any())).thenReturn("01022");
+    when(userDao.insertUser(any())).thenReturn(1);
+    when(userDao.getUserByEmail(any())).thenReturn(userDTO);
+    when(emailUtil.sendMail(any())).thenReturn("true");
+    UserRegisterRequest dto = new UserRegisterRequest();
+    dto.setEmail(userDTO.getEmail());
+    dto.setRole("manager");
+    dto.setPassword("01022");
+
+    ForgetPasswordRequest forgetPasswordRequest = new ForgetPasswordRequest();
+    forgetPasswordRequest.setPassword("123456");
+    forgetPasswordRequest.setEmail(userDTO.getEmail());
+    forgetPasswordRequest.setCode("123456");
+    // Run the test
+    final Response result = userService.sendCode(userDTO.getEmail());
+     try{
+       userService.forgetPassword(forgetPasswordRequest);
+       fail();
+     }catch (Exception e){
+       // Verify the results
+       assertNotNull(result);
+       assertTrue(true);
+     }
+
+  }
+
 }
