@@ -26,7 +26,7 @@ public interface TestDao extends Mapper<Test> {
   @ResultType(EndTestCategoryDTO.class)
   @Select(
       "SELECT test.test_id as testId, begin_date as beginDate, end_date as endDate, intro, tag, score, test_name as testName, has_submit as hasSubmit  "
-          + "from test NATURAL JOIN test_user NATURAL JOIN  test_record WHERE test_user.user_id = #{id} and (end_date < NOW() or has_submit > 0); ")
+          + "from test NATURAL JOIN test_user NATURAL JOIN  test_record WHERE test_user.user_id = #{id} and has_submit > 0; ")
   List<EndTestCategoryDTO> getEndTestCategoryByUserId(@Param("id") long userId);
 
   @Select("select exists(select 1 from test where paper_id=#{paperId})")
