@@ -18,7 +18,7 @@ public interface TestDao extends Mapper<Test> {
   @Select(
       "SELECT test.test_id as testId, begin_date as beginDate, end_date as endDate, test_name as testName, intro, tag  "
           + "from test JOIN test_user on test.test_id = test_user.test_id "
-          + "WHERE test_user.user_id = #{id} and NOW() < end_date and test_user.has_submit = 0 "
+          + "WHERE test_user.user_id = #{id} and NOW() >  begin_date and NOW() < end_date and test_user.has_submit = 0 "
           + "ORDER BY begin_date")
   List<TestCategoryDTO> getTestCategoryByUserId(@Param("id") long userId);
 
