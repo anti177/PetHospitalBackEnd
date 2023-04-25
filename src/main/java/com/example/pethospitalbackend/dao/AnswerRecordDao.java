@@ -16,9 +16,9 @@ public interface AnswerRecordDao extends Mapper<AnswerRecord> {
           + "rel_question_paper.score as score,choice, user_answer as userAns, "
           + "ans,description,question_type as questionType "
           + "from answer_record "
-          + "left JOIN test on answer_record.test_id = test.test_id "
-          + "left JOIN question on question.question_id = answer_record.question_id "
-          + "left JOIN rel_question_paper on answer_record.question_id = rel_question_paper.question_id and test.paper_id = rel_question_paper.paper_id "
+          + "inner JOIN test on answer_record.test_id = test.test_id "
+          + "inner JOIN question on question.question_id = answer_record.question_id "
+          + "inner JOIN rel_question_paper on answer_record.question_id = rel_question_paper.question_id and test.paper_id = rel_question_paper.paper_id "
           + "where answer_record.user_id = #{user_id} and answer_record.test_id = #{test_id} "
           + "ORDER BY rel_question_paper.index_num ")
   List<FrontTestAnswerDTO> getTestAnswer(
